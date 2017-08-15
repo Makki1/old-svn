@@ -1,0 +1,695 @@
+Archive member included because of file (symbol)
+
+/usr/lib/gcc/avr/4.7.2/avr25/libgcc.a(_exit.o)
+                              /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/crttn84.o (exit)
+/usr/lib/gcc/avr/4.7.2/avr25/libgcc.a(_copy_data.o)
+                              main.o (__do_copy_data)
+/usr/lib/gcc/avr/4.7.2/avr25/libgcc.a(_clear_bss.o)
+                              main.o (__do_clear_bss)
+/usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eerd_byte_attiny84.o)
+                              main.o (__eerd_byte_tn84)
+/usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eerd_dword_attiny84.o)
+                              main.o (__eerd_dword_tn84)
+/usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eerd_word_attiny84.o)
+                              main.o (__eerd_word_tn84)
+/usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eeupd_byte_attiny84.o)
+                              main.o (__eeupd_byte_tn84)
+/usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eeupd_dword_attiny84.o)
+                              main.o (__eeupd_dword_tn84)
+/usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eeupd_word_attiny84.o)
+                              main.o (__eeupd_word_tn84)
+/usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eewr_byte_attiny84.o)
+                              main.o (__eewr_byte_tn84)
+/usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eewr_dword_attiny84.o)
+                              main.o (__eewr_dword_tn84)
+/usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eewr_word_attiny84.o)
+                              main.o (__eewr_word_tn84)
+/usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eerd_block_attiny84.o)
+                              /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eerd_dword_attiny84.o) (__eerd_blraw_tn84)
+
+Allocating common symbols
+Common symbol       size              file
+
+sleepmode           0x1               main.o
+scratchpad          0xb               main.o
+wmode               0x1               main.o
+pinstatB            0x1               main.o
+actbit              0x1               main.o
+Counter4            0x4               main.o
+lastcps             0x1               main.o
+bitp                0x1               main.o
+srcount             0x1               main.o
+eflag               0x1               main.o
+mode                0x1               main.o
+Counter1            0x4               main.o
+Counter3            0x4               main.o
+bytep               0x1               main.o
+cbuf                0x1               main.o
+page                0x1               main.o
+pinstatA            0x1               main.o
+ewrite_flag         0x1               main.o
+scrc                0x2               main.o
+Counter2            0x4               main.o
+eewrite_buf         0x8               main.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+text             0x00000000         0x00002000         xr
+data             0x00800060         0x0000ffa0         rw !x
+eeprom           0x00810000         0x00010000         rw !x
+fuse             0x00820000         0x00000400         rw !x
+lock             0x00830000         0x00000400         rw !x
+signature        0x00840000         0x00000400         rw !x
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+LOAD /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/crttn84.o
+LOAD main.o
+LOAD /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libm.a
+LOAD /usr/lib/gcc/avr/4.7.2/avr25/libgcc.a
+LOAD /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a
+LOAD /usr/lib/gcc/avr/4.7.2/avr25/libgcc.a
+
+.hash
+ *(.hash)
+
+.dynsym
+ *(.dynsym)
+
+.dynstr
+ *(.dynstr)
+
+.gnu.version
+ *(.gnu.version)
+
+.gnu.version_d
+ *(.gnu.version_d)
+
+.gnu.version_r
+ *(.gnu.version_r)
+
+.rel.init
+ *(.rel.init)
+
+.rela.init
+ *(.rela.init)
+
+.rel.text
+ *(.rel.text)
+ *(.rel.text.*)
+ *(.rel.gnu.linkonce.t*)
+
+.rela.text
+ *(.rela.text)
+ *(.rela.text.*)
+ *(.rela.gnu.linkonce.t*)
+
+.rel.fini
+ *(.rel.fini)
+
+.rela.fini
+ *(.rela.fini)
+
+.rel.rodata
+ *(.rel.rodata)
+ *(.rel.rodata.*)
+ *(.rel.gnu.linkonce.r*)
+
+.rela.rodata
+ *(.rela.rodata)
+ *(.rela.rodata.*)
+ *(.rela.gnu.linkonce.r*)
+
+.rel.data
+ *(.rel.data)
+ *(.rel.data.*)
+ *(.rel.gnu.linkonce.d*)
+
+.rela.data
+ *(.rela.data)
+ *(.rela.data.*)
+ *(.rela.gnu.linkonce.d*)
+
+.rel.ctors
+ *(.rel.ctors)
+
+.rela.ctors
+ *(.rela.ctors)
+
+.rel.dtors
+ *(.rel.dtors)
+
+.rela.dtors
+ *(.rela.dtors)
+
+.rel.got
+ *(.rel.got)
+
+.rela.got
+ *(.rela.got)
+
+.rel.bss
+ *(.rel.bss)
+
+.rela.bss
+ *(.rela.bss)
+
+.rel.plt
+ *(.rel.plt)
+
+.rela.plt
+ *(.rela.plt)
+
+.text           0x00000000      0xc90
+ *(.vectors)
+ .vectors       0x00000000       0x22 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/crttn84.o
+                0x00000000                __vectors
+                0x00000000                __vector_default
+ *(.vectors)
+ *(.progmem.gcc*)
+ .progmem.gcc_sw_table
+                0x00000022       0x48 main.o
+ *(.progmem*)
+                0x0000006a                . = ALIGN (0x2)
+                0x0000006a                __trampolines_start = .
+ *(.trampolines)
+ .trampolines   0x0000006a        0x0 linker stubs
+ *(.trampolines*)
+                0x0000006a                __trampolines_end = .
+ *(.jumptables)
+ *(.jumptables*)
+ *(.lowtext)
+ *(.lowtext*)
+                0x0000006a                __ctors_start = .
+ *(.ctors)
+                0x0000006a                __ctors_end = .
+                0x0000006a                __dtors_start = .
+ *(.dtors)
+                0x0000006a                __dtors_end = .
+ SORT(*)(.ctors)
+ SORT(*)(.dtors)
+ *(.init0)
+ .init0         0x0000006a        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/crttn84.o
+                0x0000006a                __init
+ *(.init0)
+ *(.init1)
+ *(.init1)
+ *(.init2)
+ .init2         0x0000006a        0xc /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/crttn84.o
+ *(.init2)
+ *(.init3)
+ *(.init3)
+ *(.init4)
+ .init4         0x00000076       0x16 /usr/lib/gcc/avr/4.7.2/avr25/libgcc.a(_copy_data.o)
+                0x00000076                __do_copy_data
+ .init4         0x0000008c       0x10 /usr/lib/gcc/avr/4.7.2/avr25/libgcc.a(_clear_bss.o)
+                0x0000008c                __do_clear_bss
+ *(.init4)
+ *(.init5)
+ *(.init5)
+ *(.init6)
+ *(.init6)
+ *(.init7)
+ *(.init7)
+ *(.init8)
+ *(.init8)
+ *(.init9)
+ .init9         0x0000009c        0x4 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/crttn84.o
+ *(.init9)
+ *(.text)
+ .text          0x000000a0        0x2 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/crttn84.o
+                0x000000a0                __vector_12
+                0x000000a0                __bad_interrupt
+                0x000000a0                __vector_6
+                0x000000a0                __vector_13
+                0x000000a0                __vector_7
+                0x000000a0                __vector_5
+                0x000000a0                __vector_9
+                0x000000a0                __vector_15
+                0x000000a0                __vector_8
+                0x000000a0                __vector_14
+                0x000000a0                __vector_10
+                0x000000a0                __vector_16
+ .text          0x000000a2      0xa34 main.o
+                0x000000a2                __vector_1
+                0x00000148                __vector_11
+                0x00000776                __vector_2
+                0x00000836                __vector_3
+                0x00000920                init_eeprom
+                0x00000a8c                __vector_4
+ .text          0x00000ad6        0x0 /usr/lib/gcc/avr/4.7.2/avr25/libgcc.a(_exit.o)
+ .text          0x00000ad6        0x0 /usr/lib/gcc/avr/4.7.2/avr25/libgcc.a(_copy_data.o)
+ .text          0x00000ad6        0x0 /usr/lib/gcc/avr/4.7.2/avr25/libgcc.a(_clear_bss.o)
+ .text          0x00000ad6        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eerd_byte_attiny84.o)
+ .text          0x00000ad6        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eerd_dword_attiny84.o)
+ .text          0x00000ad6        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eerd_word_attiny84.o)
+ .text          0x00000ad6        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eeupd_byte_attiny84.o)
+ .text          0x00000ad6        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eeupd_dword_attiny84.o)
+ .text          0x00000ad6        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eeupd_word_attiny84.o)
+ .text          0x00000ad6        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eewr_byte_attiny84.o)
+ .text          0x00000ad6        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eewr_dword_attiny84.o)
+ .text          0x00000ad6        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eewr_word_attiny84.o)
+ .text          0x00000ad6        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eerd_block_attiny84.o)
+                0x00000ad6                . = ALIGN (0x2)
+ *(.text.*)
+ .text.startup  0x00000ad6      0x10a main.o
+                0x00000ad6                main
+ .text.libgcc.mul
+                0x00000be0        0x0 /usr/lib/gcc/avr/4.7.2/avr25/libgcc.a(_exit.o)
+ .text.libgcc.div
+                0x00000be0        0x0 /usr/lib/gcc/avr/4.7.2/avr25/libgcc.a(_exit.o)
+ .text.libgcc   0x00000be0        0x0 /usr/lib/gcc/avr/4.7.2/avr25/libgcc.a(_exit.o)
+ .text.libgcc.prologue
+                0x00000be0        0x0 /usr/lib/gcc/avr/4.7.2/avr25/libgcc.a(_exit.o)
+ .text.libgcc.builtins
+                0x00000be0        0x0 /usr/lib/gcc/avr/4.7.2/avr25/libgcc.a(_exit.o)
+ .text.libgcc.fmul
+                0x00000be0        0x0 /usr/lib/gcc/avr/4.7.2/avr25/libgcc.a(_exit.o)
+ .text.libgcc.mul
+                0x00000be0        0x0 /usr/lib/gcc/avr/4.7.2/avr25/libgcc.a(_copy_data.o)
+ .text.libgcc.div
+                0x00000be0        0x0 /usr/lib/gcc/avr/4.7.2/avr25/libgcc.a(_copy_data.o)
+ .text.libgcc   0x00000be0        0x0 /usr/lib/gcc/avr/4.7.2/avr25/libgcc.a(_copy_data.o)
+ .text.libgcc.prologue
+                0x00000be0        0x0 /usr/lib/gcc/avr/4.7.2/avr25/libgcc.a(_copy_data.o)
+ .text.libgcc.builtins
+                0x00000be0        0x0 /usr/lib/gcc/avr/4.7.2/avr25/libgcc.a(_copy_data.o)
+ .text.libgcc.fmul
+                0x00000be0        0x0 /usr/lib/gcc/avr/4.7.2/avr25/libgcc.a(_copy_data.o)
+ .text.libgcc.mul
+                0x00000be0        0x0 /usr/lib/gcc/avr/4.7.2/avr25/libgcc.a(_clear_bss.o)
+ .text.libgcc.div
+                0x00000be0        0x0 /usr/lib/gcc/avr/4.7.2/avr25/libgcc.a(_clear_bss.o)
+ .text.libgcc   0x00000be0        0x0 /usr/lib/gcc/avr/4.7.2/avr25/libgcc.a(_clear_bss.o)
+ .text.libgcc.prologue
+                0x00000be0        0x0 /usr/lib/gcc/avr/4.7.2/avr25/libgcc.a(_clear_bss.o)
+ .text.libgcc.builtins
+                0x00000be0        0x0 /usr/lib/gcc/avr/4.7.2/avr25/libgcc.a(_clear_bss.o)
+ .text.libgcc.fmul
+                0x00000be0        0x0 /usr/lib/gcc/avr/4.7.2/avr25/libgcc.a(_clear_bss.o)
+ .text.avr-libc
+                0x00000be0       0x10 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eerd_byte_attiny84.o)
+                0x00000be0                __eerd_byte_tn84
+ .text.avr-libc
+                0x00000bf0        0xa /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eerd_dword_attiny84.o)
+                0x00000bf0                __eerd_dword_tn84
+                0x00000bf0                __eerd_float_tn84
+ .text.avr-libc
+                0x00000bfa        0xa /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eerd_word_attiny84.o)
+                0x00000bfa                __eerd_word_tn84
+ .text.avr-libc
+                0x00000c04       0x24 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eeupd_byte_attiny84.o)
+                0x00000c04                __eeupd_byte_tn84
+                0x00000c06                __eeupd_r18_tn84
+ .text.avr-libc
+                0x00000c28       0x10 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eeupd_dword_attiny84.o)
+                0x00000c28                __eeupd_dword_tn84
+                0x00000c28                __eeupd_float_tn84
+ .text.avr-libc
+                0x00000c38        0x8 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eeupd_word_attiny84.o)
+                0x00000c38                __eeupd_word_tn84
+ .text.avr-libc
+                0x00000c40       0x1c /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eewr_byte_attiny84.o)
+                0x00000c40                __eewr_byte_tn84
+                0x00000c42                __eewr_r18_tn84
+ .text.avr-libc
+                0x00000c5c        0xa /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eewr_dword_attiny84.o)
+                0x00000c5c                __eewr_float_tn84
+                0x00000c5c                __eewr_dword_tn84
+ .text.avr-libc
+                0x00000c66        0x6 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eewr_word_attiny84.o)
+                0x00000c66                __eewr_word_tn84
+ .text.avr-libc
+                0x00000c6c       0x20 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eerd_block_attiny84.o)
+                0x00000c6c                __eerd_block_tn84
+                0x00000c70                __eerd_blraw_tn84
+                0x00000c8c                . = ALIGN (0x2)
+ *(.fini9)
+ .fini9         0x00000c8c        0x0 /usr/lib/gcc/avr/4.7.2/avr25/libgcc.a(_exit.o)
+                0x00000c8c                exit
+                0x00000c8c                _exit
+ *(.fini9)
+ *(.fini8)
+ *(.fini8)
+ *(.fini7)
+ *(.fini7)
+ *(.fini6)
+ *(.fini6)
+ *(.fini5)
+ *(.fini5)
+ *(.fini4)
+ *(.fini4)
+ *(.fini3)
+ *(.fini3)
+ *(.fini2)
+ *(.fini2)
+ *(.fini1)
+ *(.fini1)
+ *(.fini0)
+ .fini0         0x00000c8c        0x4 /usr/lib/gcc/avr/4.7.2/avr25/libgcc.a(_exit.o)
+ *(.fini0)
+                0x00000c90                _etext = .
+
+.data           0x00800060       0x1c load address 0x00000c90
+                0x00800060                PROVIDE (__data_start, .)
+ *(.data)
+ .data          0x00800060        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/crttn84.o
+ .data          0x00800060        0xe main.o
+                0x00800060                rcnt
+                0x00800062                pullupcfg
+                0x00800063                stype
+                0x00800064                version
+                0x00800066                owid
+ .data          0x0080006e        0x0 /usr/lib/gcc/avr/4.7.2/avr25/libgcc.a(_exit.o)
+ .data          0x0080006e        0x0 /usr/lib/gcc/avr/4.7.2/avr25/libgcc.a(_copy_data.o)
+ .data          0x0080006e        0x0 /usr/lib/gcc/avr/4.7.2/avr25/libgcc.a(_clear_bss.o)
+ .data          0x0080006e        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eerd_byte_attiny84.o)
+ .data          0x0080006e        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eerd_dword_attiny84.o)
+ .data          0x0080006e        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eerd_word_attiny84.o)
+ .data          0x0080006e        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eeupd_byte_attiny84.o)
+ .data          0x0080006e        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eeupd_dword_attiny84.o)
+ .data          0x0080006e        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eeupd_word_attiny84.o)
+ .data          0x0080006e        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eewr_byte_attiny84.o)
+ .data          0x0080006e        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eewr_dword_attiny84.o)
+ .data          0x0080006e        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eewr_word_attiny84.o)
+ .data          0x0080006e        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eerd_block_attiny84.o)
+ *(.data*)
+ *(.rodata)
+ .rodata        0x0080006e        0xd main.o
+                0x0080006e                EE_LABEL_MAXLEN
+                0x0080006f                EE_LABEL_OFFSET
+                0x00800070                EE_OUTPUT_OFFSET
+                0x00800071                EE_PULLUP_OFFSET
+                0x00800072                EE_VERSION_OFFSET
+                0x00800073                EE_TYPE_OFFSET
+                0x00800074                EE_COUNTER_OFFSET
+                0x00800075                EE_RCNT_OFFSET
+                0x00800076                EE_OWID_OFFSET
+                0x00800077                EE_MAGIC_OFFSET
+                0x00800078                EE_DEFTYPE
+                0x00800079                EE_MAGIC_NUMBER
+ *(.rodata*)
+ *(.gnu.linkonce.d*)
+                0x0080007c                . = ALIGN (0x2)
+ *fill*         0x0080007b        0x1 00
+                0x0080007c                _edata = .
+                0x0080007c                PROVIDE (__data_end, .)
+
+.bss            0x0080007c       0x3b
+                0x0080007c                PROVIDE (__bss_start, .)
+ *(.bss)
+ .bss           0x0080007c        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/crttn84.o
+ .bss           0x0080007c        0x8 main.o
+                0x0080007c                crcerrcnt
+                0x0080007d                outstate
+                0x0080007e                nackmsg
+                0x0080007f                recv_state
+                0x00800080                uptime
+ .bss           0x00800084        0x0 /usr/lib/gcc/avr/4.7.2/avr25/libgcc.a(_exit.o)
+ .bss           0x00800084        0x0 /usr/lib/gcc/avr/4.7.2/avr25/libgcc.a(_copy_data.o)
+ .bss           0x00800084        0x0 /usr/lib/gcc/avr/4.7.2/avr25/libgcc.a(_clear_bss.o)
+ .bss           0x00800084        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eerd_byte_attiny84.o)
+ .bss           0x00800084        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eerd_dword_attiny84.o)
+ .bss           0x00800084        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eerd_word_attiny84.o)
+ .bss           0x00800084        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eeupd_byte_attiny84.o)
+ .bss           0x00800084        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eeupd_dword_attiny84.o)
+ .bss           0x00800084        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eeupd_word_attiny84.o)
+ .bss           0x00800084        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eewr_byte_attiny84.o)
+ .bss           0x00800084        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eewr_dword_attiny84.o)
+ .bss           0x00800084        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eewr_word_attiny84.o)
+ .bss           0x00800084        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eerd_block_attiny84.o)
+ *(.bss*)
+ *(COMMON)
+ COMMON         0x00800084       0x33 main.o
+                0x00800084                sleepmode
+                0x00800085                scratchpad
+                0x00800090                wmode
+                0x00800091                pinstatB
+                0x00800092                actbit
+                0x00800093                Counter4
+                0x00800097                lastcps
+                0x00800098                bitp
+                0x00800099                srcount
+                0x0080009a                eflag
+                0x0080009b                mode
+                0x0080009c                Counter1
+                0x008000a0                Counter3
+                0x008000a4                bytep
+                0x008000a5                cbuf
+                0x008000a6                page
+                0x008000a7                pinstatA
+                0x008000a8                ewrite_flag
+                0x008000a9                scrc
+                0x008000ab                Counter2
+                0x008000af                eewrite_buf
+                0x008000b7                PROVIDE (__bss_end, .)
+                0x00000c90                __data_load_start = LOADADDR (.data)
+                0x00000cac                __data_load_end = (__data_load_start + SIZEOF (.data))
+
+.noinit         0x008000b7        0x0
+                0x008000b7                PROVIDE (__noinit_start, .)
+ *(.noinit*)
+                0x008000b7                PROVIDE (__noinit_end, .)
+                0x008000b7                _end = .
+                0x008000b7                PROVIDE (__heap_start, .)
+
+.eeprom         0x00810000        0x0
+ *(.eeprom*)
+                0x00810000                __eeprom_end = .
+
+.fuse
+ *(.fuse)
+ *(.lfuse)
+ *(.hfuse)
+ *(.efuse)
+
+.lock
+ *(.lock*)
+
+.signature
+ *(.signature*)
+
+.stab           0x00000000      0xd08
+ *(.stab)
+ .stab          0x00000000      0x6cc /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/crttn84.o
+ .stab          0x000006cc       0x90 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eerd_byte_attiny84.o)
+                                 0x9c (size before relaxing)
+ .stab          0x0000075c       0x78 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eerd_dword_attiny84.o)
+                                 0x84 (size before relaxing)
+ .stab          0x000007d4       0x6c /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eerd_word_attiny84.o)
+                                 0x78 (size before relaxing)
+ .stab          0x00000840      0x114 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eeupd_byte_attiny84.o)
+                                0x120 (size before relaxing)
+ .stab          0x00000954       0x9c /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eeupd_dword_attiny84.o)
+                                 0xa8 (size before relaxing)
+ .stab          0x000009f0       0x60 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eeupd_word_attiny84.o)
+                                 0x6c (size before relaxing)
+ .stab          0x00000a50       0xe4 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eewr_byte_attiny84.o)
+                                 0xf0 (size before relaxing)
+ .stab          0x00000b34       0x78 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eewr_dword_attiny84.o)
+                                 0x84 (size before relaxing)
+ .stab          0x00000bac       0x54 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eewr_word_attiny84.o)
+                                 0x60 (size before relaxing)
+ .stab          0x00000c00      0x108 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eerd_block_attiny84.o)
+                                0x114 (size before relaxing)
+
+.stabstr        0x00000000      0x231
+ *(.stabstr)
+ .stabstr       0x00000000      0x231 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/crttn84.o
+
+.stab.excl
+ *(.stab.excl)
+
+.stab.exclstr
+ *(.stab.exclstr)
+
+.stab.index
+ *(.stab.index)
+
+.stab.indexstr
+ *(.stab.indexstr)
+
+.comment        0x00000000       0x11
+ *(.comment)
+ .comment       0x00000000       0x11 main.o
+                                 0x12 (size before relaxing)
+
+.debug
+ *(.debug)
+
+.line
+ *(.line)
+
+.debug_srcinfo
+ *(.debug_srcinfo)
+
+.debug_sfnames
+ *(.debug_sfnames)
+
+.debug_aranges  0x00000000       0x28
+ *(.debug_aranges)
+ .debug_aranges
+                0x00000000       0x28 main.o
+
+.debug_pubnames
+ *(.debug_pubnames)
+
+.debug_info     0x00000000      0xc15
+ *(.debug_info)
+ .debug_info    0x00000000      0xc15 main.o
+ *(.gnu.linkonce.wi.*)
+
+.debug_abbrev   0x00000000      0x1d8
+ *(.debug_abbrev)
+ .debug_abbrev  0x00000000      0x1d8 main.o
+
+.debug_line     0x00000000      0x2b1
+ *(.debug_line)
+ .debug_line    0x00000000      0x2b1 main.o
+
+.debug_frame    0x00000000      0x1b4
+ *(.debug_frame)
+ .debug_frame   0x00000000      0x1b4 main.o
+
+.debug_str      0x00000000      0x423
+ *(.debug_str)
+ .debug_str     0x00000000      0x423 main.o
+                                0x486 (size before relaxing)
+
+.debug_loc      0x00000000      0x858
+ *(.debug_loc)
+ .debug_loc     0x00000000      0x858 main.o
+
+.debug_macinfo
+ *(.debug_macinfo)
+OUTPUT(main.elf elf32-avr)
+LOAD linker stubs
+
+.debug_ranges   0x00000000       0x18
+ .debug_ranges  0x00000000       0x18 main.o
+
+Cross Reference Table
+
+Symbol                                            File
+Counter1                                          main.o
+Counter2                                          main.o
+Counter3                                          main.o
+Counter4                                          main.o
+EE_COUNTER_OFFSET                                 main.o
+EE_DEFTYPE                                        main.o
+EE_LABEL_MAXLEN                                   main.o
+EE_LABEL_OFFSET                                   main.o
+EE_MAGIC_NUMBER                                   main.o
+EE_MAGIC_OFFSET                                   main.o
+EE_OUTPUT_OFFSET                                  main.o
+EE_OWID_OFFSET                                    main.o
+EE_PULLUP_OFFSET                                  main.o
+EE_RCNT_OFFSET                                    main.o
+EE_TYPE_OFFSET                                    main.o
+EE_VERSION_OFFSET                                 main.o
+__bad_interrupt                                   /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/crttn84.o
+__bss_end                                         /usr/lib/gcc/avr/4.7.2/avr25/libgcc.a(_clear_bss.o)
+__bss_start                                       /usr/lib/gcc/avr/4.7.2/avr25/libgcc.a(_clear_bss.o)
+__data_end                                        /usr/lib/gcc/avr/4.7.2/avr25/libgcc.a(_copy_data.o)
+__data_load_start                                 /usr/lib/gcc/avr/4.7.2/avr25/libgcc.a(_copy_data.o)
+__data_start                                      /usr/lib/gcc/avr/4.7.2/avr25/libgcc.a(_copy_data.o)
+__do_clear_bss                                    /usr/lib/gcc/avr/4.7.2/avr25/libgcc.a(_clear_bss.o)
+                                                  main.o
+__do_copy_data                                    /usr/lib/gcc/avr/4.7.2/avr25/libgcc.a(_copy_data.o)
+                                                  main.o
+__eerd_block_tn84                                 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eerd_block_attiny84.o)
+__eerd_blraw_tn84                                 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eerd_block_attiny84.o)
+                                                  /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eerd_word_attiny84.o)
+                                                  /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eerd_dword_attiny84.o)
+__eerd_byte_tn84                                  /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eerd_byte_attiny84.o)
+                                                  main.o
+__eerd_dword_tn84                                 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eerd_dword_attiny84.o)
+                                                  main.o
+__eerd_float_tn84                                 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eerd_dword_attiny84.o)
+__eerd_word_tn84                                  /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eerd_word_attiny84.o)
+                                                  main.o
+__eeupd_byte_tn84                                 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eeupd_byte_attiny84.o)
+                                                  /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eeupd_word_attiny84.o)
+                                                  /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eeupd_dword_attiny84.o)
+                                                  main.o
+__eeupd_dword_tn84                                /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eeupd_dword_attiny84.o)
+                                                  main.o
+__eeupd_float_tn84                                /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eeupd_dword_attiny84.o)
+__eeupd_r18_tn84                                  /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eeupd_byte_attiny84.o)
+                                                  /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eeupd_word_attiny84.o)
+                                                  /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eeupd_dword_attiny84.o)
+__eeupd_word_tn84                                 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eeupd_word_attiny84.o)
+                                                  main.o
+__eewr_byte_tn84                                  /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eewr_byte_attiny84.o)
+                                                  /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eewr_word_attiny84.o)
+                                                  main.o
+__eewr_dword_tn84                                 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eewr_dword_attiny84.o)
+                                                  main.o
+__eewr_float_tn84                                 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eewr_dword_attiny84.o)
+__eewr_r18_tn84                                   /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eewr_byte_attiny84.o)
+                                                  /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eewr_word_attiny84.o)
+                                                  /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eewr_dword_attiny84.o)
+__eewr_word_tn84                                  /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eewr_word_attiny84.o)
+                                                  /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/libc.a(eewr_dword_attiny84.o)
+                                                  main.o
+__heap_end                                        /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/crttn84.o
+__init                                            /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/crttn84.o
+__stack                                           /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/crttn84.o
+__vector_1                                        main.o
+                                                  /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/crttn84.o
+__vector_10                                       /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/crttn84.o
+__vector_11                                       main.o
+                                                  /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/crttn84.o
+__vector_12                                       /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/crttn84.o
+__vector_13                                       /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/crttn84.o
+__vector_14                                       /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/crttn84.o
+__vector_15                                       /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/crttn84.o
+__vector_16                                       /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/crttn84.o
+__vector_2                                        main.o
+                                                  /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/crttn84.o
+__vector_3                                        main.o
+                                                  /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/crttn84.o
+__vector_4                                        main.o
+                                                  /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/crttn84.o
+__vector_5                                        /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/crttn84.o
+__vector_6                                        /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/crttn84.o
+__vector_7                                        /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/crttn84.o
+__vector_8                                        /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/crttn84.o
+__vector_9                                        /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/crttn84.o
+__vector_default                                  /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/crttn84.o
+__vectors                                         /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/crttn84.o
+_exit                                             /usr/lib/gcc/avr/4.7.2/avr25/libgcc.a(_exit.o)
+actbit                                            main.o
+bitp                                              main.o
+bytep                                             main.o
+cbuf                                              main.o
+crcerrcnt                                         main.o
+eewrite_buf                                       main.o
+eflag                                             main.o
+ewrite_flag                                       main.o
+exit                                              /usr/lib/gcc/avr/4.7.2/avr25/libgcc.a(_exit.o)
+                                                  /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/crttn84.o
+init_eeprom                                       main.o
+lastcps                                           main.o
+main                                              main.o
+                                                  /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr25/crttn84.o
+mode                                              main.o
+nackmsg                                           main.o
+outstate                                          main.o
+owid                                              main.o
+page                                              main.o
+pinstatA                                          main.o
+pinstatB                                          main.o
+pullupcfg                                         main.o
+rcnt                                              main.o
+recv_state                                        main.o
+scratchpad                                        main.o
+scrc                                              main.o
+sleepmode                                         main.o
+srcount                                           main.o
+stype                                             main.o
+uptime                                            main.o
+version                                           main.o
+wmode                                             main.o

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="org.eclipse.ui.views.task">
+	</section>
+	<section name="ExternalProjectImportWizard">
+		<item key="WizardProjectsImportPage.STORE_ARCHIVE_SELECTED" value="false"/>
+		<item key="WizardProjectsImportPage.STORE_COPY_PROJECT_ID" value="false"/>
+	</section>
+	<section name="ResourceNavigator">
+		<item key="ResourceWorkingSetFilter.STORE_WORKING_SET" value=""/>
+		<item key="LINK_NAVIGATOR_TO_EDITOR" value="true"/>
+		<item key="ResourceViewer.STORE_SORT_TYPE" value="1"/>
+	</section>
+	<section name="ChooseWorkspaceDialogSettings">
+		<item key="DIALOG_X_ORIGIN" value="288"/>
+		<item key="DIALOG_HEIGHT" value="244"/>
+		<item key="DIALOG_FONT_NAME" value="1|Tahoma|8|0|WINDOWS|1|-11|0|0|0|400|0|0|0|1|0|0|0|0|Tahoma"/>
+		<item key="DIALOG_Y_ORIGIN" value="222"/>
+		<item key="DIALOG_WIDTH" value="449"/>
+	</section>
+</section>

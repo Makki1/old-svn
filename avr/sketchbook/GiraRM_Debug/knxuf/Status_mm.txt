@@ -1,0 +1,44 @@
+Zusammenfassung (meines) Status:
+
+-- FB-Modul meldet nur Alarm, Störung (?)
+http://www.freebus.org/content/bus-interface-f%C3%BCr-gira-rauchmelder
+http://www.reichelt.de/?ACTION=20;AWKID=646225;PROVID=2084
+git://git.freebus.org/ -> ../freebus
+-> Keine Option für mich zwecks phy, lizenz, LPC..
+
+https://github.com/selfbus/software-incubation/blob/master/Rauchmelder/Doc/RM_Protokoll.txt
+-> Sehr detailliert, stimmt!
+eine Anmerkung: Antwort auf <STX>0262<ETX> entspricht IMHO dem Statusversand (08xxxx) bei Änderung!
+
+SN: 269959518 wurde evtl. gegrillt! (12V auf Vernetzungsleitung bis er schmorte..
+
+-- gira_rm.py von mode
+Geht, wunderbare Vorlage, aber jeden RM an nen TTL-Wandler an nen PC ist wieder keine Option ;)
+
+-- PIN des Relaismoduls / Störungsmeldung = ?
+-- PIN Fern/Alarm = ?
+Pending:
+-> Was passiert beim auslösen??
+-> 230V/12V input?
+-> Events?
+-> Fernauslösung wie (Test, Real) ?
+
+-- zus. Stromverbrauch bei seriellem "polling" ?
+-- Funk-Alternative Attiny + RFM12 ?
+
+
+------------------------------------------------------------------
+
+Serial:
+C4 10174155 0F
+
+10174155
+269959509
+
+
+?:
+015C010318
+5838537496
+
+22806787
+

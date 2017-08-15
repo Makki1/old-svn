@@ -1,0 +1,2 @@
+[Database]
+Database = <euer Pfad zur runtime>\data\Datenbank.db

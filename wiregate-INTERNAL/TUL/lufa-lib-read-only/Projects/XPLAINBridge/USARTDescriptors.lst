@@ -1,0 +1,256 @@
+   1               		.file	"USARTDescriptors.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__CCP__  = 0x34
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+  15               	.Ltext0:
+  16               		.section	.text.USART_GetDescriptor,"ax",@progbits
+  17               	.global	USART_GetDescriptor
+  19               	USART_GetDescriptor:
+  20               	.LFB96:
+  21               	.LSM0:
+  22               	.LVL0:
+  23               	/* prologue: function */
+  24               	/* frame size = 0 */
+  25 0000 DA01      		movw r26,r20
+  26               	.LSM1:
+  27 0002 292F      		mov r18,r25
+  28 0004 3327      		clr r19
+  29 0006 2230      		cpi r18,lo8(2)
+  30 0008 01F0      		breq .L4
+  31               	.LVL1:
+  32 000a 2330      		cpi r18,lo8(3)
+  33 000c 01F0      		breq .L5
+  34 000e 2130      		cpi r18,lo8(1)
+  35 0010 01F4      		brne .L2
+  36 0012 E0E0      		ldi r30,lo8(USART_DeviceDescriptor)
+  37 0014 F0E0      		ldi r31,hi8(USART_DeviceDescriptor)
+  38               	.LVL2:
+  39 0016 82E1      		ldi r24,lo8(18)
+  40 0018 90E0      		ldi r25,hi8(18)
+  41               	.LVL3:
+  42 001a 00C0      		rjmp .L6
+  43               	.LVL4:
+  44               	.L4:
+  45 001c E0E0      		ldi r30,lo8(USART_ConfigurationDescriptor)
+  46 001e F0E0      		ldi r31,hi8(USART_ConfigurationDescriptor)
+  47               	.LVL5:
+  48 0020 8EE3      		ldi r24,lo8(62)
+  49 0022 90E0      		ldi r25,hi8(62)
+  50               	.LVL6:
+  51 0024 00C0      		rjmp .L6
+  52               	.LVL7:
+  53               	.L5:
+  54               	.LSM2:
+  55 0026 8130      		cpi r24,lo8(1)
+  56 0028 01F0      		breq .L8
+  57 002a 8130      		cpi r24,lo8(1)
+  58 002c 00F0      		brlo .L7
+  59 002e 8230      		cpi r24,lo8(2)
+  60 0030 01F4      		brne .L2
+  61 0032 00C0      		rjmp .L12
+  62               	.L7:
+  63               	.LBB2:
+  64               	.LSM3:
+  65 0034 E0E0      		ldi r30,lo8(USART_LanguageString)
+  66 0036 F0E0      		ldi r31,hi8(USART_LanguageString)
+  67               	/* #APP */
+  68               	 ;  250 "USARTDescriptors.c" 1
+  69 0038 8491      		lpm r24, Z
+  70               		
+  71               	 ;  0 "" 2
+  72               	.LVL8:
+  73               	/* #NOAPP */
+  74 003a 00C0      		rjmp .L11
+  75               	.LVL9:
+  76               	.L8:
+  77               	.LBE2:
+  78               	.LBB3:
+  79               	.LSM4:
+  80 003c E0E0      		ldi r30,lo8(USART_ManufacturerString)
+  81 003e F0E0      		ldi r31,hi8(USART_ManufacturerString)
+  82               	/* #APP */
+  83               	 ;  254 "USARTDescriptors.c" 1
+  84 0040 8491      		lpm r24, Z
+  85               		
+  86               	 ;  0 "" 2
+  87               	.LVL10:
+  88               	/* #NOAPP */
+  89 0042 00C0      		rjmp .L11
+  90               	.LVL11:
+  91               	.L12:
+  92               	.LBE3:
+  93               	.LBB4:
+  94               	.LSM5:
+  95 0044 E0E0      		ldi r30,lo8(USART_ProductString)
+  96 0046 F0E0      		ldi r31,hi8(USART_ProductString)
+  97               	/* #APP */
+  98               	 ;  258 "USARTDescriptors.c" 1
+  99 0048 8491      		lpm r24, Z
+ 100               		
+ 101               	 ;  0 "" 2
+ 102               	.LVL12:
+ 103               	/* #NOAPP */
+ 104               	.L11:
+ 105               	.LBE4:
+ 106 004a 90E0      		ldi r25,lo8(0)
+ 107               	.LVL13:
+ 108 004c 00C0      		rjmp .L6
+ 109               	.LVL14:
+ 110               	.L2:
+ 111 004e E0E0      		ldi r30,lo8(0)
+ 112 0050 F0E0      		ldi r31,hi8(0)
+ 113               	.LVL15:
+ 114 0052 80E0      		ldi r24,lo8(0)
+ 115 0054 90E0      		ldi r25,hi8(0)
+ 116               	.LVL16:
+ 117               	.L6:
+ 118               	.LSM6:
+ 119 0056 ED93      		st X+,r30
+ 120 0058 FC93      		st X,r31
+ 121               	.LVL17:
+ 122               	/* epilogue start */
+ 123               	.LSM7:
+ 124 005a 0895      		ret
+ 125               	.LFE96:
+ 127               	.global	USART_DeviceDescriptor
+ 128               		.section	.progmem.data,"a",@progbits
+ 131               	USART_DeviceDescriptor:
+ 132 0000 12        		.byte	18
+ 133 0001 01        		.byte	1
+ 134 0002 1001      		.word	272
+ 135 0004 02        		.byte	2
+ 136 0005 00        		.byte	0
+ 137 0006 00        		.byte	0
+ 138 0007 08        		.byte	8
+ 139 0008 EB03      		.word	1003
+ 140 000a 4B20      		.word	8267
+ 141 000c 0100      		.word	1
+ 142 000e 01        		.byte	1
+ 143 000f 02        		.byte	2
+ 144 0010 DC        		.byte	-36
+ 145 0011 01        		.byte	1
+ 146               	.global	USART_ConfigurationDescriptor
+ 149               	USART_ConfigurationDescriptor:
+ 150 0012 09        		.byte	9
+ 151 0013 02        		.byte	2
+ 152 0014 3E00      		.word	62
+ 153 0016 02        		.byte	2
+ 154 0017 01        		.byte	1
+ 155 0018 00        		.byte	0
+ 156 0019 80        		.byte	-128
+ 157 001a 32        		.byte	50
+ 158 001b 09        		.byte	9
+ 159 001c 04        		.byte	4
+ 160 001d 00        		.byte	0
+ 161 001e 00        		.byte	0
+ 162 001f 01        		.byte	1
+ 163 0020 02        		.byte	2
+ 164 0021 02        		.byte	2
+ 165 0022 01        		.byte	1
+ 166 0023 00        		.byte	0
+ 167 0024 05        		.byte	5
+ 168 0025 24        		.byte	36
+ 169 0026 00        		.byte	0
+ 170 0027 1001      		.word	272
+ 171 0029 04        		.byte	4
+ 172 002a 24        		.byte	36
+ 173 002b 02        		.byte	2
+ 174 002c 06        		.byte	6
+ 175 002d 05        		.byte	5
+ 176 002e 24        		.byte	36
+ 177 002f 06        		.byte	6
+ 178 0030 00        		.byte	0
+ 179 0031 01        		.byte	1
+ 180 0032 07        		.byte	7
+ 181 0033 05        		.byte	5
+ 182 0034 82        		.byte	-126
+ 183 0035 03        		.byte	3
+ 184 0036 0800      		.word	8
+ 185 0038 FF        		.byte	-1
+ 186 0039 09        		.byte	9
+ 187 003a 04        		.byte	4
+ 188 003b 01        		.byte	1
+ 189 003c 00        		.byte	0
+ 190 003d 02        		.byte	2
+ 191 003e 0A        		.byte	10
+ 192 003f 00        		.byte	0
+ 193 0040 00        		.byte	0
+ 194 0041 00        		.byte	0
+ 195 0042 07        		.byte	7
+ 196 0043 05        		.byte	5
+ 197 0044 04        		.byte	4
+ 198 0045 02        		.byte	2
+ 199 0046 1000      		.word	16
+ 200 0048 01        		.byte	1
+ 201 0049 07        		.byte	7
+ 202 004a 05        		.byte	5
+ 203 004b 83        		.byte	-125
+ 204 004c 02        		.byte	2
+ 205 004d 1000      		.word	16
+ 206 004f 01        		.byte	1
+ 207               	.global	USART_LanguageString
+ 210               	USART_LanguageString:
+ 211 0050 04        		.byte	4
+ 212 0051 03        		.byte	3
+ 213 0052 0904      		.word	1033
+ 214               	.global	USART_ManufacturerString
+ 217               	USART_ManufacturerString:
+ 218 0054 18        		.byte	24
+ 219 0055 03        		.byte	3
+ 220 0056 4400      		.string	"D"
+ 221 0058 6500      		.string	"e"
+ 222 005a 6100      		.string	"a"
+ 223 005c 6E00      		.string	"n"
+ 224 005e 2000      		.string	" "
+ 225 0060 4300      		.string	"C"
+ 226 0062 6100      		.string	"a"
+ 227 0064 6D00      		.string	"m"
+ 228 0066 6500      		.string	"e"
+ 229 0068 7200      		.string	"r"
+ 230 006a 6100      		.string	"a"
+ 231 006c 00        		.string	""
+ 232 006d 00        		.string	""
+ 233               	.global	USART_ProductString
+ 236               	USART_ProductString:
+ 237 006e 26        		.byte	38
+ 238 006f 03        		.byte	3
+ 239 0070 4C00      		.string	"L"
+ 240 0072 5500      		.string	"U"
+ 241 0074 4600      		.string	"F"
+ 242 0076 4100      		.string	"A"
+ 243 0078 2000      		.string	" "
+ 244 007a 5800      		.string	"X"
+ 245 007c 5000      		.string	"P"
+ 246 007e 4C00      		.string	"L"
+ 247 0080 4100      		.string	"A"
+ 248 0082 4900      		.string	"I"
+ 249 0084 4E00      		.string	"N"
+ 250 0086 2000      		.string	" "
+ 251 0088 4200      		.string	"B"
+ 252 008a 7200      		.string	"r"
+ 253 008c 6900      		.string	"i"
+ 254 008e 6400      		.string	"d"
+ 255 0090 6700      		.string	"g"
+ 256 0092 6500      		.string	"e"
+ 257 0094 00        		.string	""
+ 258 0095 00        		.string	""
+ 283               	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 USARTDescriptors.c
+     /tmp/ccVWX7oA.s:2      *ABS*:0000003f __SREG__
+     /tmp/ccVWX7oA.s:3      *ABS*:0000003e __SP_H__
+     /tmp/ccVWX7oA.s:4      *ABS*:0000003d __SP_L__
+     /tmp/ccVWX7oA.s:5      *ABS*:00000034 __CCP__
+     /tmp/ccVWX7oA.s:6      *ABS*:00000000 __tmp_reg__
+     /tmp/ccVWX7oA.s:7      *ABS*:00000001 __zero_reg__
+     /tmp/ccVWX7oA.s:19     .text.USART_GetDescriptor:00000000 USART_GetDescriptor
+     /tmp/ccVWX7oA.s:131    .progmem.data:00000000 USART_DeviceDescriptor
+     /tmp/ccVWX7oA.s:149    .progmem.data:00000012 USART_ConfigurationDescriptor
+     /tmp/ccVWX7oA.s:210    .progmem.data:00000050 USART_LanguageString
+     /tmp/ccVWX7oA.s:217    .progmem.data:00000054 USART_ManufacturerString
+     /tmp/ccVWX7oA.s:236    .progmem.data:0000006e USART_ProductString
+
+NO UNDEFINED SYMBOLS

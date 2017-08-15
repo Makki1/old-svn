@@ -1,0 +1,168 @@
+Version 2.2
+-------------
+31.1.2012
+- Soft-Ein hinzugefügt
+- Soft-Aus hinzugefügt
+
+
+Version 2.1.1
+-------------
+Kopie von 2.1   7.1.2012
+auf rp_lpc922.lib bzw. rp_lpc936.lib umgestellt
+im GIT veröffentlicht am 18.1.2012 22:30
+
+
+Version 2.1
+-----------
+7.1.2012
+- Beide Kanäle funktionieren
+- getestet mit jeweils 200W Glühlampen
+- Software nochmals stark überarbeitet
+
+Version 2.0
+-----------
+2.1.2012
+- test mit Hardware 2.1
+- Kanal 1 tut
+- Kanal 2 bringt überlast ???
+
+
+
+Version 1.7.2
+-------------
+17.2.2011
+- Timerqueue überarbeitet, kann jetzt mehrere Befehle
+
+
+Version 1.7.1
+-------------
+27.1.2011
+- Verzögerung der Nullpunkterkennung bei ANSchnitt in der Software korrigiert
+- Erste Tests, noch buggy
+
+
+Version 1.7.0
+-------------
+angepasst an neue Hardwareversion ohne eigenen I-Sensor, d.h.U-Sensor wird auch I-Sernsor wenn eingeschaltet
+
+
+Version 1.6.4
+-------------
+26.10.2010
+- fb_lib922.lib wieder entfernt und durch Quellcode ersetzt
+- fb_lpc922 in fb_lpc9xx umbenannt und so angepasst, dass mit  #define LPC936 für den LPC936 compiliert wird
+   d.h. eeprom und userram wandern weiter nach hinten
+- 2 buildkonfigurationen angelegt:
+     + Release922  Ausgabe: Universaldimmer922.hex
+     + Release936  Ausgabe: Universaldimmer936.hex   Parameter -DLPC936 an SDCC übergeben
+
+
+Version 1.6.3
+-------------
+12.9.2010
+-fb_lib922.lib eingebunden (war bisher im Source enthalten und konnte deshalb nichtins SVN eingepflegt werden)
+- Erste Sourceversion im SVN
+
+
+Version 1.6.2  
+-------------
+15.4.2010
+IRQ EX0 und KBD eingebunden und Messprogramm der Phasen
+
+
+Version 1.6.1
+-------------
+9.4.2010
+-Debugfunktion um die Auslösung des Watchdogs überwachen zu können:
+ Bei jedem Neustart wird ein Zähler im userram auf 0xFF hochgezählt
+ und ein Telegramm an die GA des 1. Lichtszenenobjektes gesendet um einen Restart über Watchdog
+ loggen zu können.
+
+
+Version 1.6.0
+-------------
+19.3.2010
+Achtung: Ab version 1.6.0 ist die Ansteuerung der FETs invertiert, d.h.
+passt nur noch zu Hardware ab V1.4
+
+- FETs sind jetzt bei Ausgang = 1 an, d.h. invertiert zu vorher
+
+5.4.2010
+- ANSchnittsdimmer auf U=0+x = EIN    und I=0 auf aus
+  tut noch nicht
+7.4.2010
+- Watchdog integriert
+
+
+Version 1.5.5
+-------------
+7.3.2010
+- Dimmen Stopp jetzt auch mit Wert 0x88 (zusätzlich zu 0x80)
+- Rückmeldung Kurzschluss
+
+Version 1.5.4
+-------------
+7.3.2010
+- BUG behoben: Prio von T1 war zuu niedrig nach Parametrierung mit der ETS
+
+
+
+Version 1.5.3
+-------------
+4.3.2010
+- Debugging: Progtaste 0.5..2s --> Anschnitt (schaltet beu U=0 ab statt bei I=0)
+- Debugging: Progtaste >2s --> Abschnitt
+
+
+
+Version 1.5.2
+-------------
+2.3.2010
+- Bug behoben: Physik. Adr konnte nicht gesetzt werden
+- Debugging: Progtaste 1..3s --> Anschnitt (tut noch nicht)
+- Debugging: Progtaste >3s --> Abschnitt
+
+
+Version 1.5
+-----------
+26.2.2010
+- Erste veröffentlichte Version
+- Bisher folgende Funktionen implementiert:
+    o Ein/Aus
+    o Dimmen
+    o Helligkeitsobjekt
+    o Grundhelligkeit
+    o Verhalten bei Busspannungsausfall (nur Stufen 0..11)
+    o Einschalthelligkeit
+    o anspringen/andimmen
+    o Dimmgeschwindigkeit
+- bisher nur ABschnittsdimmer
+
+
+
+
+
+
+
+
+ToDo
+----
+- Neustart soll Zähler hochzählen und EIB-Telegramm senden 
+  (um Watchdog Resets feststellen zu können)
+- Soft-Ein
+- Soft-aus
+- Zeitdimmfunktion
+- Sperrfunktion
+- Auschaltfunktion
+- Lichtszenen
+- Bestimmen der Dimmart
+- Abschalten bei Anschnittbei I=0
+   - Bei ANschnitt und kleiner Last -> kein I-Signal
+   - bei Anschnitt Starthilfe nötig da noch kein I-Signal
+- Spannungsausfall melden
+- Rückmeldungen:
+   - Ein:nur einmal sobald H!=0
+   - Aus: sobald H==0
+   - Wert: sobaldkeine änderung mehr (= Ziel ereicht pder dimmstopp)
+  
+  

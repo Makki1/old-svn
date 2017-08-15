@@ -1,0 +1,2253 @@
+
+main.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .data         0000001c  00800100  00000b96  00000c2a  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  1 .text         00000b96  00000000  00000000  00000094  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  2 .bss          0000007e  0080011c  0080011c  00000c46  2**0
+                  ALLOC
+  3 .stab         00000ef4  00000000  00000000  00000c48  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  4 .stabstr      00000262  00000000  00000000  00001b3c  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .comment      00000011  00000000  00000000  00001d9e  2**0
+                  CONTENTS, READONLY
+  6 .debug_aranges 00000048  00000000  00000000  00001daf  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_info   00000ca2  00000000  00000000  00001df7  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_abbrev 00000392  00000000  00000000  00002a99  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_line   0000039d  00000000  00000000  00002e2b  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_frame  0000023c  00000000  00000000  000031c8  2**2
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_str    000003ef  00000000  00000000  00003404  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 12 .debug_loc    00000b90  00000000  00000000  000037f3  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 13 .debug_ranges 00000018  00000000  00000000  00004383  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	47 c0       	rjmp	.+142    	; 0x90 <__ctors_end>
+   2:	92 c0       	rjmp	.+292    	; 0x128 <__vector_1>
+   4:	60 c0       	rjmp	.+192    	; 0xc6 <__bad_interrupt>
+   6:	05 c3       	rjmp	.+1546   	; 0x612 <__vector_3>
+   8:	5e c0       	rjmp	.+188    	; 0xc6 <__bad_interrupt>
+   a:	5d c0       	rjmp	.+186    	; 0xc6 <__bad_interrupt>
+   c:	5c c0       	rjmp	.+184    	; 0xc6 <__bad_interrupt>
+   e:	5b c0       	rjmp	.+182    	; 0xc6 <__bad_interrupt>
+  10:	5a c0       	rjmp	.+180    	; 0xc6 <__bad_interrupt>
+  12:	59 c0       	rjmp	.+178    	; 0xc6 <__bad_interrupt>
+  14:	58 c0       	rjmp	.+176    	; 0xc6 <__bad_interrupt>
+  16:	57 c0       	rjmp	.+174    	; 0xc6 <__bad_interrupt>
+  18:	56 c0       	rjmp	.+172    	; 0xc6 <__bad_interrupt>
+  1a:	56 c0       	rjmp	.+172    	; 0xc8 <__vector_13>
+  1c:	54 c0       	rjmp	.+168    	; 0xc6 <__bad_interrupt>
+  1e:	53 c0       	rjmp	.+166    	; 0xc6 <__bad_interrupt>
+  20:	ca c0       	rjmp	.+404    	; 0x1b6 <__vector_16>
+  22:	51 c0       	rjmp	.+162    	; 0xc6 <__bad_interrupt>
+  24:	cc c3       	rjmp	.+1944   	; 0x7be <__vector_18>
+  26:	f9 c3       	rjmp	.+2034   	; 0x81a <__vector_19>
+  28:	4e c0       	rjmp	.+156    	; 0xc6 <__bad_interrupt>
+  2a:	4d c0       	rjmp	.+154    	; 0xc6 <__bad_interrupt>
+  2c:	4c c0       	rjmp	.+152    	; 0xc6 <__bad_interrupt>
+  2e:	4b c0       	rjmp	.+150    	; 0xc6 <__bad_interrupt>
+  30:	4a c0       	rjmp	.+148    	; 0xc6 <__bad_interrupt>
+  32:	49 c0       	rjmp	.+146    	; 0xc6 <__bad_interrupt>
+  34:	95 c0       	rjmp	.+298    	; 0x160 <__vector_1+0x38>
+  36:	ab c0       	rjmp	.+342    	; 0x18e <__vector_1+0x66>
+  38:	aa c0       	rjmp	.+340    	; 0x18e <__vector_1+0x66>
+  3a:	99 c0       	rjmp	.+306    	; 0x16e <__vector_1+0x46>
+  3c:	96 c0       	rjmp	.+300    	; 0x16a <__vector_1+0x42>
+  3e:	97 c0       	rjmp	.+302    	; 0x16e <__vector_1+0x46>
+  40:	96 c0       	rjmp	.+300    	; 0x16e <__vector_1+0x46>
+  42:	95 c0       	rjmp	.+298    	; 0x16e <__vector_1+0x46>
+  44:	97 c0       	rjmp	.+302    	; 0x174 <__vector_1+0x4c>
+  46:	93 c0       	rjmp	.+294    	; 0x16e <__vector_1+0x46>
+  48:	92 c0       	rjmp	.+292    	; 0x16e <__vector_1+0x46>
+  4a:	a1 c0       	rjmp	.+322    	; 0x18e <__vector_1+0x66>
+  4c:	a0 c0       	rjmp	.+320    	; 0x18e <__vector_1+0x66>
+  4e:	9f c0       	rjmp	.+318    	; 0x18e <__vector_1+0x66>
+  50:	9e c0       	rjmp	.+316    	; 0x18e <__vector_1+0x66>
+  52:	9d c0       	rjmp	.+314    	; 0x18e <__vector_1+0x66>
+  54:	9c c0       	rjmp	.+312    	; 0x18e <__vector_1+0x66>
+  56:	8b c0       	rjmp	.+278    	; 0x16e <__vector_1+0x46>
+  58:	8a c0       	rjmp	.+276    	; 0x16e <__vector_1+0x46>
+  5a:	f7 c0       	rjmp	.+494    	; 0x24a <__vector_16+0x94>
+  5c:	fd c0       	rjmp	.+506    	; 0x258 <__vector_16+0xa2>
+  5e:	fe c0       	rjmp	.+508    	; 0x25c <__vector_16+0xa6>
+  60:	5e c1       	rjmp	.+700    	; 0x31e <__stack+0x1f>
+  62:	84 c1       	rjmp	.+776    	; 0x36c <__stack+0x6d>
+  64:	cc c1       	rjmp	.+920    	; 0x3fe <__stack+0xff>
+  66:	ff c1       	rjmp	.+1022   	; 0x466 <__stack+0x167>
+  68:	90 c2       	rjmp	.+1312   	; 0x58a <__stack+0x28b>
+  6a:	97 c1       	rjmp	.+814    	; 0x39a <__stack+0x9b>
+  6c:	ab c1       	rjmp	.+854    	; 0x3c4 <__stack+0xc5>
+  6e:	8d c2       	rjmp	.+1306   	; 0x58a <__stack+0x28b>
+  70:	8c c2       	rjmp	.+1304   	; 0x58a <__stack+0x28b>
+  72:	8b c2       	rjmp	.+1302   	; 0x58a <__stack+0x28b>
+  74:	8a c2       	rjmp	.+1300   	; 0x58a <__stack+0x28b>
+  76:	89 c2       	rjmp	.+1298   	; 0x58a <__stack+0x28b>
+  78:	88 c2       	rjmp	.+1296   	; 0x58a <__stack+0x28b>
+  7a:	70 c2       	rjmp	.+1248   	; 0x55c <__stack+0x25d>
+  7c:	79 c2       	rjmp	.+1266   	; 0x570 <__stack+0x271>
+
+0000007e <__c.1903>:
+  7e:	0d 0a 44 43 3a 00                                   ..DC:.
+
+00000084 <__c.1945>:
+  84:	53 74 61 72 74 75 70 00                             Startup.
+
+0000008c <__c.1948>:
+  8c:	0d 0a 00 00                                         ....
+
+00000090 <__ctors_end>:
+  90:	11 24       	eor	r1, r1
+  92:	1f be       	out	0x3f, r1	; 63
+  94:	cf ef       	ldi	r28, 0xFF	; 255
+  96:	d2 e0       	ldi	r29, 0x02	; 2
+  98:	de bf       	out	0x3e, r29	; 62
+  9a:	cd bf       	out	0x3d, r28	; 61
+
+0000009c <__do_copy_data>:
+  9c:	11 e0       	ldi	r17, 0x01	; 1
+  9e:	a0 e0       	ldi	r26, 0x00	; 0
+  a0:	b1 e0       	ldi	r27, 0x01	; 1
+  a2:	e6 e9       	ldi	r30, 0x96	; 150
+  a4:	fb e0       	ldi	r31, 0x0B	; 11
+  a6:	02 c0       	rjmp	.+4      	; 0xac <__do_copy_data+0x10>
+  a8:	05 90       	lpm	r0, Z+
+  aa:	0d 92       	st	X+, r0
+  ac:	ac 31       	cpi	r26, 0x1C	; 28
+  ae:	b1 07       	cpc	r27, r17
+  b0:	d9 f7       	brne	.-10     	; 0xa8 <__do_copy_data+0xc>
+
+000000b2 <__do_clear_bss>:
+  b2:	11 e0       	ldi	r17, 0x01	; 1
+  b4:	ac e1       	ldi	r26, 0x1C	; 28
+  b6:	b1 e0       	ldi	r27, 0x01	; 1
+  b8:	01 c0       	rjmp	.+2      	; 0xbc <.do_clear_bss_start>
+
+000000ba <.do_clear_bss_loop>:
+  ba:	1d 92       	st	X+, r1
+
+000000bc <.do_clear_bss_start>:
+  bc:	aa 39       	cpi	r26, 0x9A	; 154
+  be:	b1 07       	cpc	r27, r17
+  c0:	e1 f7       	brne	.-8      	; 0xba <.do_clear_bss_loop>
+  c2:	35 d4       	rcall	.+2154   	; 0x92e <main>
+  c4:	66 c5       	rjmp	.+2764   	; 0xb92 <_exit>
+
+000000c6 <__bad_interrupt>:
+  c6:	9c cf       	rjmp	.-200    	; 0x0 <__vectors>
+
+000000c8 <__vector_13>:
+
+volatile uint32_t uptime = 0; /* holds uptime in 1/4 seconds - overflows after 3.4 years */
+volatile uint8_t ovf_flag = 0;
+
+
+ISR(TIMER1_OVF_vect) {
+  c8:	1f 92       	push	r1
+  ca:	0f 92       	push	r0
+  cc:	0f b6       	in	r0, 0x3f	; 63
+  ce:	0f 92       	push	r0
+  d0:	11 24       	eor	r1, r1
+  d2:	8f 93       	push	r24
+  d4:	9f 93       	push	r25
+  d6:	af 93       	push	r26
+  d8:	bf 93       	push	r27
+  if (ovf_flag == 249) { //once every 125*4 calls we have a second
+  da:	80 91 1c 01 	lds	r24, 0x011C
+  de:	89 3f       	cpi	r24, 0xF9	; 249
+  e0:	a9 f4       	brne	.+42     	; 0x10c <__vector_13+0x44>
+    uptime++; ovf_flag=0;
+  e2:	80 91 1d 01 	lds	r24, 0x011D
+  e6:	90 91 1e 01 	lds	r25, 0x011E
+  ea:	a0 91 1f 01 	lds	r26, 0x011F
+  ee:	b0 91 20 01 	lds	r27, 0x0120
+  f2:	01 96       	adiw	r24, 0x01	; 1
+  f4:	a1 1d       	adc	r26, r1
+  f6:	b1 1d       	adc	r27, r1
+  f8:	80 93 1d 01 	sts	0x011D, r24
+  fc:	90 93 1e 01 	sts	0x011E, r25
+ 100:	a0 93 1f 01 	sts	0x011F, r26
+ 104:	b0 93 20 01 	sts	0x0120, r27
+ 108:	10 92 1c 01 	sts	0x011C, r1
+  }
+  ovf_flag++; //TODO: can be made better with bitshifting!
+ 10c:	80 91 1c 01 	lds	r24, 0x011C
+ 110:	8f 5f       	subi	r24, 0xFF	; 255
+ 112:	80 93 1c 01 	sts	0x011C, r24
+
+}
+ 116:	bf 91       	pop	r27
+ 118:	af 91       	pop	r26
+ 11a:	9f 91       	pop	r25
+ 11c:	8f 91       	pop	r24
+ 11e:	0f 90       	pop	r0
+ 120:	0f be       	out	0x3f, r0	; 63
+ 122:	0f 90       	pop	r0
+ 124:	1f 90       	pop	r1
+ 126:	18 95       	reti
+
+00000128 <__vector_1>:
+#define OWW_WRITE_1 1
+#define OWW_WRITE_0 0
+
+
+
+PIN_INT {
+ 128:	1f 92       	push	r1
+ 12a:	0f 92       	push	r0
+ 12c:	0f b6       	in	r0, 0x3f	; 63
+ 12e:	0f 92       	push	r0
+ 130:	11 24       	eor	r1, r1
+ 132:	2f 93       	push	r18
+ 134:	8f 93       	push	r24
+ 136:	9f 93       	push	r25
+ 138:	ef 93       	push	r30
+ 13a:	ff 93       	push	r31
+    uint8_t lwmode=wmode;  //let this variables in registers
+ 13c:	80 91 66 01 	lds	r24, 0x0166
+    uint8_t lmode=mode;
+ 140:	90 91 70 01 	lds	r25, 0x0170
+    if ((lwmode==OWW_WRITE_0)) {SET_LOW;lwmode=OWW_NO_WRITE;}    //if necessary set 0-Bit
+ 144:	81 11       	cpse	r24, r1
+ 146:	03 c0       	rjmp	.+6      	; 0x14e <__vector_1+0x26>
+ 148:	52 9a       	sbi	0x0a, 2	; 10
+ 14a:	5a 98       	cbi	0x0b, 2	; 11
+ 14c:	82 e0       	ldi	r24, 0x02	; 2
+    DIS_OWINT; //disable interrupt, only in OWM_SLEEP mode it is active
+ 14e:	e8 98       	cbi	0x1d, 0	; 29
+    switch (lmode) {
+ 150:	e9 2f       	mov	r30, r25
+ 152:	f0 e0       	ldi	r31, 0x00	; 0
+ 154:	e3 31       	cpi	r30, 0x13	; 19
+ 156:	f1 05       	cpc	r31, r1
+ 158:	d0 f4       	brcc	.+52     	; 0x18e <__vector_1+0x66>
+ 15a:	e6 5e       	subi	r30, 0xE6	; 230
+ 15c:	ff 4f       	sbci	r31, 0xFF	; 255
+ 15e:	09 94       	ijmp
+        case OWM_SLEEP:
+            TCNT_REG=~(OWT_MIN_RESET);
+ 160:	2c ec       	ldi	r18, 0xCC	; 204
+ 162:	26 bd       	out	0x26, r18	; 38
+            EN_OWINT; //other edges ?
+ 164:	e8 9a       	sbi	0x1d, 0	; 29
+ 166:	e0 9a       	sbi	0x1c, 0	; 28
+            break;
+ 168:	12 c0       	rjmp	.+36     	; 0x18e <__vector_1+0x66>
+        case OWM_GET_ADRESS:
+        case OWM_READ_COMMAND:
+            TCNT_REG=~(OWT_READLINE); //wait a time for reading
+            break;
+        case OWM_SEARCH_ROM:   //Search algorithm waiting for receive or send
+            if (srcount<2) { //this means bit or complement is writing,
+ 16a:	20 91 6f 01 	lds	r18, 0x016F
+            break;
+#ifdef _ONE_DEVICE_CMDS_
+        case OWM_READ_ROM:
+#endif
+        case OWM_READ_MEMORY_COUNTER: //a bit is sending
+            TCNT_REG=~(OWT_LOWTIME);
+ 16e:	2c ef       	ldi	r18, 0xFC	; 252
+ 170:	26 bd       	out	0x26, r18	; 38
+            break;
+ 172:	0d c0       	rjmp	.+26     	; 0x18e <__vector_1+0x66>
+        case OWM_CHK_RESET:  //rising edge of reset pulse
+            SET_FALLING;
+ 174:	90 91 69 00 	lds	r25, 0x0069
+ 178:	92 60       	ori	r25, 0x02	; 2
+ 17a:	90 93 69 00 	sts	0x0069, r25
+ 17e:	90 91 69 00 	lds	r25, 0x0069
+ 182:	9e 7f       	andi	r25, 0xFE	; 254
+ 184:	90 93 69 00 	sts	0x0069, r25
+            TCNT_REG=~(OWT_RESET_PRESENCE);  //waiting for sending presence pulse
+ 188:	9b ef       	ldi	r25, 0xFB	; 251
+ 18a:	96 bd       	out	0x26, r25	; 38
+            lmode=OWM_RESET;
+ 18c:	91 e0       	ldi	r25, 0x01	; 1
+            break;
+    }
+    EN_TIMER;
+ 18e:	20 91 6e 00 	lds	r18, 0x006E
+ 192:	21 60       	ori	r18, 0x01	; 1
+ 194:	20 93 6e 00 	sts	0x006E, r18
+ 198:	a8 9a       	sbi	0x15, 0	; 21
+    mode=lmode;
+ 19a:	90 93 70 01 	sts	0x0170, r25
+    wmode=lwmode;
+ 19e:	80 93 66 01 	sts	0x0166, r24
+
+}
+ 1a2:	ff 91       	pop	r31
+ 1a4:	ef 91       	pop	r30
+ 1a6:	9f 91       	pop	r25
+ 1a8:	8f 91       	pop	r24
+ 1aa:	2f 91       	pop	r18
+ 1ac:	0f 90       	pop	r0
+ 1ae:	0f be       	out	0x3f, r0	; 63
+ 1b0:	0f 90       	pop	r0
+ 1b2:	1f 90       	pop	r1
+ 1b4:	18 95       	reti
+
+000001b6 <__vector_16>:
+
+TIMER_INT {
+ 1b6:	1f 92       	push	r1
+ 1b8:	0f 92       	push	r0
+ 1ba:	0f b6       	in	r0, 0x3f	; 63
+ 1bc:	0f 92       	push	r0
+ 1be:	11 24       	eor	r1, r1
+ 1c0:	cf 92       	push	r12
+ 1c2:	df 92       	push	r13
+ 1c4:	ff 92       	push	r15
+ 1c6:	0f 93       	push	r16
+ 1c8:	1f 93       	push	r17
+ 1ca:	2f 93       	push	r18
+ 1cc:	3f 93       	push	r19
+ 1ce:	4f 93       	push	r20
+ 1d0:	5f 93       	push	r21
+ 1d2:	6f 93       	push	r22
+ 1d4:	7f 93       	push	r23
+ 1d6:	8f 93       	push	r24
+ 1d8:	9f 93       	push	r25
+ 1da:	af 93       	push	r26
+ 1dc:	bf 93       	push	r27
+ 1de:	ef 93       	push	r30
+ 1e0:	ff 93       	push	r31
+ 1e2:	cf 93       	push	r28
+ 1e4:	df 93       	push	r29
+ 1e6:	00 d0       	rcall	.+0      	; 0x1e8 <__vector_16+0x32>
+ 1e8:	cd b7       	in	r28, 0x3d	; 61
+ 1ea:	de b7       	in	r29, 0x3e	; 62
+    uint8_t lwmode=wmode; //let this variables in registers
+ 1ec:	40 91 66 01 	lds	r20, 0x0166
+    uint8_t lmode=mode;
+ 1f0:	20 91 70 01 	lds	r18, 0x0170
+    uint8_t lbytep=bytep;
+ 1f4:	00 91 85 01 	lds	r16, 0x0185
+    uint8_t lbitp=bitp;
+ 1f8:	50 91 6e 01 	lds	r21, 0x016E
+    uint8_t lsrcount=srcount;
+ 1fc:	10 91 6f 01 	lds	r17, 0x016F
+    uint8_t lactbit=actbit;
+ 200:	30 91 67 01 	lds	r19, 0x0167
+    uint16_t lscrc=scrc;
+ 204:	c0 90 94 01 	lds	r12, 0x0194
+ 208:	d0 90 95 01 	lds	r13, 0x0195
+    //Ask input line sate
+    uint8_t p=((OW_PIN&OW_PINN)==OW_PINN);
+ 20c:	f9 b0       	in	r15, 0x09	; 9
+ 20e:	f2 fa       	bst	r15, 2
+ 210:	ff 24       	eor	r15, r15
+ 212:	f0 f8       	bld	r15, 0
+    //Interrupt still active ?
+    if (CHK_INT_EN) {
+ 214:	e8 9b       	sbis	0x1d, 0	; 29
+ 216:	0e c0       	rjmp	.+28     	; 0x234 <__vector_16+0x7e>
+        //maybe reset pulse
+        if (p==0) {
+ 218:	f1 10       	cpse	r15, r1
+ 21a:	06 c0       	rjmp	.+12     	; 0x228 <__vector_16+0x72>
+            lmode=OWM_CHK_RESET;  //wait for rising edge
+            SET_RISING;
+ 21c:	80 91 69 00 	lds	r24, 0x0069
+ 220:	83 60       	ori	r24, 0x03	; 3
+ 222:	80 93 69 00 	sts	0x0069, r24
+    uint8_t p=((OW_PIN&OW_PINN)==OW_PINN);
+    //Interrupt still active ?
+    if (CHK_INT_EN) {
+        //maybe reset pulse
+        if (p==0) {
+            lmode=OWM_CHK_RESET;  //wait for rising edge
+ 226:	28 e0       	ldi	r18, 0x08	; 8
+            SET_RISING;
+        }
+        DIS_TIMER;
+ 228:	80 91 6e 00 	lds	r24, 0x006E
+ 22c:	8e 7f       	andi	r24, 0xFE	; 254
+ 22e:	80 93 6e 00 	sts	0x006E, r24
+ 232:	ab c1       	rjmp	.+854    	; 0x58a <__stack+0x28b>
+    } else
+    switch (lmode) {
+ 234:	82 2f       	mov	r24, r18
+ 236:	90 e0       	ldi	r25, 0x00	; 0
+ 238:	fc 01       	movw	r30, r24
+ 23a:	31 97       	sbiw	r30, 0x01	; 1
+ 23c:	e2 31       	cpi	r30, 0x12	; 18
+ 23e:	f1 05       	cpc	r31, r1
+ 240:	08 f0       	brcs	.+2      	; 0x244 <__vector_16+0x8e>
+ 242:	a3 c1       	rjmp	.+838    	; 0x58a <__stack+0x28b>
+ 244:	e3 5d       	subi	r30, 0xD3	; 211
+ 246:	ff 4f       	sbci	r31, 0xFF	; 255
+ 248:	09 94       	ijmp
+        case OWM_RESET:  //Reset pulse and time after is finished, now go in presence state
+            lmode=OWM_PRESENCE;
+            SET_LOW;
+ 24a:	52 9a       	sbi	0x0a, 2	; 10
+ 24c:	5a 98       	cbi	0x0b, 2	; 11
+            TCNT_REG=~(OWT_PRESENCE);
+ 24e:	8b ee       	ldi	r24, 0xEB	; 235
+ 250:	86 bd       	out	0x26, r24	; 38
+            DIS_OWINT;  //No Pin interrupt necessary only wait for presence is done
+ 252:	e8 98       	cbi	0x1d, 0	; 29
+        }
+        DIS_TIMER;
+    } else
+    switch (lmode) {
+        case OWM_RESET:  //Reset pulse and time after is finished, now go in presence state
+            lmode=OWM_PRESENCE;
+ 254:	22 e0       	ldi	r18, 0x02	; 2
+            SET_LOW;
+            TCNT_REG=~(OWT_PRESENCE);
+            DIS_OWINT;  //No Pin interrupt necessary only wait for presence is done
+            break;
+ 256:	a8 c1       	rjmp	.+848    	; 0x5a8 <__stack+0x2a9>
+        case OWM_PRESENCE:
+            RESET_LOW;  //Presence is done now wait for a command
+ 258:	52 98       	cbi	0x0a, 2	; 10
+ 25a:	9a c0       	rjmp	.+308    	; 0x390 <__stack+0x91>
+            lmode=OWM_READ_COMMAND;
+            cbuf=0;lbitp=1;  //Command buffer have to set zero, only set bits will write in
+            break;
+        case OWM_READ_COMMAND:
+            if (p) {  //Set bit if line high
+ 25c:	ff 20       	and	r15, r15
+ 25e:	29 f0       	breq	.+10     	; 0x26a <__vector_16+0xb4>
+                cbuf|=lbitp;
+ 260:	80 91 93 01 	lds	r24, 0x0193
+ 264:	85 2b       	or	r24, r21
+ 266:	80 93 93 01 	sts	0x0193, r24
+            }
+            lbitp=(lbitp<<1);
+ 26a:	55 0f       	add	r21, r21
+            if (!lbitp) { //8-Bits read - weird syntax?
+ 26c:	09 f0       	breq	.+2      	; 0x270 <__vector_16+0xba>
+ 26e:	96 c1       	rjmp	.+812    	; 0x59c <__stack+0x29d>
+                lbitp=1;
+                switch (cbuf) {
+ 270:	80 91 93 01 	lds	r24, 0x0193
+ 274:	85 35       	cpi	r24, 0x55	; 85
+ 276:	c9 f0       	breq	.+50     	; 0x2aa <__vector_16+0xf4>
+ 278:	68 f4       	brcc	.+26     	; 0x294 <__vector_16+0xde>
+ 27a:	82 31       	cpi	r24, 0x12	; 18
+ 27c:	09 f4       	brne	.+2      	; 0x280 <__vector_16+0xca>
+ 27e:	42 c0       	rjmp	.+132    	; 0x304 <__stack+0x5>
+ 280:	20 f4       	brcc	.+8      	; 0x28a <__vector_16+0xd4>
+ 282:	81 31       	cpi	r24, 0x11	; 17
+ 284:	09 f0       	breq	.+2      	; 0x288 <__vector_16+0xd2>
+ 286:	42 c0       	rjmp	.+132    	; 0x30c <__stack+0xd>
+ 288:	a2 c1       	rjmp	.+836    	; 0x5ce <__stack+0x2cf>
+ 28a:	84 34       	cpi	r24, 0x44	; 68
+ 28c:	09 f1       	breq	.+66     	; 0x2d0 <__vector_16+0x11a>
+ 28e:	8e 34       	cpi	r24, 0x4E	; 78
+ 290:	e9 f5       	brne	.+122    	; 0x30c <__stack+0xd>
+ 292:	18 c0       	rjmp	.+48     	; 0x2c4 <__vector_16+0x10e>
+ 294:	85 3a       	cpi	r24, 0xA5	; 165
+ 296:	61 f1       	breq	.+88     	; 0x2f0 <__vector_16+0x13a>
+ 298:	18 f4       	brcc	.+6      	; 0x2a0 <__vector_16+0xea>
+ 29a:	84 36       	cpi	r24, 0x64	; 100
+ 29c:	b9 f5       	brne	.+110    	; 0x30c <__stack+0xd>
+ 29e:	18 c0       	rjmp	.+48     	; 0x2d0 <__vector_16+0x11a>
+ 2a0:	8e 3b       	cpi	r24, 0xBE	; 190
+ 2a2:	e1 f0       	breq	.+56     	; 0x2dc <__vector_16+0x126>
+ 2a4:	80 3f       	cpi	r24, 0xF0	; 240
+ 2a6:	91 f5       	brne	.+100    	; 0x30c <__stack+0xd>
+ 2a8:	04 c0       	rjmp	.+8      	; 0x2b2 <__vector_16+0xfc>
+            if (p) {  //Set bit if line high
+                cbuf|=lbitp;
+            }
+            lbitp=(lbitp<<1);
+            if (!lbitp) { //8-Bits read - weird syntax?
+                lbitp=1;
+ 2aa:	51 e0       	ldi	r21, 0x01	; 1
+                switch (cbuf) {
+                    case 0x55://Match ROM
+                        lbytep=0;
+ 2ac:	00 e0       	ldi	r16, 0x00	; 0
+                        lmode=OWM_MATCH_ROM;
+ 2ae:	25 e0       	ldi	r18, 0x05	; 5
+ 2b0:	77 c1       	rjmp	.+750    	; 0x5a0 <__stack+0x2a1>
+                    case 0xF0:  //initialize search rom
+                        lmode=OWM_SEARCH_ROM;
+                        lsrcount=0;
+                        lbytep=0;
+                        /* FIXME: owid from eeprom - takes 4 cyc = 500ns @ 8 */
+                        lactbit=(owid[lbytep]&lbitp)==lbitp; //set actual bit
+ 2b2:	40 91 00 01 	lds	r20, 0x0100
+ 2b6:	41 70       	andi	r20, 0x01	; 1
+ 2b8:	34 2f       	mov	r19, r20
+                        lbytep=0;
+                        lmode=OWM_MATCH_ROM;
+                        break;
+                    case 0xF0:  //initialize search rom
+                        lmode=OWM_SEARCH_ROM;
+                        lsrcount=0;
+ 2ba:	10 e0       	ldi	r17, 0x00	; 0
+            if (p) {  //Set bit if line high
+                cbuf|=lbitp;
+            }
+            lbitp=(lbitp<<1);
+            if (!lbitp) { //8-Bits read - weird syntax?
+                lbitp=1;
+ 2bc:	51 e0       	ldi	r21, 0x01	; 1
+                        lmode=OWM_MATCH_ROM;
+                        break;
+                    case 0xF0:  //initialize search rom
+                        lmode=OWM_SEARCH_ROM;
+                        lsrcount=0;
+                        lbytep=0;
+ 2be:	00 e0       	ldi	r16, 0x00	; 0
+                    case 0x55://Match ROM
+                        lbytep=0;
+                        lmode=OWM_MATCH_ROM;
+                        break;
+                    case 0xF0:  //initialize search rom
+                        lmode=OWM_SEARCH_ROM;
+ 2c0:	24 e0       	ldi	r18, 0x04	; 4
+                        lsrcount=0;
+                        lbytep=0;
+                        /* FIXME: owid from eeprom - takes 4 cyc = 500ns @ 8 */
+                        lactbit=(owid[lbytep]&lbitp)==lbitp; //set actual bit
+                        lwmode=lactbit;  //prepare for writing when next falling edge
+                        break;
+ 2c2:	6e c1       	rjmp	.+732    	; 0x5a0 <__stack+0x2a1>
+                    //FIXME: case 0xEC:  //alarm search rom - TODO
+                    case 0x4E: //DS1820
+                        lmode=OWM_WRITE_SCRATCHPAD;
+                        lbytep=2;scratchpad[2]=0;  //initialize writing position in scratch pad
+ 2c4:	10 92 0a 01 	sts	0x010A, r1
+            if (p) {  //Set bit if line high
+                cbuf|=lbitp;
+            }
+            lbitp=(lbitp<<1);
+            if (!lbitp) { //8-Bits read - weird syntax?
+                lbitp=1;
+ 2c8:	51 e0       	ldi	r21, 0x01	; 1
+                        lwmode=lactbit;  //prepare for writing when next falling edge
+                        break;
+                    //FIXME: case 0xEC:  //alarm search rom - TODO
+                    case 0x4E: //DS1820
+                        lmode=OWM_WRITE_SCRATCHPAD;
+                        lbytep=2;scratchpad[2]=0;  //initialize writing position in scratch pad
+ 2ca:	02 e0       	ldi	r16, 0x02	; 2
+                        lactbit=(owid[lbytep]&lbitp)==lbitp; //set actual bit
+                        lwmode=lactbit;  //prepare for writing when next falling edge
+                        break;
+                    //FIXME: case 0xEC:  //alarm search rom - TODO
+                    case 0x4E: //DS1820
+                        lmode=OWM_WRITE_SCRATCHPAD;
+ 2cc:	29 e0       	ldi	r18, 0x09	; 9
+                        lbytep=2;scratchpad[2]=0;  //initialize writing position in scratch pad
+                        break;
+ 2ce:	68 c1       	rjmp	.+720    	; 0x5a0 <__stack+0x2a1>
+                    case 0x44:  //DS1820 Start Convert
+                    case 0x64:  // some tool uses this command
+                        CONV_TEMP;
+ 2d0:	8f ef       	ldi	r24, 0xFF	; 255
+ 2d2:	80 93 08 01 	sts	0x0108, r24
+ 2d6:	10 92 09 01 	sts	0x0109, r1
+ 2da:	7f c1       	rjmp	.+766    	; 0x5da <__stack+0x2db>
+                        lmode=OWM_SLEEP;
+                        break;
+                    case 0xBE: //DS1820
+                        lmode=OWM_READ_SCRATCHPAD; //read scratch pad
+                        lbytep=0;lscrc=0; //from first position
+                        lactbit=(lbitp&scratchpad[0])==lbitp;
+ 2dc:	40 91 08 01 	lds	r20, 0x0108
+ 2e0:	41 70       	andi	r20, 0x01	; 1
+ 2e2:	34 2f       	mov	r19, r20
+                        CONV_TEMP;
+                        lmode=OWM_SLEEP;
+                        break;
+                    case 0xBE: //DS1820
+                        lmode=OWM_READ_SCRATCHPAD; //read scratch pad
+                        lbytep=0;lscrc=0; //from first position
+ 2e4:	c1 2c       	mov	r12, r1
+ 2e6:	d1 2c       	mov	r13, r1
+            if (p) {  //Set bit if line high
+                cbuf|=lbitp;
+            }
+            lbitp=(lbitp<<1);
+            if (!lbitp) { //8-Bits read - weird syntax?
+                lbitp=1;
+ 2e8:	51 e0       	ldi	r21, 0x01	; 1
+                        CONV_TEMP;
+                        lmode=OWM_SLEEP;
+                        break;
+                    case 0xBE: //DS1820
+                        lmode=OWM_READ_SCRATCHPAD; //read scratch pad
+                        lbytep=0;lscrc=0; //from first position
+ 2ea:	00 e0       	ldi	r16, 0x00	; 0
+                    case 0x64:  // some tool uses this command
+                        CONV_TEMP;
+                        lmode=OWM_SLEEP;
+                        break;
+                    case 0xBE: //DS1820
+                        lmode=OWM_READ_SCRATCHPAD; //read scratch pad
+ 2ec:	2a e0       	ldi	r18, 0x0A	; 10
+                        lbytep=0;lscrc=0; //from first position
+                        lactbit=(lbitp&scratchpad[0])==lbitp;
+                        lwmode=lactbit; //prepare for send firs bit
+                        break;
+ 2ee:	58 c1       	rjmp	.+688    	; 0x5a0 <__stack+0x2a1>
+                    case 0xA5: // DS2423 Read Memory + Counter [A5H]
+                        lmode=OWM_GET_ADRESS; //first the master send an address
+                        lbytep=0;lscrc=0x7bc0; //CRC16 of 0xA5
+                        counterpack.bytes[0]=0;
+ 2f0:	10 92 86 01 	sts	0x0186, r1
+                        lactbit=(lbitp&scratchpad[0])==lbitp;
+                        lwmode=lactbit; //prepare for send firs bit
+                        break;
+                    case 0xA5: // DS2423 Read Memory + Counter [A5H]
+                        lmode=OWM_GET_ADRESS; //first the master send an address
+                        lbytep=0;lscrc=0x7bc0; //CRC16 of 0xA5
+ 2f4:	b0 ec       	ldi	r27, 0xC0	; 192
+ 2f6:	cb 2e       	mov	r12, r27
+ 2f8:	bb e7       	ldi	r27, 0x7B	; 123
+ 2fa:	db 2e       	mov	r13, r27
+            if (p) {  //Set bit if line high
+                cbuf|=lbitp;
+            }
+            lbitp=(lbitp<<1);
+            if (!lbitp) { //8-Bits read - weird syntax?
+                lbitp=1;
+ 2fc:	51 e0       	ldi	r21, 0x01	; 1
+                        lactbit=(lbitp&scratchpad[0])==lbitp;
+                        lwmode=lactbit; //prepare for send firs bit
+                        break;
+                    case 0xA5: // DS2423 Read Memory + Counter [A5H]
+                        lmode=OWM_GET_ADRESS; //first the master send an address
+                        lbytep=0;lscrc=0x7bc0; //CRC16 of 0xA5
+ 2fe:	00 e0       	ldi	r16, 0x00	; 0
+                        lbytep=0;lscrc=0; //from first position
+                        lactbit=(lbitp&scratchpad[0])==lbitp;
+                        lwmode=lactbit; //prepare for send firs bit
+                        break;
+                    case 0xA5: // DS2423 Read Memory + Counter [A5H]
+                        lmode=OWM_GET_ADRESS; //first the master send an address
+ 300:	26 e0       	ldi	r18, 0x06	; 6
+                        lbytep=0;lscrc=0x7bc0; //CRC16 of 0xA5
+                        counterpack.bytes[0]=0;
+                        break;
+ 302:	4e c1       	rjmp	.+668    	; 0x5a0 <__stack+0x2a1>
+            if (p) {  //Set bit if line high
+                cbuf|=lbitp;
+            }
+            lbitp=(lbitp<<1);
+            if (!lbitp) { //8-Bits read - weird syntax?
+                lbitp=1;
+ 304:	51 e0       	ldi	r21, 0x01	; 1
+                        lmode=OWC_GET_VERSION;
+                        lbytep=0;
+                        break;
+                    case 0x12: //E1 CUSTOM get type
+                        lmode=OWC_GET_TYPE;
+                        lbytep=0;
+ 306:	00 e0       	ldi	r16, 0x00	; 0
+                    case 0x11: //E1 CUSTOM get version
+                        lmode=OWC_GET_VERSION;
+                        lbytep=0;
+                        break;
+                    case 0x12: //E1 CUSTOM get type
+                        lmode=OWC_GET_TYPE;
+ 308:	22 e1       	ldi	r18, 0x12	; 18
+                        lbytep=0;
+                        break;
+ 30a:	4a c1       	rjmp	.+660    	; 0x5a0 <__stack+0x2a1>
+                    default:
+                        LSL("\r\nDC:")
+ 30c:	8e e7       	ldi	r24, 0x7E	; 126
+ 30e:	90 e0       	ldi	r25, 0x00	; 0
+ 310:	3a 83       	std	Y+2, r19	; 0x02
+ 312:	49 83       	std	Y+1, r20	; 0x01
+ 314:	ff d2       	rcall	.+1534   	; 0x914 <uart_puts_p>
+            if (p) {  //Set bit if line high
+                cbuf|=lbitp;
+            }
+            lbitp=(lbitp<<1);
+            if (!lbitp) { //8-Bits read - weird syntax?
+                lbitp=1;
+ 316:	51 e0       	ldi	r21, 0x01	; 1
+ 318:	3a 81       	ldd	r19, Y+2	; 0x02
+ 31a:	49 81       	ldd	r20, Y+1	; 0x01
+ 31c:	38 c1       	rjmp	.+624    	; 0x58e <__stack+0x28f>
+                        lmode=OWM_SLEEP;  //all other commands do nothing
+                }
+            }
+            break;
+        case OWM_SEARCH_ROM:
+            RESET_LOW;  //Set low also if nothing send (branch takes time and memory)
+ 31e:	52 98       	cbi	0x0a, 2	; 10
+            lsrcount++;  //next search rom mode
+ 320:	1f 5f       	subi	r17, 0xFF	; 255
+            switch (lsrcount) {
+ 322:	11 30       	cpi	r17, 0x01	; 1
+ 324:	21 f0       	breq	.+8      	; 0x32e <__stack+0x2f>
+ 326:	13 30       	cpi	r17, 0x03	; 3
+ 328:	09 f0       	breq	.+2      	; 0x32c <__stack+0x2d>
+ 32a:	38 c1       	rjmp	.+624    	; 0x59c <__stack+0x29d>
+ 32c:	06 c0       	rjmp	.+12     	; 0x33a <__stack+0x3b>
+                case 1:lwmode=!lactbit;  //preparation sending complement
+ 32e:	41 e0       	ldi	r20, 0x01	; 1
+ 330:	33 23       	and	r19, r19
+ 332:	09 f4       	brne	.+2      	; 0x336 <__stack+0x37>
+ 334:	33 c1       	rjmp	.+614    	; 0x59c <__stack+0x29d>
+ 336:	40 e0       	ldi	r20, 0x00	; 0
+                    break;
+ 338:	31 c1       	rjmp	.+610    	; 0x59c <__stack+0x29d>
+                case 3:
+                    if (p!=(lactbit==1)) {  //check master bit
+ 33a:	81 e0       	ldi	r24, 0x01	; 1
+ 33c:	31 30       	cpi	r19, 0x01	; 1
+ 33e:	09 f0       	breq	.+2      	; 0x342 <__stack+0x43>
+ 340:	80 e0       	ldi	r24, 0x00	; 0
+ 342:	f8 12       	cpse	r15, r24
+ 344:	24 c1       	rjmp	.+584    	; 0x58e <__stack+0x28f>
+                        lmode=OWM_SLEEP;  //not the same go sleep
+                    } else {
+                        lbitp=(lbitp<<1);  //prepare next bit
+ 346:	55 0f       	add	r21, r21
+                        if (lbitp==0) {
+ 348:	29 f4       	brne	.+10     	; 0x354 <__stack+0x55>
+                            lbitp=1;
+                            lbytep++;
+ 34a:	0f 5f       	subi	r16, 0xFF	; 255
+                    if (p!=(lactbit==1)) {  //check master bit
+                        lmode=OWM_SLEEP;  //not the same go sleep
+                    } else {
+                        lbitp=(lbitp<<1);  //prepare next bit
+                        if (lbitp==0) {
+                            lbitp=1;
+ 34c:	51 e0       	ldi	r21, 0x01	; 1
+                            lbytep++;
+                            if (lbytep>=8) {
+ 34e:	08 30       	cpi	r16, 0x08	; 8
+ 350:	08 f0       	brcs	.+2      	; 0x354 <__stack+0x55>
+ 352:	1d c1       	rjmp	.+570    	; 0x58e <__stack+0x28f>
+                                break;
+                            }
+                        }
+                        lsrcount=0;
+                        /* FIXME: owid from eeprom - takes 4 cyc = 500ns @ 8 */
+                        lactbit=(owid[lbytep]&lbitp)==lbitp;
+ 354:	e0 2f       	mov	r30, r16
+ 356:	f0 e0       	ldi	r31, 0x00	; 0
+ 358:	e0 50       	subi	r30, 0x00	; 0
+ 35a:	ff 4f       	sbci	r31, 0xFF	; 255
+ 35c:	80 81       	ld	r24, Z
+ 35e:	85 23       	and	r24, r21
+ 360:	31 e0       	ldi	r19, 0x01	; 1
+ 362:	85 13       	cpse	r24, r21
+ 364:	30 e0       	ldi	r19, 0x00	; 0
+                        lwmode=lactbit;
+ 366:	43 2f       	mov	r20, r19
+                            if (lbytep>=8) {
+                                lmode=OWM_SLEEP;  //all bits processed
+                                break;
+                            }
+                        }
+                        lsrcount=0;
+ 368:	10 e0       	ldi	r17, 0x00	; 0
+ 36a:	18 c1       	rjmp	.+560    	; 0x59c <__stack+0x29d>
+                    break;
+            }
+            break;
+        case OWM_MATCH_ROM:
+            /* FIXME: owid from eeprom - takes 4 cyc = 500ns @ 8 */
+            if (p==((owid[lbytep]&lbitp)==lbitp)) {  //Compare with ID Buffer
+ 36c:	e0 2f       	mov	r30, r16
+ 36e:	f0 e0       	ldi	r31, 0x00	; 0
+ 370:	e0 50       	subi	r30, 0x00	; 0
+ 372:	ff 4f       	sbci	r31, 0xFF	; 255
+ 374:	80 81       	ld	r24, Z
+ 376:	85 23       	and	r24, r21
+ 378:	91 e0       	ldi	r25, 0x01	; 1
+ 37a:	85 13       	cpse	r24, r21
+ 37c:	90 e0       	ldi	r25, 0x00	; 0
+ 37e:	f9 12       	cpse	r15, r25
+ 380:	06 c1       	rjmp	.+524    	; 0x58e <__stack+0x28f>
+                lbitp=(lbitp<<1);
+ 382:	55 0f       	add	r21, r21
+                if (!lbitp) {
+ 384:	09 f0       	breq	.+2      	; 0x388 <__stack+0x89>
+ 386:	0a c1       	rjmp	.+532    	; 0x59c <__stack+0x29d>
+                    lbytep++;
+ 388:	0f 5f       	subi	r16, 0xFF	; 255
+                    lbitp=1;
+                    if (lbytep>=8) {
+ 38a:	08 30       	cpi	r16, 0x08	; 8
+ 38c:	08 f4       	brcc	.+2      	; 0x390 <__stack+0x91>
+ 38e:	23 c1       	rjmp	.+582    	; 0x5d6 <__stack+0x2d7>
+                        lmode=OWM_READ_COMMAND;  //same? get next command
+
+                        cbuf=0;
+ 390:	10 92 93 01 	sts	0x0193, r1
+            /* FIXME: owid from eeprom - takes 4 cyc = 500ns @ 8 */
+            if (p==((owid[lbytep]&lbitp)==lbitp)) {  //Compare with ID Buffer
+                lbitp=(lbitp<<1);
+                if (!lbitp) {
+                    lbytep++;
+                    lbitp=1;
+ 394:	51 e0       	ldi	r21, 0x01	; 1
+                    if (lbytep>=8) {
+                        lmode=OWM_READ_COMMAND;  //same? get next command
+ 396:	23 e0       	ldi	r18, 0x03	; 3
+
+                        cbuf=0;
+                        break;
+ 398:	03 c1       	rjmp	.+518    	; 0x5a0 <__stack+0x2a1>
+            } else {
+                lmode=OWM_SLEEP;
+            }
+            break;
+        case OWM_WRITE_SCRATCHPAD:
+            if (p) {
+ 39a:	ff 20       	and	r15, r15
+ 39c:	39 f0       	breq	.+14     	; 0x3ac <__stack+0xad>
+                scratchpad[lbytep]|=lbitp;
+ 39e:	e0 2f       	mov	r30, r16
+ 3a0:	f0 e0       	ldi	r31, 0x00	; 0
+ 3a2:	e8 5f       	subi	r30, 0xF8	; 248
+ 3a4:	fe 4f       	sbci	r31, 0xFE	; 254
+ 3a6:	80 81       	ld	r24, Z
+ 3a8:	85 2b       	or	r24, r21
+ 3aa:	80 83       	st	Z, r24
+            }
+            lbitp=(lbitp<<1);
+ 3ac:	55 0f       	add	r21, r21
+            if (!lbitp) {
+ 3ae:	09 f0       	breq	.+2      	; 0x3b2 <__stack+0xb3>
+ 3b0:	f5 c0       	rjmp	.+490    	; 0x59c <__stack+0x29d>
+                lbytep++;
+ 3b2:	0f 5f       	subi	r16, 0xFF	; 255
+                lbitp=1;
+                if (lbytep==5) {
+ 3b4:	05 30       	cpi	r16, 0x05	; 5
+ 3b6:	09 f4       	brne	.+2      	; 0x3ba <__stack+0xbb>
+ 3b8:	10 c1       	rjmp	.+544    	; 0x5da <__stack+0x2db>
+                    lmode=OWM_SLEEP;
+                    break;
+                } else scratchpad[lbytep]=0;
+ 3ba:	e0 2f       	mov	r30, r16
+ 3bc:	f0 e0       	ldi	r31, 0x00	; 0
+ 3be:	e8 5f       	subi	r30, 0xF8	; 248
+ 3c0:	fe 4f       	sbci	r31, 0xFE	; 254
+ 3c2:	4f c0       	rjmp	.+158    	; 0x462 <__stack+0x163>
+            }
+            break;
+        case OWM_READ_SCRATCHPAD:
+            RESET_LOW;
+ 3c4:	52 98       	cbi	0x0a, 2	; 10
+            if ((lscrc&1)!=lactbit) lscrc=(lscrc>>1)^0x8c; else lscrc >>=1;
+ 3c6:	b6 01       	movw	r22, r12
+ 3c8:	61 70       	andi	r22, 0x01	; 1
+ 3ca:	77 27       	eor	r23, r23
+ 3cc:	83 2f       	mov	r24, r19
+ 3ce:	90 e0       	ldi	r25, 0x00	; 0
+ 3d0:	d6 94       	lsr	r13
+ 3d2:	c7 94       	ror	r12
+ 3d4:	68 17       	cp	r22, r24
+ 3d6:	79 07       	cpc	r23, r25
+ 3d8:	11 f0       	breq	.+4      	; 0x3de <__stack+0xdf>
+ 3da:	8c e8       	ldi	r24, 0x8C	; 140
+ 3dc:	c8 26       	eor	r12, r24
+            lbitp=(lbitp<<1);
+ 3de:	55 0f       	add	r21, r21
+            if (!lbitp) {
+ 3e0:	49 f4       	brne	.+18     	; 0x3f4 <__stack+0xf5>
+                lbytep++;
+ 3e2:	0f 5f       	subi	r16, 0xFF	; 255
+                lbitp=1;
+                if (lbytep>=9) {
+ 3e4:	09 30       	cpi	r16, 0x09	; 9
+ 3e6:	08 f0       	brcs	.+2      	; 0x3ea <__stack+0xeb>
+ 3e8:	f8 c0       	rjmp	.+496    	; 0x5da <__stack+0x2db>
+                    lmode=OWM_SLEEP;
+                    break;
+                } else if (lbytep==8) scratchpad[8]=lscrc;
+ 3ea:	08 30       	cpi	r16, 0x08	; 8
+ 3ec:	11 f4       	brne	.+4      	; 0x3f2 <__stack+0xf3>
+ 3ee:	c0 92 10 01 	sts	0x0110, r12
+            RESET_LOW;
+            if ((lscrc&1)!=lactbit) lscrc=(lscrc>>1)^0x8c; else lscrc >>=1;
+            lbitp=(lbitp<<1);
+            if (!lbitp) {
+                lbytep++;
+                lbitp=1;
+ 3f2:	51 e0       	ldi	r21, 0x01	; 1
+                if (lbytep>=9) {
+                    lmode=OWM_SLEEP;
+                    break;
+                } else if (lbytep==8) scratchpad[8]=lscrc;
+            }
+            lactbit=(lbitp&scratchpad[lbytep])==lbitp;
+ 3f4:	e0 2f       	mov	r30, r16
+ 3f6:	f0 e0       	ldi	r31, 0x00	; 0
+ 3f8:	e8 5f       	subi	r30, 0xF8	; 248
+ 3fa:	fe 4f       	sbci	r31, 0xFE	; 254
+ 3fc:	ac c0       	rjmp	.+344    	; 0x556 <__stack+0x257>
+            lwmode=lactbit;
+            break;
+        case OWM_GET_ADRESS:
+            //FIXME: copy value to local varible/"scratchpad"?? it might change during read!
+            if (p) { //Get the Address for reading
+ 3fe:	ff 20       	and	r15, r15
+ 400:	39 f0       	breq	.+14     	; 0x410 <__stack+0x111>
+                counterpack.bytes[lbytep]|=lbitp;
+ 402:	e0 2f       	mov	r30, r16
+ 404:	f0 e0       	ldi	r31, 0x00	; 0
+ 406:	ea 57       	subi	r30, 0x7A	; 122
+ 408:	fe 4f       	sbci	r31, 0xFE	; 254
+ 40a:	80 81       	ld	r24, Z
+ 40c:	85 2b       	or	r24, r21
+ 40e:	80 83       	st	Z, r24
+            }
+            //address is part of crc
+            if ((lscrc&1)!=p) lscrc=(lscrc>>1)^0xA001; else lscrc >>=1;
+ 410:	b6 01       	movw	r22, r12
+ 412:	61 70       	andi	r22, 0x01	; 1
+ 414:	77 27       	eor	r23, r23
+ 416:	8f 2d       	mov	r24, r15
+ 418:	90 e0       	ldi	r25, 0x00	; 0
+ 41a:	d6 94       	lsr	r13
+ 41c:	c7 94       	ror	r12
+ 41e:	68 17       	cp	r22, r24
+ 420:	79 07       	cpc	r23, r25
+ 422:	21 f0       	breq	.+8      	; 0x42c <__stack+0x12d>
+ 424:	e1 e0       	ldi	r30, 0x01	; 1
+ 426:	ce 26       	eor	r12, r30
+ 428:	e0 ea       	ldi	r30, 0xA0	; 160
+ 42a:	de 26       	eor	r13, r30
+            lbitp=(lbitp<<1);
+ 42c:	55 0f       	add	r21, r21
+            if (!lbitp) {
+ 42e:	09 f0       	breq	.+2      	; 0x432 <__stack+0x133>
+ 430:	b5 c0       	rjmp	.+362    	; 0x59c <__stack+0x29d>
+                lbytep++;
+ 432:	0f 5f       	subi	r16, 0xFF	; 255
+                lbitp=1;
+                if (lbytep==2) {
+ 434:	02 30       	cpi	r16, 0x02	; 2
+ 436:	89 f4       	brne	.+34     	; 0x45a <__stack+0x15b>
+                    lmode=OWM_READ_MEMORY_COUNTER;
+                    lactbit=(lbitp&counterpack.bytes[lbytep])==lbitp;
+ 438:	40 91 88 01 	lds	r20, 0x0188
+ 43c:	41 70       	andi	r20, 0x01	; 1
+                    lwmode=lactbit;
+                    lsrcount=(counterpack.addr&0xfe0)+0x20-counterpack.addr;
+ 43e:	80 91 86 01 	lds	r24, 0x0186
+ 442:	90 91 87 01 	lds	r25, 0x0187
+ 446:	9c 01       	movw	r18, r24
+ 448:	20 7e       	andi	r18, 0xE0	; 224
+ 44a:	33 27       	eor	r19, r19
+ 44c:	12 2f       	mov	r17, r18
+ 44e:	18 1b       	sub	r17, r24
+ 450:	10 5e       	subi	r17, 0xE0	; 224
+            if (!lbitp) {
+                lbytep++;
+                lbitp=1;
+                if (lbytep==2) {
+                    lmode=OWM_READ_MEMORY_COUNTER;
+                    lactbit=(lbitp&counterpack.bytes[lbytep])==lbitp;
+ 452:	34 2f       	mov	r19, r20
+            //address is part of crc
+            if ((lscrc&1)!=p) lscrc=(lscrc>>1)^0xA001; else lscrc >>=1;
+            lbitp=(lbitp<<1);
+            if (!lbitp) {
+                lbytep++;
+                lbitp=1;
+ 454:	51 e0       	ldi	r21, 0x01	; 1
+                if (lbytep==2) {
+                    lmode=OWM_READ_MEMORY_COUNTER;
+ 456:	27 e0       	ldi	r18, 0x07	; 7
+                    lactbit=(lbitp&counterpack.bytes[lbytep])==lbitp;
+                    lwmode=lactbit;
+                    lsrcount=(counterpack.addr&0xfe0)+0x20-counterpack.addr;
+                    //bytes between start and Counter Values, Iam never understanding why so much???
+                    break;
+ 458:	a3 c0       	rjmp	.+326    	; 0x5a0 <__stack+0x2a1>
+                } else counterpack.bytes[lbytep]=0;
+ 45a:	e0 2f       	mov	r30, r16
+ 45c:	f0 e0       	ldi	r31, 0x00	; 0
+ 45e:	ea 57       	subi	r30, 0x7A	; 122
+ 460:	fe 4f       	sbci	r31, 0xFE	; 254
+ 462:	10 82       	st	Z, r1
+ 464:	b8 c0       	rjmp	.+368    	; 0x5d6 <__stack+0x2d7>
+            }
+            break;
+        case OWM_READ_MEMORY_COUNTER:
+            RESET_LOW;
+ 466:	52 98       	cbi	0x0a, 2	; 10
+            //CRC16 Calculation
+            if ((lscrc&1)!=lactbit)
+ 468:	b6 01       	movw	r22, r12
+ 46a:	61 70       	andi	r22, 0x01	; 1
+ 46c:	77 27       	eor	r23, r23
+ 46e:	83 2f       	mov	r24, r19
+ 470:	90 e0       	ldi	r25, 0x00	; 0
+ 472:	d6 94       	lsr	r13
+ 474:	c7 94       	ror	r12
+ 476:	68 17       	cp	r22, r24
+ 478:	79 07       	cpc	r23, r25
+ 47a:	21 f0       	breq	.+8      	; 0x484 <__stack+0x185>
+              lscrc=(lscrc>>1)^0xA001;
+ 47c:	f1 e0       	ldi	r31, 0x01	; 1
+ 47e:	cf 26       	eor	r12, r31
+ 480:	f0 ea       	ldi	r31, 0xA0	; 160
+ 482:	df 26       	eor	r13, r31
+            else
+              lscrc >>=1;
+            p=lactbit;
+            lbitp=(lbitp<<1);
+ 484:	55 0f       	add	r21, r21
+            if (!lbitp) {
+ 486:	09 f0       	breq	.+2      	; 0x48a <__stack+0x18b>
+ 488:	62 c0       	rjmp	.+196    	; 0x54e <__stack+0x24f>
+                lbytep++;
+ 48a:	80 2f       	mov	r24, r16
+ 48c:	8f 5f       	subi	r24, 0xFF	; 255
+                lbitp=1;
+                if (lbytep==3) {
+ 48e:	83 30       	cpi	r24, 0x03	; 3
+ 490:	09 f0       	breq	.+2      	; 0x494 <__stack+0x195>
+ 492:	4f c0       	rjmp	.+158    	; 0x532 <__stack+0x233>
+                    lsrcount--;
+ 494:	11 50       	subi	r17, 0x01	; 1
+                    if (lsrcount) lbytep--;
+ 496:	09 f0       	breq	.+2      	; 0x49a <__stack+0x19b>
+ 498:	4d c0       	rjmp	.+154    	; 0x534 <__stack+0x235>
+                    else  {//now copy counter in send buffer
+                        switch (counterpack.addr&0xFe0) {
+ 49a:	80 91 86 01 	lds	r24, 0x0186
+ 49e:	90 91 87 01 	lds	r25, 0x0187
+ 4a2:	80 7e       	andi	r24, 0xE0	; 224
+ 4a4:	9f 70       	andi	r25, 0x0F	; 15
+ 4a6:	80 3a       	cpi	r24, 0xA0	; 160
+ 4a8:	31 e0       	ldi	r19, 0x01	; 1
+ 4aa:	93 07       	cpc	r25, r19
+ 4ac:	b1 f0       	breq	.+44     	; 0x4da <__stack+0x1db>
+ 4ae:	20 f4       	brcc	.+8      	; 0x4b8 <__stack+0x1b9>
+ 4b0:	80 38       	cpi	r24, 0x80	; 128
+ 4b2:	91 40       	sbci	r25, 0x01	; 1
+ 4b4:	a9 f5       	brne	.+106    	; 0x520 <__stack+0x221>
+ 4b6:	08 c0       	rjmp	.+16     	; 0x4c8 <__stack+0x1c9>
+ 4b8:	80 3c       	cpi	r24, 0xC0	; 192
+ 4ba:	31 e0       	ldi	r19, 0x01	; 1
+ 4bc:	93 07       	cpc	r25, r19
+ 4be:	b1 f0       	breq	.+44     	; 0x4ec <__stack+0x1ed>
+ 4c0:	80 3e       	cpi	r24, 0xE0	; 224
+ 4c2:	91 40       	sbci	r25, 0x01	; 1
+ 4c4:	69 f5       	brne	.+90     	; 0x520 <__stack+0x221>
+ 4c6:	1b c0       	rjmp	.+54     	; 0x4fe <__stack+0x1ff>
+                        case 0x180:
+                            counterpack.counter=Counter1;
+ 4c8:	80 91 7d 01 	lds	r24, 0x017D
+ 4cc:	90 91 7e 01 	lds	r25, 0x017E
+ 4d0:	a0 91 7f 01 	lds	r26, 0x017F
+ 4d4:	b0 91 80 01 	lds	r27, 0x0180
+ 4d8:	1a c0       	rjmp	.+52     	; 0x50e <__stack+0x20f>
+                        break;
+                        case 0x1A0:
+                            counterpack.counter=Counter2;
+ 4da:	80 91 96 01 	lds	r24, 0x0196
+ 4de:	90 91 97 01 	lds	r25, 0x0197
+ 4e2:	a0 91 98 01 	lds	r26, 0x0198
+ 4e6:	b0 91 99 01 	lds	r27, 0x0199
+ 4ea:	11 c0       	rjmp	.+34     	; 0x50e <__stack+0x20f>
+                            break;
+                        case 0x1C0:
+                            counterpack.counter=Counter3;
+ 4ec:	80 91 81 01 	lds	r24, 0x0181
+ 4f0:	90 91 82 01 	lds	r25, 0x0182
+ 4f4:	a0 91 83 01 	lds	r26, 0x0183
+ 4f8:	b0 91 84 01 	lds	r27, 0x0184
+ 4fc:	08 c0       	rjmp	.+16     	; 0x50e <__stack+0x20f>
+                            break;
+                        case 0x1E0:
+                            counterpack.counter=Counter4;
+ 4fe:	80 91 68 01 	lds	r24, 0x0168
+ 502:	90 91 69 01 	lds	r25, 0x0169
+ 506:	a0 91 6a 01 	lds	r26, 0x016A
+ 50a:	b0 91 6b 01 	lds	r27, 0x016B
+ 50e:	80 93 89 01 	sts	0x0189, r24
+ 512:	90 93 8a 01 	sts	0x018A, r25
+ 516:	a0 93 8b 01 	sts	0x018B, r26
+ 51a:	b0 93 8c 01 	sts	0x018C, r27
+                            break;
+ 51e:	55 c0       	rjmp	.+170    	; 0x5ca <__stack+0x2cb>
+                        default: counterpack.counter=0;
+ 520:	10 92 89 01 	sts	0x0189, r1
+ 524:	10 92 8a 01 	sts	0x018A, r1
+ 528:	10 92 8b 01 	sts	0x018B, r1
+ 52c:	10 92 8c 01 	sts	0x018C, r1
+ 530:	4c c0       	rjmp	.+152    	; 0x5ca <__stack+0x2cb>
+            p=lactbit;
+            lbitp=(lbitp<<1);
+            if (!lbitp) {
+                lbytep++;
+                lbitp=1;
+                if (lbytep==3) {
+ 532:	08 2f       	mov	r16, r24
+                            break;
+                        default: counterpack.counter=0;
+                        }
+                    }
+                }
+                if (lbytep>=13) { //done sending
+ 534:	0d 30       	cpi	r16, 0x0D	; 13
+ 536:	08 f0       	brcs	.+2      	; 0x53a <__stack+0x23b>
+ 538:	50 c0       	rjmp	.+160    	; 0x5da <__stack+0x2db>
+                    lmode=OWM_SLEEP;
+                    break;
+                }
+                if ((lbytep==11)&&(lbitp==1)) { //Send CRC
+ 53a:	0b 30       	cpi	r16, 0x0B	; 11
+ 53c:	39 f4       	brne	.+14     	; 0x54c <__stack+0x24d>
+                    counterpack.crc=~lscrc;
+ 53e:	c6 01       	movw	r24, r12
+ 540:	80 95       	com	r24
+ 542:	90 95       	com	r25
+ 544:	90 93 92 01 	sts	0x0192, r25
+ 548:	80 93 91 01 	sts	0x0191, r24
+              lscrc >>=1;
+            p=lactbit;
+            lbitp=(lbitp<<1);
+            if (!lbitp) {
+                lbytep++;
+                lbitp=1;
+ 54c:	51 e0       	ldi	r21, 0x01	; 1
+                if ((lbytep==11)&&(lbitp==1)) { //Send CRC
+                    counterpack.crc=~lscrc;
+                }
+
+            }
+            lactbit=(lbitp&counterpack.bytes[lbytep])==lbitp;
+ 54e:	e0 2f       	mov	r30, r16
+ 550:	f0 e0       	ldi	r31, 0x00	; 0
+ 552:	ea 57       	subi	r30, 0x7A	; 122
+ 554:	fe 4f       	sbci	r31, 0xFE	; 254
+ 556:	80 81       	ld	r24, Z
+ 558:	85 23       	and	r24, r21
+ 55a:	12 c0       	rjmp	.+36     	; 0x580 <__stack+0x281>
+            lwmode=lactbit;
+            break;
+        case OWC_GET_VERSION:
+            RESET_LOW;
+ 55c:	52 98       	cbi	0x0a, 2	; 10
+            lbitp=(lbitp<<1);
+ 55e:	55 0f       	add	r21, r21
+            if (!lbitp) {
+ 560:	21 f4       	brne	.+8      	; 0x56a <__stack+0x26b>
+                lbytep++;
+ 562:	0f 5f       	subi	r16, 0xFF	; 255
+                lbitp=1;
+ 564:	51 e0       	ldi	r21, 0x01	; 1
+                if (lbytep>=2) {
+ 566:	02 30       	cpi	r16, 0x02	; 2
+ 568:	90 f4       	brcc	.+36     	; 0x58e <__stack+0x28f>
+                    lmode=OWM_SLEEP;
+                    break;
+                }
+            }
+            //lactbit=(lbitp&owid[lbytep])==lbitp;
+            lactbit=(lbitp& 0x89)==lbitp;
+ 56a:	85 2f       	mov	r24, r21
+ 56c:	89 78       	andi	r24, 0x89	; 137
+ 56e:	08 c0       	rjmp	.+16     	; 0x580 <__stack+0x281>
+            lwmode=lactbit;
+            break;
+        case OWC_GET_TYPE:
+            RESET_LOW;
+ 570:	52 98       	cbi	0x0a, 2	; 10
+            lbitp=(lbitp<<1);
+ 572:	55 0f       	add	r21, r21
+            if (!lbitp) {
+ 574:	19 f4       	brne	.+6      	; 0x57c <__stack+0x27d>
+                lbytep++;
+ 576:	0f 5f       	subi	r16, 0xFF	; 255
+                lbitp=1;
+ 578:	51 e0       	ldi	r21, 0x01	; 1
+                if (lbytep>=1) {
+ 57a:	49 f4       	brne	.+18     	; 0x58e <__stack+0x28f>
+                    lmode=OWM_SLEEP;
+                    break;
+                }
+            }
+            lactbit=(lbitp& 0x88)==lbitp;
+ 57c:	85 2f       	mov	r24, r21
+ 57e:	88 78       	andi	r24, 0x88	; 136
+ 580:	31 e0       	ldi	r19, 0x01	; 1
+ 582:	85 13       	cpse	r24, r21
+ 584:	30 e0       	ldi	r19, 0x00	; 0
+            lwmode=lactbit;
+ 586:	43 2f       	mov	r20, r19
+            break;
+ 588:	09 c0       	rjmp	.+18     	; 0x59c <__stack+0x29d>
+            lactbit=(lbitp&owid[lbytep])==lbitp;
+            lwmode=lactbit;
+            break;
+#endif
+        }
+        if (lmode==OWM_SLEEP) {DIS_TIMER;}
+ 58a:	21 11       	cpse	r18, r1
+ 58c:	07 c0       	rjmp	.+14     	; 0x59c <__stack+0x29d>
+ 58e:	80 91 6e 00 	lds	r24, 0x006E
+ 592:	8e 7f       	andi	r24, 0xFE	; 254
+ 594:	80 93 6e 00 	sts	0x006E, r24
+ 598:	20 e0       	ldi	r18, 0x00	; 0
+ 59a:	02 c0       	rjmp	.+4      	; 0x5a0 <__stack+0x2a1>
+        if (lmode!=OWM_PRESENCE)  {
+ 59c:	22 30       	cpi	r18, 0x02	; 2
+ 59e:	21 f0       	breq	.+8      	; 0x5a8 <__stack+0x2a9>
+            TCNT_REG=~(OWT_MIN_RESET-OWT_READLINE);  //OWT_READLINE around OWT_LOWTIME
+ 5a0:	8f ec       	ldi	r24, 0xCF	; 207
+ 5a2:	86 bd       	out	0x26, r24	; 38
+            EN_OWINT;
+ 5a4:	e8 9a       	sbi	0x1d, 0	; 29
+ 5a6:	e0 9a       	sbi	0x1c, 0	; 28
+        }
+        mode=lmode;
+ 5a8:	20 93 70 01 	sts	0x0170, r18
+        wmode=lwmode;
+ 5ac:	40 93 66 01 	sts	0x0166, r20
+        bytep=lbytep;
+ 5b0:	00 93 85 01 	sts	0x0185, r16
+        bitp=lbitp;
+ 5b4:	50 93 6e 01 	sts	0x016E, r21
+        srcount=lsrcount;
+ 5b8:	10 93 6f 01 	sts	0x016F, r17
+        actbit=lactbit;
+ 5bc:	30 93 67 01 	sts	0x0167, r19
+        scrc=lscrc;
+ 5c0:	d0 92 95 01 	sts	0x0195, r13
+ 5c4:	c0 92 94 01 	sts	0x0194, r12
+ 5c8:	0a c0       	rjmp	.+20     	; 0x5de <__stack+0x2df>
+              lscrc >>=1;
+            p=lactbit;
+            lbitp=(lbitp<<1);
+            if (!lbitp) {
+                lbytep++;
+                lbitp=1;
+ 5ca:	03 e0       	ldi	r16, 0x03	; 3
+ 5cc:	bf cf       	rjmp	.-130    	; 0x54c <__stack+0x24d>
+            if (p) {  //Set bit if line high
+                cbuf|=lbitp;
+            }
+            lbitp=(lbitp<<1);
+            if (!lbitp) { //8-Bits read - weird syntax?
+                lbitp=1;
+ 5ce:	51 e0       	ldi	r21, 0x01	; 1
+                        lbytep=0;
+                        break;
+#endif
+                    case 0x11: //E1 CUSTOM get version
+                        lmode=OWC_GET_VERSION;
+                        lbytep=0;
+ 5d0:	00 e0       	ldi	r16, 0x00	; 0
+                        lmode=OWM_READ_ROM;
+                        lbytep=0;
+                        break;
+#endif
+                    case 0x11: //E1 CUSTOM get version
+                        lmode=OWC_GET_VERSION;
+ 5d2:	21 e1       	ldi	r18, 0x11	; 17
+ 5d4:	e5 cf       	rjmp	.-54     	; 0x5a0 <__stack+0x2a1>
+            /* FIXME: owid from eeprom - takes 4 cyc = 500ns @ 8 */
+            if (p==((owid[lbytep]&lbitp)==lbitp)) {  //Compare with ID Buffer
+                lbitp=(lbitp<<1);
+                if (!lbitp) {
+                    lbytep++;
+                    lbitp=1;
+ 5d6:	51 e0       	ldi	r21, 0x01	; 1
+ 5d8:	e1 cf       	rjmp	.-62     	; 0x59c <__stack+0x29d>
+              lscrc >>=1;
+            p=lactbit;
+            lbitp=(lbitp<<1);
+            if (!lbitp) {
+                lbytep++;
+                lbitp=1;
+ 5da:	51 e0       	ldi	r21, 0x01	; 1
+ 5dc:	d8 cf       	rjmp	.-80     	; 0x58e <__stack+0x28f>
+        bytep=lbytep;
+        bitp=lbitp;
+        srcount=lsrcount;
+        actbit=lactbit;
+        scrc=lscrc;
+}
+ 5de:	0f 90       	pop	r0
+ 5e0:	0f 90       	pop	r0
+ 5e2:	df 91       	pop	r29
+ 5e4:	cf 91       	pop	r28
+ 5e6:	ff 91       	pop	r31
+ 5e8:	ef 91       	pop	r30
+ 5ea:	bf 91       	pop	r27
+ 5ec:	af 91       	pop	r26
+ 5ee:	9f 91       	pop	r25
+ 5f0:	8f 91       	pop	r24
+ 5f2:	7f 91       	pop	r23
+ 5f4:	6f 91       	pop	r22
+ 5f6:	5f 91       	pop	r21
+ 5f8:	4f 91       	pop	r20
+ 5fa:	3f 91       	pop	r19
+ 5fc:	2f 91       	pop	r18
+ 5fe:	1f 91       	pop	r17
+ 600:	0f 91       	pop	r16
+ 602:	ff 90       	pop	r15
+ 604:	df 90       	pop	r13
+ 606:	cf 90       	pop	r12
+ 608:	0f 90       	pop	r0
+ 60a:	0f be       	out	0x3f, r0	; 63
+ 60c:	0f 90       	pop	r0
+ 60e:	1f 90       	pop	r1
+ 610:	18 95       	reti
+
+00000612 <__vector_3>:
+
+
+
+PC_INT_ISR  //for counting  defined for specific device
+ 612:	1f 92       	push	r1
+ 614:	0f 92       	push	r0
+ 616:	0f b6       	in	r0, 0x3f	; 63
+ 618:	0f 92       	push	r0
+ 61a:	11 24       	eor	r1, r1
+ 61c:	8f 93       	push	r24
+ 61e:	9f 93       	push	r25
+ 620:	af 93       	push	r26
+ 622:	bf 93       	push	r27
+ 624:	1b 99       	sbic	0x03, 3	; 3
+ 626:	17 c0       	rjmp	.+46     	; 0x656 <__vector_3+0x44>
+ 628:	80 91 6c 01 	lds	r24, 0x016C
+ 62c:	83 ff       	sbrs	r24, 3
+ 62e:	13 c0       	rjmp	.+38     	; 0x656 <__vector_3+0x44>
+ 630:	80 91 81 01 	lds	r24, 0x0181
+ 634:	90 91 82 01 	lds	r25, 0x0182
+ 638:	a0 91 83 01 	lds	r26, 0x0183
+ 63c:	b0 91 84 01 	lds	r27, 0x0184
+ 640:	01 96       	adiw	r24, 0x01	; 1
+ 642:	a1 1d       	adc	r26, r1
+ 644:	b1 1d       	adc	r27, r1
+ 646:	80 93 81 01 	sts	0x0181, r24
+ 64a:	90 93 82 01 	sts	0x0182, r25
+ 64e:	a0 93 83 01 	sts	0x0183, r26
+ 652:	b0 93 84 01 	sts	0x0184, r27
+ 656:	1c 99       	sbic	0x03, 4	; 3
+ 658:	17 c0       	rjmp	.+46     	; 0x688 <__vector_3+0x76>
+ 65a:	80 91 6c 01 	lds	r24, 0x016C
+ 65e:	84 ff       	sbrs	r24, 4
+ 660:	13 c0       	rjmp	.+38     	; 0x688 <__vector_3+0x76>
+ 662:	80 91 68 01 	lds	r24, 0x0168
+ 666:	90 91 69 01 	lds	r25, 0x0169
+ 66a:	a0 91 6a 01 	lds	r26, 0x016A
+ 66e:	b0 91 6b 01 	lds	r27, 0x016B
+ 672:	01 96       	adiw	r24, 0x01	; 1
+ 674:	a1 1d       	adc	r26, r1
+ 676:	b1 1d       	adc	r27, r1
+ 678:	80 93 68 01 	sts	0x0168, r24
+ 67c:	90 93 69 01 	sts	0x0169, r25
+ 680:	a0 93 6a 01 	sts	0x016A, r26
+ 684:	b0 93 6b 01 	sts	0x016B, r27
+ 688:	83 b1       	in	r24, 0x03	; 3
+ 68a:	80 93 6c 01 	sts	0x016C, r24
+ 68e:	bf 91       	pop	r27
+ 690:	af 91       	pop	r26
+ 692:	9f 91       	pop	r25
+ 694:	8f 91       	pop	r24
+ 696:	0f 90       	pop	r0
+ 698:	0f be       	out	0x3f, r0	; 63
+ 69a:	0f 90       	pop	r0
+ 69c:	1f 90       	pop	r1
+ 69e:	18 95       	reti
+
+000006a0 <init_eeprom>:
+
+void init_eeprom(void) {
+ 6a0:	0f 93       	push	r16
+ 6a2:	1f 93       	push	r17
+ 6a4:	cf 93       	push	r28
+ 6a6:	df 93       	push	r29
+    /* check magic, read slave address and counter values, resetcount, init-name, */
+    if (eeprom_read_word(EE_MAGIC_OFFSET) == EE_MAGIC_NUMBER) {
+ 6a8:	80 e0       	ldi	r24, 0x00	; 0
+ 6aa:	90 e0       	ldi	r25, 0x00	; 0
+ 6ac:	01 d2       	rcall	.+1026   	; 0xab0 <__eerd_word_m48>
+ 6ae:	82 3e       	cpi	r24, 0xE2	; 226
+ 6b0:	91 4e       	sbci	r25, 0xE1	; 225
+ 6b2:	09 f0       	breq	.+2      	; 0x6b6 <init_eeprom+0x16>
+ 6b4:	43 c0       	rjmp	.+134    	; 0x73c <init_eeprom+0x9c>
+ 6b6:	00 e0       	ldi	r16, 0x00	; 0
+ 6b8:	11 e0       	ldi	r17, 0x01	; 1
+ 6ba:	c2 e0       	ldi	r28, 0x02	; 2
+ 6bc:	d0 e0       	ldi	r29, 0x00	; 0
+      //EEPROM valid -> read counters & settings
+      for (uint16_t i=EE_OWID_OFFSET;i<EE_OWID_OFFSET+8;i++)
+        owid[i-EE_OWID_OFFSET] = eeprom_read_byte((uint8_t *) i);
+ 6be:	ce 01       	movw	r24, r28
+ 6c0:	eb d1       	rcall	.+982    	; 0xa98 <__eerd_byte_m48>
+ 6c2:	f8 01       	movw	r30, r16
+ 6c4:	81 93       	st	Z+, r24
+ 6c6:	8f 01       	movw	r16, r30
+
+void init_eeprom(void) {
+    /* check magic, read slave address and counter values, resetcount, init-name, */
+    if (eeprom_read_word(EE_MAGIC_OFFSET) == EE_MAGIC_NUMBER) {
+      //EEPROM valid -> read counters & settings
+      for (uint16_t i=EE_OWID_OFFSET;i<EE_OWID_OFFSET+8;i++)
+ 6c8:	21 96       	adiw	r28, 0x01	; 1
+ 6ca:	ca 30       	cpi	r28, 0x0A	; 10
+ 6cc:	d1 05       	cpc	r29, r1
+ 6ce:	b9 f7       	brne	.-18     	; 0x6be <init_eeprom+0x1e>
+        owid[i-EE_OWID_OFFSET] = eeprom_read_byte((uint8_t *) i);
+      eeprom_update_word(EE_RCNT_OFFSET, eeprom_read_word(EE_RCNT_OFFSET) + 1);
+ 6d0:	8a e0       	ldi	r24, 0x0A	; 10
+ 6d2:	90 e0       	ldi	r25, 0x00	; 0
+ 6d4:	ed d1       	rcall	.+986    	; 0xab0 <__eerd_word_m48>
+ 6d6:	bc 01       	movw	r22, r24
+ 6d8:	6f 5f       	subi	r22, 0xFF	; 255
+ 6da:	7f 4f       	sbci	r23, 0xFF	; 255
+ 6dc:	8a e0       	ldi	r24, 0x0A	; 10
+ 6de:	90 e0       	ldi	r25, 0x00	; 0
+ 6e0:	eb d1       	rcall	.+982    	; 0xab8 <__eeupd_word_m48>
+      Counter1 = eeprom_read_dword(EE_COUNTER_OFFSET);
+ 6e2:	8c e0       	ldi	r24, 0x0C	; 12
+ 6e4:	90 e0       	ldi	r25, 0x00	; 0
+ 6e6:	e0 d1       	rcall	.+960    	; 0xaa8 <__eerd_dword_m48>
+ 6e8:	60 93 7d 01 	sts	0x017D, r22
+ 6ec:	70 93 7e 01 	sts	0x017E, r23
+ 6f0:	80 93 7f 01 	sts	0x017F, r24
+ 6f4:	90 93 80 01 	sts	0x0180, r25
+      Counter2 = eeprom_read_dword(EE_COUNTER_OFFSET+4);
+ 6f8:	80 e1       	ldi	r24, 0x10	; 16
+ 6fa:	90 e0       	ldi	r25, 0x00	; 0
+ 6fc:	d5 d1       	rcall	.+938    	; 0xaa8 <__eerd_dword_m48>
+ 6fe:	60 93 96 01 	sts	0x0196, r22
+ 702:	70 93 97 01 	sts	0x0197, r23
+ 706:	80 93 98 01 	sts	0x0198, r24
+ 70a:	90 93 99 01 	sts	0x0199, r25
+      Counter3 = eeprom_read_dword(EE_COUNTER_OFFSET+8);
+ 70e:	84 e1       	ldi	r24, 0x14	; 20
+ 710:	90 e0       	ldi	r25, 0x00	; 0
+ 712:	ca d1       	rcall	.+916    	; 0xaa8 <__eerd_dword_m48>
+ 714:	60 93 81 01 	sts	0x0181, r22
+ 718:	70 93 82 01 	sts	0x0182, r23
+ 71c:	80 93 83 01 	sts	0x0183, r24
+ 720:	90 93 84 01 	sts	0x0184, r25
+      Counter4 = eeprom_read_dword(EE_COUNTER_OFFSET+16);
+ 724:	8c e1       	ldi	r24, 0x1C	; 28
+ 726:	90 e0       	ldi	r25, 0x00	; 0
+ 728:	bf d1       	rcall	.+894    	; 0xaa8 <__eerd_dword_m48>
+ 72a:	60 93 68 01 	sts	0x0168, r22
+ 72e:	70 93 69 01 	sts	0x0169, r23
+ 732:	80 93 6a 01 	sts	0x016A, r24
+ 736:	90 93 6b 01 	sts	0x016B, r25
+ 73a:	3c c0       	rjmp	.+120    	; 0x7b4 <init_eeprom+0x114>
+    } else {
+      //Init values
+      /* should cli(); here no sei(); yet enabled in main.. */
+      eeprom_write_word(EE_MAGIC_OFFSET, EE_MAGIC_NUMBER);
+ 73c:	62 ee       	ldi	r22, 0xE2	; 226
+ 73e:	71 ee       	ldi	r23, 0xE1	; 225
+ 740:	80 e0       	ldi	r24, 0x00	; 0
+ 742:	90 e0       	ldi	r25, 0x00	; 0
+ 744:	d0 d1       	rcall	.+928    	; 0xae6 <__eewr_word_m48>
+ 746:	00 e0       	ldi	r16, 0x00	; 0
+ 748:	11 e0       	ldi	r17, 0x01	; 1
+      for (uint16_t i=EE_OWID_OFFSET;i<EE_OWID_OFFSET+8;i++)
+ 74a:	c2 e0       	ldi	r28, 0x02	; 2
+ 74c:	d0 e0       	ldi	r29, 0x00	; 0
+        eeprom_write_byte((uint8_t *) i,owid[i-EE_OWID_OFFSET]);
+ 74e:	f8 01       	movw	r30, r16
+ 750:	61 91       	ld	r22, Z+
+ 752:	8f 01       	movw	r16, r30
+ 754:	ce 01       	movw	r24, r28
+ 756:	b4 d1       	rcall	.+872    	; 0xac0 <__eewr_byte_m48>
+      Counter4 = eeprom_read_dword(EE_COUNTER_OFFSET+16);
+    } else {
+      //Init values
+      /* should cli(); here no sei(); yet enabled in main.. */
+      eeprom_write_word(EE_MAGIC_OFFSET, EE_MAGIC_NUMBER);
+      for (uint16_t i=EE_OWID_OFFSET;i<EE_OWID_OFFSET+8;i++)
+ 758:	21 96       	adiw	r28, 0x01	; 1
+ 75a:	ca 30       	cpi	r28, 0x0A	; 10
+ 75c:	d1 05       	cpc	r29, r1
+ 75e:	b9 f7       	brne	.-18     	; 0x74e <init_eeprom+0xae>
+        eeprom_write_byte((uint8_t *) i,owid[i-EE_OWID_OFFSET]);
+      eeprom_write_word(EE_RCNT_OFFSET, 1);
+ 760:	61 e0       	ldi	r22, 0x01	; 1
+ 762:	70 e0       	ldi	r23, 0x00	; 0
+ 764:	8a e0       	ldi	r24, 0x0A	; 10
+ 766:	90 e0       	ldi	r25, 0x00	; 0
+ 768:	be d1       	rcall	.+892    	; 0xae6 <__eewr_word_m48>
+      eeprom_write_dword(EE_COUNTER_OFFSET,0);
+ 76a:	40 e0       	ldi	r20, 0x00	; 0
+ 76c:	50 e0       	ldi	r21, 0x00	; 0
+ 76e:	ba 01       	movw	r22, r20
+ 770:	8c e0       	ldi	r24, 0x0C	; 12
+ 772:	90 e0       	ldi	r25, 0x00	; 0
+ 774:	b3 d1       	rcall	.+870    	; 0xadc <__eewr_dword_m48>
+      eeprom_write_dword(EE_COUNTER_OFFSET+4,0);
+ 776:	40 e0       	ldi	r20, 0x00	; 0
+ 778:	50 e0       	ldi	r21, 0x00	; 0
+ 77a:	ba 01       	movw	r22, r20
+ 77c:	80 e1       	ldi	r24, 0x10	; 16
+ 77e:	90 e0       	ldi	r25, 0x00	; 0
+ 780:	ad d1       	rcall	.+858    	; 0xadc <__eewr_dword_m48>
+      eeprom_write_dword(EE_COUNTER_OFFSET+8,0);
+ 782:	40 e0       	ldi	r20, 0x00	; 0
+ 784:	50 e0       	ldi	r21, 0x00	; 0
+ 786:	ba 01       	movw	r22, r20
+ 788:	84 e1       	ldi	r24, 0x14	; 20
+ 78a:	90 e0       	ldi	r25, 0x00	; 0
+ 78c:	a7 d1       	rcall	.+846    	; 0xadc <__eewr_dword_m48>
+      eeprom_write_dword(EE_COUNTER_OFFSET+12,0);
+ 78e:	40 e0       	ldi	r20, 0x00	; 0
+ 790:	50 e0       	ldi	r21, 0x00	; 0
+ 792:	ba 01       	movw	r22, r20
+ 794:	88 e1       	ldi	r24, 0x18	; 24
+ 796:	90 e0       	ldi	r25, 0x00	; 0
+ 798:	a1 d1       	rcall	.+834    	; 0xadc <__eewr_dword_m48>
+      eeprom_write_byte((uint8_t *) EE_TYPE_OFFSET, EE_DEFTYPE);
+ 79a:	61 e0       	ldi	r22, 0x01	; 1
+ 79c:	8c e2       	ldi	r24, 0x2C	; 44
+ 79e:	90 e0       	ldi	r25, 0x00	; 0
+ 7a0:	8f d1       	rcall	.+798    	; 0xac0 <__eewr_byte_m48>
+      eeprom_write_word(EE_VERSION_OFFSET, 0x0102);
+ 7a2:	62 e0       	ldi	r22, 0x02	; 2
+ 7a4:	71 e0       	ldi	r23, 0x01	; 1
+ 7a6:	8d e2       	ldi	r24, 0x2D	; 45
+ 7a8:	90 e0       	ldi	r25, 0x00	; 0
+    }
+}
+ 7aa:	df 91       	pop	r29
+ 7ac:	cf 91       	pop	r28
+ 7ae:	1f 91       	pop	r17
+ 7b0:	0f 91       	pop	r16
+      eeprom_write_dword(EE_COUNTER_OFFSET,0);
+      eeprom_write_dword(EE_COUNTER_OFFSET+4,0);
+      eeprom_write_dword(EE_COUNTER_OFFSET+8,0);
+      eeprom_write_dword(EE_COUNTER_OFFSET+12,0);
+      eeprom_write_byte((uint8_t *) EE_TYPE_OFFSET, EE_DEFTYPE);
+      eeprom_write_word(EE_VERSION_OFFSET, 0x0102);
+ 7b2:	99 c1       	rjmp	.+818    	; 0xae6 <__eewr_word_m48>
+    }
+}
+ 7b4:	df 91       	pop	r29
+ 7b6:	cf 91       	pop	r28
+ 7b8:	1f 91       	pop	r17
+ 7ba:	0f 91       	pop	r16
+ 7bc:	08 95       	ret
+
+000007be <__vector_18>:
+ISR (UART0_RECEIVE_INTERRUPT)
+/*************************************************************************
+Function: UART Receive Complete interrupt
+Purpose:  called when the UART has received a character
+**************************************************************************/
+{
+ 7be:	1f 92       	push	r1
+ 7c0:	0f 92       	push	r0
+ 7c2:	0f b6       	in	r0, 0x3f	; 63
+ 7c4:	0f 92       	push	r0
+ 7c6:	11 24       	eor	r1, r1
+ 7c8:	2f 93       	push	r18
+ 7ca:	8f 93       	push	r24
+ 7cc:	9f 93       	push	r25
+ 7ce:	ef 93       	push	r30
+ 7d0:	ff 93       	push	r31
+    unsigned char usr;
+    unsigned char lastRxError;
+
+
+    /* read UART status register and UART data register */
+    usr  = UART0_STATUS;
+ 7d2:	80 91 c0 00 	lds	r24, 0x00C0
+    data = UART0_DATA;
+ 7d6:	90 91 c6 00 	lds	r25, 0x00C6
+#if defined( AT90_UART )
+    lastRxError = (usr & (_BV(FE)|_BV(DOR)) );
+#elif defined( ATMEGA_USART )
+    lastRxError = (usr & (_BV(FE)|_BV(DOR)) );
+#elif defined( ATMEGA_USART0 )
+    lastRxError = (usr & (_BV(FE0)|_BV(DOR0)) );
+ 7da:	88 71       	andi	r24, 0x18	; 24
+#elif defined ( ATMEGA_UART )
+    lastRxError = (usr & (_BV(FE)|_BV(DOR)) );
+#endif
+
+    /* calculate buffer index */
+    tmphead = ( UART_RxHead + 1) & UART_RX_BUFFER_MASK;
+ 7dc:	e0 91 23 01 	lds	r30, 0x0123
+ 7e0:	ef 5f       	subi	r30, 0xFF	; 255
+ 7e2:	ef 71       	andi	r30, 0x1F	; 31
+
+    if ( tmphead == UART_RxTail ) {
+ 7e4:	20 91 22 01 	lds	r18, 0x0122
+ 7e8:	e2 17       	cp	r30, r18
+ 7ea:	39 f0       	breq	.+14     	; 0x7fa <__vector_18+0x3c>
+        /* error: receive buffer overflow */
+        lastRxError = UART_BUFFER_OVERFLOW >> 8;
+    }else{
+        /* store new index */
+        UART_RxHead = tmphead;
+ 7ec:	e0 93 23 01 	sts	0x0123, r30
+        /* store received data in buffer */
+        UART_RxBuf[tmphead] = data;
+ 7f0:	f0 e0       	ldi	r31, 0x00	; 0
+ 7f2:	ea 5d       	subi	r30, 0xDA	; 218
+ 7f4:	fe 4f       	sbci	r31, 0xFE	; 254
+ 7f6:	90 83       	st	Z, r25
+ 7f8:	01 c0       	rjmp	.+2      	; 0x7fc <__vector_18+0x3e>
+    /* calculate buffer index */
+    tmphead = ( UART_RxHead + 1) & UART_RX_BUFFER_MASK;
+
+    if ( tmphead == UART_RxTail ) {
+        /* error: receive buffer overflow */
+        lastRxError = UART_BUFFER_OVERFLOW >> 8;
+ 7fa:	82 e0       	ldi	r24, 0x02	; 2
+        /* store new index */
+        UART_RxHead = tmphead;
+        /* store received data in buffer */
+        UART_RxBuf[tmphead] = data;
+    }
+    UART_LastRxError |= lastRxError;
+ 7fc:	90 91 21 01 	lds	r25, 0x0121
+ 800:	98 2b       	or	r25, r24
+ 802:	90 93 21 01 	sts	0x0121, r25
+}
+ 806:	ff 91       	pop	r31
+ 808:	ef 91       	pop	r30
+ 80a:	9f 91       	pop	r25
+ 80c:	8f 91       	pop	r24
+ 80e:	2f 91       	pop	r18
+ 810:	0f 90       	pop	r0
+ 812:	0f be       	out	0x3f, r0	; 63
+ 814:	0f 90       	pop	r0
+ 816:	1f 90       	pop	r1
+ 818:	18 95       	reti
+
+0000081a <__vector_19>:
+ISR (UART0_TRANSMIT_INTERRUPT)
+/*************************************************************************
+Function: UART Data Register Empty interrupt
+Purpose:  called when the UART is ready to transmit the next byte
+**************************************************************************/
+{
+ 81a:	1f 92       	push	r1
+ 81c:	0f 92       	push	r0
+ 81e:	0f b6       	in	r0, 0x3f	; 63
+ 820:	0f 92       	push	r0
+ 822:	11 24       	eor	r1, r1
+ 824:	8f 93       	push	r24
+ 826:	9f 93       	push	r25
+ 828:	ef 93       	push	r30
+ 82a:	ff 93       	push	r31
+    unsigned char tmptail;
+
+
+    if ( UART_TxHead != UART_TxTail) {
+ 82c:	90 91 25 01 	lds	r25, 0x0125
+ 830:	80 91 24 01 	lds	r24, 0x0124
+ 834:	98 17       	cp	r25, r24
+ 836:	69 f0       	breq	.+26     	; 0x852 <__vector_19+0x38>
+        /* calculate and store new buffer index */
+        tmptail = (UART_TxTail + 1) & UART_TX_BUFFER_MASK;
+ 838:	e0 91 24 01 	lds	r30, 0x0124
+ 83c:	ef 5f       	subi	r30, 0xFF	; 255
+ 83e:	ef 71       	andi	r30, 0x1F	; 31
+        UART_TxTail = tmptail;
+ 840:	e0 93 24 01 	sts	0x0124, r30
+        /* get one byte from buffer and write it to UART */
+        UART0_DATA = UART_TxBuf[tmptail];  /* start transmission */
+ 844:	f0 e0       	ldi	r31, 0x00	; 0
+ 846:	ea 5b       	subi	r30, 0xBA	; 186
+ 848:	fe 4f       	sbci	r31, 0xFE	; 254
+ 84a:	80 81       	ld	r24, Z
+ 84c:	80 93 c6 00 	sts	0x00C6, r24
+ 850:	05 c0       	rjmp	.+10     	; 0x85c <__vector_19+0x42>
+    }else{
+        /* tx buffer empty, disable UDRE interrupt */
+        UART0_CONTROL &= ~_BV(UART0_UDRIE);
+ 852:	80 91 c1 00 	lds	r24, 0x00C1
+ 856:	8f 7d       	andi	r24, 0xDF	; 223
+ 858:	80 93 c1 00 	sts	0x00C1, r24
+    }
+}
+ 85c:	ff 91       	pop	r31
+ 85e:	ef 91       	pop	r30
+ 860:	9f 91       	pop	r25
+ 862:	8f 91       	pop	r24
+ 864:	0f 90       	pop	r0
+ 866:	0f be       	out	0x3f, r0	; 63
+ 868:	0f 90       	pop	r0
+ 86a:	1f 90       	pop	r1
+ 86c:	18 95       	reti
+
+0000086e <uart_init>:
+Input:    baudrate using macro UART_BAUD_SELECT()
+Returns:  none
+**************************************************************************/
+void uart_init(unsigned int baudrate)
+{
+    UART_TxHead = 0;
+ 86e:	10 92 25 01 	sts	0x0125, r1
+    UART_TxTail = 0;
+ 872:	10 92 24 01 	sts	0x0124, r1
+    UART_RxHead = 0;
+ 876:	10 92 23 01 	sts	0x0123, r1
+    UART_RxTail = 0;
+ 87a:	10 92 22 01 	sts	0x0122, r1
+    UCSRC = (3<<UCSZ0);
+    #endif
+
+#elif defined (ATMEGA_USART0 )
+    /* Set baud rate */
+    if ( baudrate & 0x8000 )
+ 87e:	97 ff       	sbrs	r25, 7
+ 880:	04 c0       	rjmp	.+8      	; 0x88a <uart_init+0x1c>
+    {
+   		UART0_STATUS = (1<<U2X0);  //Enable 2x speed
+ 882:	22 e0       	ldi	r18, 0x02	; 2
+ 884:	20 93 c0 00 	sts	0x00C0, r18
+   		baudrate &= ~0x8000;
+ 888:	9f 77       	andi	r25, 0x7F	; 127
+   	}
+    UBRR0H = (unsigned char)(baudrate>>8);
+ 88a:	90 93 c5 00 	sts	0x00C5, r25
+    UBRR0L = (unsigned char) baudrate;
+ 88e:	80 93 c4 00 	sts	0x00C4, r24
+
+    /* Enable USART receiver and transmitter and receive complete interrupt */
+    UART0_CONTROL = _BV(RXCIE0)|(1<<RXEN0)|(1<<TXEN0);
+ 892:	88 e9       	ldi	r24, 0x98	; 152
+ 894:	80 93 c1 00 	sts	0x00C1, r24
+
+    /* Set frame format: asynchronous, 8data, no parity, 1stop bit */
+    #ifdef URSEL0
+    UCSR0C = (1<<URSEL0)|(3<<UCSZ00);
+    #else
+    UCSR0C = (3<<UCSZ00);
+ 898:	86 e0       	ldi	r24, 0x06	; 6
+ 89a:	80 93 c2 00 	sts	0x00C2, r24
+ 89e:	08 95       	ret
+
+000008a0 <uart_getc>:
+{
+    unsigned char tmptail;
+    unsigned char data;
+
+
+    if ( UART_RxHead == UART_RxTail ) {
+ 8a0:	90 91 23 01 	lds	r25, 0x0123
+ 8a4:	80 91 22 01 	lds	r24, 0x0122
+ 8a8:	98 17       	cp	r25, r24
+ 8aa:	81 f0       	breq	.+32     	; 0x8cc <uart_getc+0x2c>
+        return UART_NO_DATA;   /* no data available */
+    }
+
+    /* calculate /store buffer index */
+    tmptail = (UART_RxTail + 1) & UART_RX_BUFFER_MASK;
+ 8ac:	e0 91 22 01 	lds	r30, 0x0122
+ 8b0:	ef 5f       	subi	r30, 0xFF	; 255
+ 8b2:	ef 71       	andi	r30, 0x1F	; 31
+    UART_RxTail = tmptail;
+ 8b4:	e0 93 22 01 	sts	0x0122, r30
+
+    /* get data from receive buffer */
+    data = UART_RxBuf[tmptail];
+ 8b8:	f0 e0       	ldi	r31, 0x00	; 0
+ 8ba:	ea 5d       	subi	r30, 0xDA	; 218
+ 8bc:	fe 4f       	sbci	r31, 0xFE	; 254
+ 8be:	20 81       	ld	r18, Z
+
+    data = (UART_LastRxError << 8) + data;
+ 8c0:	80 91 21 01 	lds	r24, 0x0121
+    UART_LastRxError = 0;
+ 8c4:	10 92 21 01 	sts	0x0121, r1
+    return data;
+ 8c8:	30 e0       	ldi	r19, 0x00	; 0
+ 8ca:	02 c0       	rjmp	.+4      	; 0x8d0 <uart_getc+0x30>
+    unsigned char tmptail;
+    unsigned char data;
+
+
+    if ( UART_RxHead == UART_RxTail ) {
+        return UART_NO_DATA;   /* no data available */
+ 8cc:	20 e0       	ldi	r18, 0x00	; 0
+ 8ce:	31 e0       	ldi	r19, 0x01	; 1
+
+    data = (UART_LastRxError << 8) + data;
+    UART_LastRxError = 0;
+    return data;
+
+}/* uart_getc */
+ 8d0:	c9 01       	movw	r24, r18
+ 8d2:	08 95       	ret
+
+000008d4 <uart_putc>:
+void uart_putc(unsigned char data)
+{
+    unsigned char tmphead;
+
+
+    tmphead  = (UART_TxHead + 1) & UART_TX_BUFFER_MASK;
+ 8d4:	90 91 25 01 	lds	r25, 0x0125
+ 8d8:	9f 5f       	subi	r25, 0xFF	; 255
+ 8da:	9f 71       	andi	r25, 0x1F	; 31
+
+    while ( tmphead == UART_TxTail ){
+ 8dc:	20 91 24 01 	lds	r18, 0x0124
+ 8e0:	92 17       	cp	r25, r18
+ 8e2:	e1 f3       	breq	.-8      	; 0x8dc <uart_putc+0x8>
+        ;/* wait for free space in buffer */
+    }
+
+    UART_TxBuf[tmphead] = data;
+ 8e4:	e9 2f       	mov	r30, r25
+ 8e6:	f0 e0       	ldi	r31, 0x00	; 0
+ 8e8:	ea 5b       	subi	r30, 0xBA	; 186
+ 8ea:	fe 4f       	sbci	r31, 0xFE	; 254
+ 8ec:	80 83       	st	Z, r24
+    UART_TxHead = tmphead;
+ 8ee:	90 93 25 01 	sts	0x0125, r25
+
+    /* enable UDRE interrupt */
+    UART0_CONTROL    |= _BV(UART0_UDRIE);
+ 8f2:	80 91 c1 00 	lds	r24, 0x00C1
+ 8f6:	80 62       	ori	r24, 0x20	; 32
+ 8f8:	80 93 c1 00 	sts	0x00C1, r24
+ 8fc:	08 95       	ret
+
+000008fe <uart_puts>:
+Purpose:  transmit string to UART
+Input:    string to be transmitted
+Returns:  none
+**************************************************************************/
+void uart_puts(const char *s )
+{
+ 8fe:	cf 93       	push	r28
+ 900:	df 93       	push	r29
+ 902:	ec 01       	movw	r28, r24
+    while (*s)
+ 904:	01 c0       	rjmp	.+2      	; 0x908 <uart_puts+0xa>
+      uart_putc(*s++);
+ 906:	e6 df       	rcall	.-52     	; 0x8d4 <uart_putc>
+Input:    string to be transmitted
+Returns:  none
+**************************************************************************/
+void uart_puts(const char *s )
+{
+    while (*s)
+ 908:	89 91       	ld	r24, Y+
+ 90a:	81 11       	cpse	r24, r1
+ 90c:	fc cf       	rjmp	.-8      	; 0x906 <uart_puts+0x8>
+      uart_putc(*s++);
+
+}/* uart_puts */
+ 90e:	df 91       	pop	r29
+ 910:	cf 91       	pop	r28
+ 912:	08 95       	ret
+
+00000914 <uart_puts_p>:
+Purpose:  transmit string from program memory to UART
+Input:    program memory string to be transmitted
+Returns:  none
+**************************************************************************/
+void uart_puts_p(const char *progmem_s )
+{
+ 914:	cf 93       	push	r28
+ 916:	df 93       	push	r29
+ 918:	ec 01       	movw	r28, r24
+    register char c;
+
+    while ( (c = pgm_read_byte(progmem_s++)) )
+ 91a:	01 c0       	rjmp	.+2      	; 0x91e <uart_puts_p+0xa>
+      uart_putc(c);
+ 91c:	db df       	rcall	.-74     	; 0x8d4 <uart_putc>
+**************************************************************************/
+void uart_puts_p(const char *progmem_s )
+{
+    register char c;
+
+    while ( (c = pgm_read_byte(progmem_s++)) )
+ 91e:	fe 01       	movw	r30, r28
+ 920:	21 96       	adiw	r28, 0x01	; 1
+ 922:	84 91       	lpm	r24, Z+
+ 924:	81 11       	cpse	r24, r1
+ 926:	fa cf       	rjmp	.-12     	; 0x91c <uart_puts_p+0x8>
+      uart_putc(c);
+
+}/* uart_puts_p */
+ 928:	df 91       	pop	r29
+ 92a:	cf 91       	pop	r28
+ 92c:	08 95       	ret
+
+0000092e <main>:
+
+int main(void) {
+    mode=OWM_SLEEP;
+ 92e:	10 92 70 01 	sts	0x0170, r1
+    wmode=OWW_NO_WRITE;
+ 932:	82 e0       	ldi	r24, 0x02	; 2
+ 934:	80 93 66 01 	sts	0x0166, r24
+    OW_DDR&=~OW_PINN;
+ 938:	52 98       	cbi	0x0a, 2	; 10
+ 93a:	80 e0       	ldi	r24, 0x00	; 0
+ 93c:	90 e0       	ldi	r25, 0x00	; 0
+
+    for(uint8_t i=0;i<sizeof(counterpack);i++) counterpack.bytes[i]=0;
+ 93e:	fc 01       	movw	r30, r24
+ 940:	ea 57       	subi	r30, 0x7A	; 122
+ 942:	fe 4f       	sbci	r31, 0xFE	; 254
+ 944:	10 82       	st	Z, r1
+ 946:	01 96       	adiw	r24, 0x01	; 1
+ 948:	8d 30       	cpi	r24, 0x0D	; 13
+ 94a:	91 05       	cpc	r25, r1
+ 94c:	c1 f7       	brne	.-16     	; 0x93e <main+0x10>
+
+    SET_FALLING;
+ 94e:	80 91 69 00 	lds	r24, 0x0069
+ 952:	82 60       	ori	r24, 0x02	; 2
+ 954:	80 93 69 00 	sts	0x0069, r24
+ 958:	80 91 69 00 	lds	r24, 0x0069
+ 95c:	8e 7f       	andi	r24, 0xFE	; 254
+ 95e:	80 93 69 00 	sts	0x0069, r24
+
+    INIT_AVR
+ 962:	90 e8       	ldi	r25, 0x80	; 128
+ 964:	90 93 61 00 	sts	0x0061, r25
+ 968:	10 92 61 00 	sts	0x0061, r1
+ 96c:	10 92 6e 00 	sts	0x006E, r1
+ 970:	c1 e0       	ldi	r28, 0x01	; 1
+ 972:	cd bb       	out	0x1d, r28	; 29
+ 974:	83 e0       	ldi	r24, 0x03	; 3
+ 976:	85 bd       	out	0x25, r24	; 37
+ 978:	8a b1       	in	r24, 0x0a	; 10
+ 97a:	80 66       	ori	r24, 0x60	; 96
+ 97c:	8a b9       	out	0x0a, r24	; 10
+ 97e:	84 b5       	in	r24, 0x24	; 36
+ 980:	83 6a       	ori	r24, 0xA3	; 163
+ 982:	84 bd       	out	0x24, r24	; 36
+ 984:	97 bd       	out	0x27, r25	; 39
+ 986:	80 ec       	ldi	r24, 0xC0	; 192
+ 988:	88 bd       	out	0x28, r24	; 40
+ 98a:	84 b1       	in	r24, 0x04	; 4
+ 98c:	86 60       	ori	r24, 0x06	; 6
+ 98e:	84 b9       	out	0x04, r24	; 4
+ 990:	80 91 6f 00 	lds	r24, 0x006F
+ 994:	81 60       	ori	r24, 0x01	; 1
+ 996:	80 93 6f 00 	sts	0x006F, r24
+ 99a:	b0 9a       	sbi	0x16, 0	; 22
+ 99c:	80 91 80 00 	lds	r24, 0x0080
+ 9a0:	81 6a       	ori	r24, 0xA1	; 161
+ 9a2:	80 93 80 00 	sts	0x0080, r24
+ 9a6:	80 91 81 00 	lds	r24, 0x0081
+ 9aa:	8b 60       	ori	r24, 0x0B	; 11
+ 9ac:	80 93 81 00 	sts	0x0081, r24
+ 9b0:	80 e8       	ldi	r24, 0x80	; 128
+ 9b2:	90 e0       	ldi	r25, 0x00	; 0
+ 9b4:	90 93 89 00 	sts	0x0089, r25
+ 9b8:	80 93 88 00 	sts	0x0088, r24
+ 9bc:	80 ec       	ldi	r24, 0xC0	; 192
+ 9be:	90 e0       	ldi	r25, 0x00	; 0
+ 9c0:	90 93 8b 00 	sts	0x008B, r25
+ 9c4:	80 93 8a 00 	sts	0x008A, r24
+    PWRSAVE_AVR
+ 9c8:	85 ec       	ldi	r24, 0xC5	; 197
+ 9ca:	80 93 64 00 	sts	0x0064, r24
+ 9ce:	8f e3       	ldi	r24, 0x3F	; 63
+ 9d0:	80 93 7e 00 	sts	0x007E, r24
+    DEBUG_INIT
+ 9d4:	8c e0       	ldi	r24, 0x0C	; 12
+ 9d6:	90 e0       	ldi	r25, 0x00	; 0
+ 9d8:	4a df       	rcall	.-364    	; 0x86e <uart_init>
+    LSL("Startup")
+ 9da:	84 e8       	ldi	r24, 0x84	; 132
+ 9dc:	90 e0       	ldi	r25, 0x00	; 0
+ 9de:	9a df       	rcall	.-204    	; 0x914 <uart_puts_p>
+
+    init_eeprom();
+ 9e0:	5f de       	rcall	.-834    	; 0x6a0 <init_eeprom>
+
+    DIS_TIMER;
+ 9e2:	80 91 6e 00 	lds	r24, 0x006E
+ 9e6:	8e 7f       	andi	r24, 0xFE	; 254
+ 9e8:	80 93 6e 00 	sts	0x006E, r24
+    /* FIXME: read slave-id from eeprom here? */
+
+    INIT_COUNTER_PINS
+ 9ec:	c0 93 68 00 	sts	0x0068, r28
+ 9f0:	85 b1       	in	r24, 0x05	; 5
+ 9f2:	88 61       	ori	r24, 0x18	; 24
+ 9f4:	85 b9       	out	0x05, r24	; 5
+ 9f6:	80 91 6b 00 	lds	r24, 0x006B
+ 9fa:	88 61       	ori	r24, 0x18	; 24
+ 9fc:	80 93 6b 00 	sts	0x006B, r24
+ a00:	84 b1       	in	r24, 0x04	; 4
+ a02:	87 7e       	andi	r24, 0xE7	; 231
+ a04:	84 b9       	out	0x04, r24	; 4
+ a06:	83 b1       	in	r24, 0x03	; 3
+ a08:	80 93 6c 01 	sts	0x016C, r24
+
+    sleep_enable();
+ a0c:	83 b7       	in	r24, 0x33	; 51
+ a0e:	81 60       	ori	r24, 0x01	; 1
+ a10:	83 bf       	out	0x33, r24	; 51
+    sei();
+ a12:	78 94       	sei
+    set_sleep_mode(SLEEP_MODE_IDLE);
+ a14:	83 b7       	in	r24, 0x33	; 51
+ a16:	81 7f       	andi	r24, 0xF1	; 241
+ a18:	83 bf       	out	0x33, r24	; 51
+    //FIXME: somehow int0 doesn't wake up! maybe SET_FAILLING is missing or so.. PWR_SAVE should work
+    //or set/change sleep_mode in OWINT?
+    uint32_t tlast;
+    while(1){
+        /* FIXME: Idle / sleep here? */
+        sleep_cpu();
+ a1a:	88 95       	sleep
+	#else
+		//round up by default
+		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+	#endif
+
+	__builtin_avr_delay_cycles(__ticks_dc);
+ a1c:	2f ef       	ldi	r18, 0xFF	; 255
+ a1e:	89 e6       	ldi	r24, 0x69	; 105
+ a20:	98 e1       	ldi	r25, 0x18	; 24
+ a22:	21 50       	subi	r18, 0x01	; 1
+ a24:	80 40       	sbci	r24, 0x00	; 0
+ a26:	90 40       	sbci	r25, 0x00	; 0
+ a28:	e1 f7       	brne	.-8      	; 0xa22 <main+0xf4>
+ a2a:	00 c0       	rjmp	.+0      	; 0xa2c <main+0xfe>
+ a2c:	00 00       	nop
+        LSL("INT0: ") LV(EICRA&(1<<ISC01)) LL
+        LSL("Timer: ") LV((TIMSK0&(1<<TOIE0))) LL
+        */
+
+        DLY(1000)
+        LV(uptime)
+ a2e:	60 91 1d 01 	lds	r22, 0x011D
+ a32:	70 91 1e 01 	lds	r23, 0x011E
+ a36:	80 91 1f 01 	lds	r24, 0x011F
+ a3a:	90 91 20 01 	lds	r25, 0x0120
+ a3e:	2a e0       	ldi	r18, 0x0A	; 10
+ a40:	30 e0       	ldi	r19, 0x00	; 0
+ a42:	41 e7       	ldi	r20, 0x71	; 113
+ a44:	51 e0       	ldi	r21, 0x01	; 1
+ a46:	05 d0       	rcall	.+10     	; 0xa52 <ultoa>
+ a48:	5a df       	rcall	.-332    	; 0x8fe <uart_puts>
+        LSL("\r\n");
+ a4a:	8c e8       	ldi	r24, 0x8C	; 140
+ a4c:	90 e0       	ldi	r25, 0x00	; 0
+ a4e:	62 df       	rcall	.-316    	; 0x914 <uart_puts_p>
+ a50:	e4 cf       	rjmp	.-56     	; 0xa1a <main+0xec>
+
+00000a52 <ultoa>:
+ a52:	fa 01       	movw	r30, r20
+ a54:	cf 93       	push	r28
+ a56:	ff 93       	push	r31
+ a58:	ef 93       	push	r30
+ a5a:	22 30       	cpi	r18, 0x02	; 2
+ a5c:	c4 f0       	brlt	.+48     	; 0xa8e <ultoa+0x3c>
+ a5e:	25 32       	cpi	r18, 0x25	; 37
+ a60:	b4 f4       	brge	.+44     	; 0xa8e <ultoa+0x3c>
+ a62:	c2 2f       	mov	r28, r18
+ a64:	2c 2f       	mov	r18, r28
+ a66:	33 27       	eor	r19, r19
+ a68:	44 27       	eor	r20, r20
+ a6a:	55 27       	eor	r21, r21
+ a6c:	ff 93       	push	r31
+ a6e:	ef 93       	push	r30
+ a70:	6e d0       	rcall	.+220    	; 0xb4e <__udivmodsi4>
+ a72:	ef 91       	pop	r30
+ a74:	ff 91       	pop	r31
+ a76:	60 5d       	subi	r22, 0xD0	; 208
+ a78:	6a 33       	cpi	r22, 0x3A	; 58
+ a7a:	0c f0       	brlt	.+2      	; 0xa7e <ultoa+0x2c>
+ a7c:	69 5d       	subi	r22, 0xD9	; 217
+ a7e:	61 93       	st	Z+, r22
+ a80:	b9 01       	movw	r22, r18
+ a82:	ca 01       	movw	r24, r20
+ a84:	60 50       	subi	r22, 0x00	; 0
+ a86:	70 40       	sbci	r23, 0x00	; 0
+ a88:	80 40       	sbci	r24, 0x00	; 0
+ a8a:	90 40       	sbci	r25, 0x00	; 0
+ a8c:	59 f7       	brne	.-42     	; 0xa64 <ultoa+0x12>
+ a8e:	10 82       	st	Z, r1
+ a90:	8f 91       	pop	r24
+ a92:	9f 91       	pop	r25
+ a94:	cf 91       	pop	r28
+ a96:	2a c0       	rjmp	.+84     	; 0xaec <strrev>
+
+00000a98 <__eerd_byte_m48>:
+ a98:	f9 99       	sbic	0x1f, 1	; 31
+ a9a:	fe cf       	rjmp	.-4      	; 0xa98 <__eerd_byte_m48>
+ a9c:	12 bc       	out	0x22, r1	; 34
+ a9e:	81 bd       	out	0x21, r24	; 33
+ aa0:	f8 9a       	sbi	0x1f, 0	; 31
+ aa2:	99 27       	eor	r25, r25
+ aa4:	80 b5       	in	r24, 0x20	; 32
+ aa6:	08 95       	ret
+
+00000aa8 <__eerd_dword_m48>:
+ aa8:	a6 e1       	ldi	r26, 0x16	; 22
+ aaa:	b0 e0       	ldi	r27, 0x00	; 0
+ aac:	44 e0       	ldi	r20, 0x04	; 4
+ aae:	30 c0       	rjmp	.+96     	; 0xb10 <__eerd_blraw_m48>
+
+00000ab0 <__eerd_word_m48>:
+ ab0:	a8 e1       	ldi	r26, 0x18	; 24
+ ab2:	b0 e0       	ldi	r27, 0x00	; 0
+ ab4:	42 e0       	ldi	r20, 0x02	; 2
+ ab6:	2c c0       	rjmp	.+88     	; 0xb10 <__eerd_blraw_m48>
+
+00000ab8 <__eeupd_word_m48>:
+ ab8:	01 96       	adiw	r24, 0x01	; 1
+ aba:	27 2f       	mov	r18, r23
+ abc:	37 d0       	rcall	.+110    	; 0xb2c <__eeupd_r18_m48>
+ abe:	35 c0       	rjmp	.+106    	; 0xb2a <__eeupd_byte_m48>
+
+00000ac0 <__eewr_byte_m48>:
+ ac0:	26 2f       	mov	r18, r22
+
+00000ac2 <__eewr_r18_m48>:
+ ac2:	f9 99       	sbic	0x1f, 1	; 31
+ ac4:	fe cf       	rjmp	.-4      	; 0xac2 <__eewr_r18_m48>
+ ac6:	1f ba       	out	0x1f, r1	; 31
+ ac8:	12 bc       	out	0x22, r1	; 34
+ aca:	81 bd       	out	0x21, r24	; 33
+ acc:	20 bd       	out	0x20, r18	; 32
+ ace:	0f b6       	in	r0, 0x3f	; 63
+ ad0:	f8 94       	cli
+ ad2:	fa 9a       	sbi	0x1f, 2	; 31
+ ad4:	f9 9a       	sbi	0x1f, 1	; 31
+ ad6:	0f be       	out	0x3f, r0	; 63
+ ad8:	01 96       	adiw	r24, 0x01	; 1
+ ada:	08 95       	ret
+
+00000adc <__eewr_dword_m48>:
+ adc:	24 2f       	mov	r18, r20
+ ade:	f1 df       	rcall	.-30     	; 0xac2 <__eewr_r18_m48>
+ ae0:	25 2f       	mov	r18, r21
+ ae2:	ef df       	rcall	.-34     	; 0xac2 <__eewr_r18_m48>
+ ae4:	00 c0       	rjmp	.+0      	; 0xae6 <__eewr_word_m48>
+
+00000ae6 <__eewr_word_m48>:
+ ae6:	ec df       	rcall	.-40     	; 0xac0 <__eewr_byte_m48>
+ ae8:	27 2f       	mov	r18, r23
+ aea:	eb cf       	rjmp	.-42     	; 0xac2 <__eewr_r18_m48>
+
+00000aec <strrev>:
+ aec:	dc 01       	movw	r26, r24
+ aee:	fc 01       	movw	r30, r24
+ af0:	67 2f       	mov	r22, r23
+ af2:	71 91       	ld	r23, Z+
+ af4:	77 23       	and	r23, r23
+ af6:	e1 f7       	brne	.-8      	; 0xaf0 <strrev+0x4>
+ af8:	32 97       	sbiw	r30, 0x02	; 2
+ afa:	04 c0       	rjmp	.+8      	; 0xb04 <strrev+0x18>
+ afc:	7c 91       	ld	r23, X
+ afe:	6d 93       	st	X+, r22
+ b00:	70 83       	st	Z, r23
+ b02:	62 91       	ld	r22, -Z
+ b04:	ae 17       	cp	r26, r30
+ b06:	bf 07       	cpc	r27, r31
+ b08:	c8 f3       	brcs	.-14     	; 0xafc <strrev+0x10>
+ b0a:	08 95       	ret
+
+00000b0c <__eerd_block_m48>:
+ b0c:	dc 01       	movw	r26, r24
+ b0e:	86 2f       	mov	r24, r22
+
+00000b10 <__eerd_blraw_m48>:
+ b10:	e8 2f       	mov	r30, r24
+ b12:	f9 99       	sbic	0x1f, 1	; 31
+ b14:	fe cf       	rjmp	.-4      	; 0xb12 <__eerd_blraw_m48+0x2>
+ b16:	12 bc       	out	0x22, r1	; 34
+ b18:	05 c0       	rjmp	.+10     	; 0xb24 <__eerd_blraw_m48+0x14>
+ b1a:	e1 bd       	out	0x21, r30	; 33
+ b1c:	f8 9a       	sbi	0x1f, 0	; 31
+ b1e:	e3 95       	inc	r30
+ b20:	00 b4       	in	r0, 0x20	; 32
+ b22:	0d 92       	st	X+, r0
+ b24:	41 50       	subi	r20, 0x01	; 1
+ b26:	c8 f7       	brcc	.-14     	; 0xb1a <__eerd_blraw_m48+0xa>
+ b28:	08 95       	ret
+
+00000b2a <__eeupd_byte_m48>:
+ b2a:	26 2f       	mov	r18, r22
+
+00000b2c <__eeupd_r18_m48>:
+ b2c:	f9 99       	sbic	0x1f, 1	; 31
+ b2e:	fe cf       	rjmp	.-4      	; 0xb2c <__eeupd_r18_m48>
+ b30:	12 bc       	out	0x22, r1	; 34
+ b32:	81 bd       	out	0x21, r24	; 33
+ b34:	f8 9a       	sbi	0x1f, 0	; 31
+ b36:	81 50       	subi	r24, 0x01	; 1
+ b38:	00 b4       	in	r0, 0x20	; 32
+ b3a:	02 16       	cp	r0, r18
+ b3c:	39 f0       	breq	.+14     	; 0xb4c <__eeupd_r18_m48+0x20>
+ b3e:	1f ba       	out	0x1f, r1	; 31
+ b40:	20 bd       	out	0x20, r18	; 32
+ b42:	0f b6       	in	r0, 0x3f	; 63
+ b44:	f8 94       	cli
+ b46:	fa 9a       	sbi	0x1f, 2	; 31
+ b48:	f9 9a       	sbi	0x1f, 1	; 31
+ b4a:	0f be       	out	0x3f, r0	; 63
+ b4c:	08 95       	ret
+
+00000b4e <__udivmodsi4>:
+ b4e:	a1 e2       	ldi	r26, 0x21	; 33
+ b50:	1a 2e       	mov	r1, r26
+ b52:	aa 1b       	sub	r26, r26
+ b54:	bb 1b       	sub	r27, r27
+ b56:	fd 01       	movw	r30, r26
+ b58:	0d c0       	rjmp	.+26     	; 0xb74 <__udivmodsi4_ep>
+
+00000b5a <__udivmodsi4_loop>:
+ b5a:	aa 1f       	adc	r26, r26
+ b5c:	bb 1f       	adc	r27, r27
+ b5e:	ee 1f       	adc	r30, r30
+ b60:	ff 1f       	adc	r31, r31
+ b62:	a2 17       	cp	r26, r18
+ b64:	b3 07       	cpc	r27, r19
+ b66:	e4 07       	cpc	r30, r20
+ b68:	f5 07       	cpc	r31, r21
+ b6a:	20 f0       	brcs	.+8      	; 0xb74 <__udivmodsi4_ep>
+ b6c:	a2 1b       	sub	r26, r18
+ b6e:	b3 0b       	sbc	r27, r19
+ b70:	e4 0b       	sbc	r30, r20
+ b72:	f5 0b       	sbc	r31, r21
+
+00000b74 <__udivmodsi4_ep>:
+ b74:	66 1f       	adc	r22, r22
+ b76:	77 1f       	adc	r23, r23
+ b78:	88 1f       	adc	r24, r24
+ b7a:	99 1f       	adc	r25, r25
+ b7c:	1a 94       	dec	r1
+ b7e:	69 f7       	brne	.-38     	; 0xb5a <__udivmodsi4_loop>
+ b80:	60 95       	com	r22
+ b82:	70 95       	com	r23
+ b84:	80 95       	com	r24
+ b86:	90 95       	com	r25
+ b88:	9b 01       	movw	r18, r22
+ b8a:	ac 01       	movw	r20, r24
+ b8c:	bd 01       	movw	r22, r26
+ b8e:	cf 01       	movw	r24, r30
+ b90:	08 95       	ret
+
+00000b92 <_exit>:
+ b92:	f8 94       	cli
+
+00000b94 <__stop_program>:
+ b94:	ff cf       	rjmp	.-2      	; 0xb94 <__stop_program>

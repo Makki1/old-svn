@@ -1,0 +1,872 @@
+   1               		.file	"RNDISEthernetHost.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__CCP__  = 0x34
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+  15               	.Ltext0:
+  16               		.section	.text.EVENT_USB_Host_DeviceEnumerationFailed,"ax",@progbits
+  17               	.global	EVENT_USB_Host_DeviceEnumerationFailed
+  19               	EVENT_USB_Host_DeviceEnumerationFailed:
+  20               	.LFB149:
+  21               	.LSM0:
+  22               	.LVL0:
+  23               	/* prologue: function */
+  24               	/* frame size = 0 */
+  25               	.LSM1:
+  26 0000 9091 0000 		lds r25,USB_HostState
+  27 0004 2DB7      		in r18,__SP_L__
+  28 0006 3EB7      		in r19,__SP_H__
+  29 0008 2850      		subi r18,lo8(-(-8))
+  30 000a 3040      		sbci r19,hi8(-(-8))
+  31 000c 0FB6      		in __tmp_reg__,__SREG__
+  32 000e F894      		cli
+  33 0010 3EBF      		out __SP_H__,r19
+  34 0012 0FBE      		out __SREG__,__tmp_reg__
+  35 0014 2DBF      		out __SP_L__,r18
+  36 0016 EDB7      		in r30,__SP_L__
+  37 0018 FEB7      		in r31,__SP_H__
+  38 001a 3196      		adiw r30,1
+  39 001c 20E0      		ldi r18,lo8(__c.4594)
+  40 001e 30E0      		ldi r19,hi8(__c.4594)
+  41 0020 ADB7      		in r26,__SP_L__
+  42 0022 BEB7      		in r27,__SP_H__
+  43 0024 1296      		adiw r26,1+1
+  44 0026 3C93      		st X,r19
+  45 0028 2E93      		st -X,r18
+  46 002a 1197      		sbiw r26,1
+  47 002c 8283      		std Z+2,r24
+  48 002e 1382      		std Z+3,__zero_reg__
+  49 0030 6483      		std Z+4,r22
+  50 0032 1582      		std Z+5,__zero_reg__
+  51 0034 9683      		std Z+6,r25
+  52 0036 1782      		std Z+7,__zero_reg__
+  53 0038 0E94 0000 		call printf_P
+  54               	.LVL1:
+  55               	.LBB60:
+  56               	.LBB61:
+  57               	.LSM2:
+  58 003c 8BB1      		in r24,43-32
+  59 003e 8F70      		andi r24,lo8(15)
+  60 0040 8069      		ori r24,lo8(-112)
+  61 0042 8BB9      		out 43-32,r24
+  62 0044 2DB7      		in r18,__SP_L__
+  63 0046 3EB7      		in r19,__SP_H__
+  64 0048 285F      		subi r18,lo8(-(8))
+  65 004a 3F4F      		sbci r19,hi8(-(8))
+  66 004c 0FB6      		in __tmp_reg__,__SREG__
+  67 004e F894      		cli
+  68 0050 3EBF      		out __SP_H__,r19
+  69 0052 0FBE      		out __SREG__,__tmp_reg__
+  70 0054 2DBF      		out __SP_L__,r18
+  71               	/* epilogue start */
+  72               	.LBE61:
+  73               	.LBE60:
+  74               	.LSM3:
+  75 0056 0895      		ret
+  76               	.LFE149:
+  78               		.section	.text.EVENT_USB_Host_HostError,"ax",@progbits
+  79               	.global	EVENT_USB_Host_HostError
+  81               	EVENT_USB_Host_HostError:
+  82               	.LFB148:
+  83               	.LSM4:
+  84               	.LVL2:
+  85 0000 1F93      		push r17
+  86               	/* prologue: function */
+  87               	/* frame size = 0 */
+  88 0002 182F      		mov r17,r24
+  89               	.LSM5:
+  90 0004 0E94 0000 		call USB_Disable
+  91               	.LVL3:
+  92               	.LSM6:
+  93 0008 00D0      		rcall .
+  94 000a 00D0      		rcall .
+  95 000c EDB7      		in r30,__SP_L__
+  96 000e FEB7      		in r31,__SP_H__
+  97 0010 3196      		adiw r30,1
+  98 0012 80E0      		ldi r24,lo8(__c.4586)
+  99 0014 90E0      		ldi r25,hi8(__c.4586)
+ 100 0016 ADB7      		in r26,__SP_L__
+ 101 0018 BEB7      		in r27,__SP_H__
+ 102 001a 1296      		adiw r26,1+1
+ 103 001c 9C93      		st X,r25
+ 104 001e 8E93      		st -X,r24
+ 105 0020 1197      		sbiw r26,1
+ 106 0022 1283      		std Z+2,r17
+ 107 0024 1382      		std Z+3,__zero_reg__
+ 108 0026 0E94 0000 		call printf_P
+ 109               	.LBB62:
+ 110               	.LBB63:
+ 111               	.LSM7:
+ 112 002a 8BB1      		in r24,43-32
+ 113 002c 8F70      		andi r24,lo8(15)
+ 114 002e 8069      		ori r24,lo8(-112)
+ 115 0030 8BB9      		out 43-32,r24
+ 116 0032 0F90      		pop __tmp_reg__
+ 117 0034 0F90      		pop __tmp_reg__
+ 118 0036 0F90      		pop __tmp_reg__
+ 119 0038 0F90      		pop __tmp_reg__
+ 120               	.L4:
+ 121 003a 00C0      		rjmp .L4
+ 122               	.LBE63:
+ 123               	.LBE62:
+ 124               	.LFE148:
+ 126               		.section	.text.EVENT_USB_Host_DeviceUnattached,"ax",@progbits
+ 127               	.global	EVENT_USB_Host_DeviceUnattached
+ 129               	EVENT_USB_Host_DeviceUnattached:
+ 130               	.LFB146:
+ 131               	.LSM8:
+ 132               	/* prologue: function */
+ 133               	/* frame size = 0 */
+ 134               	.LSM9:
+ 135 0000 80E0      		ldi r24,lo8(__c.4547)
+ 136 0002 90E0      		ldi r25,hi8(__c.4547)
+ 137 0004 0E94 0000 		call puts_P
+ 138               	.LBB64:
+ 139               	.LBB65:
+ 140               	.LSM10:
+ 141 0008 8BB1      		in r24,43-32
+ 142 000a 8F70      		andi r24,lo8(15)
+ 143 000c 8061      		ori r24,lo8(16)
+ 144 000e 8BB9      		out 43-32,r24
+ 145               	/* epilogue start */
+ 146               	.LBE65:
+ 147               	.LBE64:
+ 148               	.LSM11:
+ 149 0010 0895      		ret
+ 150               	.LFE146:
+ 152               		.section	.text.EVENT_USB_Host_DeviceAttached,"ax",@progbits
+ 153               	.global	EVENT_USB_Host_DeviceAttached
+ 155               	EVENT_USB_Host_DeviceAttached:
+ 156               	.LFB145:
+ 157               	.LSM12:
+ 158               	/* prologue: function */
+ 159               	/* frame size = 0 */
+ 160               	.LSM13:
+ 161 0000 80E0      		ldi r24,lo8(__c.4542)
+ 162 0002 90E0      		ldi r25,hi8(__c.4542)
+ 163 0004 0E94 0000 		call puts_P
+ 164               	.LBB66:
+ 165               	.LBB67:
+ 166               	.LSM14:
+ 167 0008 8BB1      		in r24,43-32
+ 168 000a 8F70      		andi r24,lo8(15)
+ 169 000c 806A      		ori r24,lo8(-96)
+ 170 000e 8BB9      		out 43-32,r24
+ 171               	/* epilogue start */
+ 172               	.LBE67:
+ 173               	.LBE66:
+ 174               	.LSM15:
+ 175 0010 0895      		ret
+ 176               	.LFE145:
+ 178               		.section	.text.EVENT_USB_Host_DeviceEnumerationComplete,"ax",@progbits
+ 179               	.global	EVENT_USB_Host_DeviceEnumerationComplete
+ 181               	EVENT_USB_Host_DeviceEnumerationComplete:
+ 182               	.LFB147:
+ 183               	.LSM16:
+ 184 0000 0F93      		push r16
+ 185 0002 1F93      		push r17
+ 186 0004 DF93      		push r29
+ 187 0006 CF93      		push r28
+ 188 0008 CDB7      		in r28,__SP_L__
+ 189 000a DEB7      		in r29,__SP_H__
+ 190 000c CA50      		subi r28,lo8(-(-522))
+ 191 000e D240      		sbci r29,hi8(-(-522))
+ 192 0010 0FB6      		in __tmp_reg__,__SREG__
+ 193 0012 F894      		cli
+ 194 0014 DEBF      		out __SP_H__,r29
+ 195 0016 0FBE      		out __SREG__,__tmp_reg__
+ 196 0018 CDBF      		out __SP_L__,r28
+ 197               	/* prologue: function */
+ 198               	/* frame size = 522 */
+ 199               	.LBB68:
+ 200               	.LBB69:
+ 201               	.LSM17:
+ 202 001a 8BB1      		in r24,43-32
+ 203 001c 8F70      		andi r24,lo8(15)
+ 204 001e 806A      		ori r24,lo8(-96)
+ 205 0020 8BB9      		out 43-32,r24
+ 206               	.LBE69:
+ 207               	.LBE68:
+ 208               	.LSM18:
+ 209 0022 8E01      		movw r16,r28
+ 210 0024 055F      		subi r16,lo8(-(11))
+ 211 0026 1F4F      		sbci r17,hi8(-(11))
+ 212 0028 81E0      		ldi r24,lo8(1)
+ 213 002a BE01      		movw r22,r28
+ 214 002c 6F5F      		subi r22,lo8(-(1))
+ 215 002e 7F4F      		sbci r23,hi8(-(1))
+ 216 0030 A801      		movw r20,r16
+ 217 0032 20E0      		ldi r18,lo8(512)
+ 218 0034 32E0      		ldi r19,hi8(512)
+ 219 0036 0E94 0000 		call USB_Host_GetDeviceConfigDescriptor
+ 220 003a 8823      		tst r24
+ 221 003c 01F0      		breq .L11
+ 222               	.LSM19:
+ 223 003e 80E0      		ldi r24,lo8(__c.4554)
+ 224 0040 90E0      		ldi r25,hi8(__c.4554)
+ 225 0042 00C0      		rjmp .L21
+ 226               	.L11:
+ 227               	.LSM20:
+ 228 0044 6981      		ldd r22,Y+1
+ 229 0046 7A81      		ldd r23,Y+2
+ 230               	.LVL4:
+ 231 0048 80E0      		ldi r24,lo8(Ethernet_RNDIS_Interface)
+ 232 004a 90E0      		ldi r25,hi8(Ethernet_RNDIS_Interface)
+ 233 004c A801      		movw r20,r16
+ 234 004e 0E94 0000 		call RNDIS_Host_ConfigurePipes
+ 235 0052 8823      		tst r24
+ 236 0054 01F0      		breq .L13
+ 237               	.LSM21:
+ 238 0056 80E0      		ldi r24,lo8(__c.4556)
+ 239 0058 90E0      		ldi r25,hi8(__c.4556)
+ 240 005a 00C0      		rjmp .L21
+ 241               	.L13:
+ 242               	.LSM22:
+ 243 005c 81E0      		ldi r24,lo8(1)
+ 244 005e 0E94 0000 		call USB_Host_SetDeviceConfiguration
+ 245 0062 8823      		tst r24
+ 246 0064 01F0      		breq .L14
+ 247               	.LSM23:
+ 248 0066 80E0      		ldi r24,lo8(__c.4558)
+ 249 0068 90E0      		ldi r25,hi8(__c.4558)
+ 250               	.L21:
+ 251 006a 0E94 0000 		call puts_P
+ 252               	.LBB70:
+ 253               	.LBB71:
+ 254               	.LSM24:
+ 255 006e 8BB1      		in r24,43-32
+ 256 0070 8F70      		andi r24,lo8(15)
+ 257 0072 8069      		ori r24,lo8(-112)
+ 258 0074 00C0      		rjmp .L20
+ 259               	.L14:
+ 260               	.LBE71:
+ 261               	.LBE70:
+ 262               	.LSM25:
+ 263 0076 80E0      		ldi r24,lo8(Ethernet_RNDIS_Interface)
+ 264 0078 90E0      		ldi r25,hi8(Ethernet_RNDIS_Interface)
+ 265 007a 0E94 0000 		call RNDIS_Host_InitializeDevice
+ 266 007e 8823      		tst r24
+ 267 0080 01F0      		breq .L15
+ 268               	.LSM26:
+ 269 0082 80E0      		ldi r24,lo8(__c.4560)
+ 270 0084 90E0      		ldi r25,hi8(__c.4560)
+ 271 0086 00C0      		rjmp .L19
+ 272               	.L15:
+ 273               	.LSM27:
+ 274 0088 00D0      		rcall .
+ 275 008a 00D0      		rcall .
+ 276 008c 00D0      		rcall .
+ 277 008e 80E0      		ldi r24,lo8(__c.4562)
+ 278 0090 90E0      		ldi r25,hi8(__c.4562)
+ 279 0092 EDB7      		in r30,__SP_L__
+ 280 0094 FEB7      		in r31,__SP_H__
+ 281 0096 9283      		std Z+2,r25
+ 282 0098 8183      		std Z+1,r24
+ 283 009a 8091 0000 		lds r24,Ethernet_RNDIS_Interface+18
+ 284 009e 9091 0000 		lds r25,(Ethernet_RNDIS_Interface+18)+1
+ 285 00a2 A091 0000 		lds r26,(Ethernet_RNDIS_Interface+18)+2
+ 286 00a6 B091 0000 		lds r27,(Ethernet_RNDIS_Interface+18)+3
+ 287 00aa 8383      		std Z+3,r24
+ 288 00ac 9483      		std Z+4,r25
+ 289 00ae A583      		std Z+5,r26
+ 290 00b0 B683      		std Z+6,r27
+ 291 00b2 0E94 0000 		call printf_P
+ 292               	.LSM28:
+ 293 00b6 8DE0      		ldi r24,lo8(13)
+ 294 00b8 90E0      		ldi r25,hi8(13)
+ 295 00ba A0E0      		ldi r26,hlo8(13)
+ 296 00bc B0E0      		ldi r27,hhi8(13)
+ 297 00be 8B83      		std Y+3,r24
+ 298 00c0 9C83      		std Y+4,r25
+ 299 00c2 AD83      		std Y+5,r26
+ 300 00c4 BE83      		std Y+6,r27
+ 301               	.LVL5:
+ 302               	.LSM29:
+ 303 00c6 8DB7      		in r24,__SP_L__
+ 304 00c8 9EB7      		in r25,__SP_H__
+ 305 00ca 0696      		adiw r24,6
+ 306 00cc 0FB6      		in __tmp_reg__,__SREG__
+ 307 00ce F894      		cli
+ 308 00d0 9EBF      		out __SP_H__,r25
+ 309 00d2 0FBE      		out __SREG__,__tmp_reg__
+ 310 00d4 8DBF      		out __SP_L__,r24
+ 311 00d6 80E0      		ldi r24,lo8(Ethernet_RNDIS_Interface)
+ 312 00d8 90E0      		ldi r25,hi8(Ethernet_RNDIS_Interface)
+ 313 00da 4EE0      		ldi r20,lo8(65806)
+ 314 00dc 51E0      		ldi r21,hi8(65806)
+ 315 00de 61E0      		ldi r22,hlo8(65806)
+ 316 00e0 70E0      		ldi r23,hhi8(65806)
+ 317 00e2 9E01      		movw r18,r28
+ 318 00e4 2D5F      		subi r18,lo8(-(3))
+ 319 00e6 3F4F      		sbci r19,hi8(-(3))
+ 320 00e8 04E0      		ldi r16,lo8(4)
+ 321 00ea 10E0      		ldi r17,hi8(4)
+ 322 00ec 0E94 0000 		call RNDIS_Host_SetRNDISProperty
+ 323 00f0 8823      		tst r24
+ 324 00f2 01F0      		breq .L16
+ 325               	.LSM30:
+ 326 00f4 80E0      		ldi r24,lo8(__c.4565)
+ 327 00f6 90E0      		ldi r25,hi8(__c.4565)
+ 328 00f8 00C0      		rjmp .L19
+ 329               	.L16:
+ 330               	.LSM31:
+ 331 00fa 80E0      		ldi r24,lo8(Ethernet_RNDIS_Interface)
+ 332 00fc 90E0      		ldi r25,hi8(Ethernet_RNDIS_Interface)
+ 333 00fe 4CE0      		ldi r20,lo8(65804)
+ 334 0100 51E0      		ldi r21,hi8(65804)
+ 335 0102 61E0      		ldi r22,hlo8(65804)
+ 336 0104 70E0      		ldi r23,hhi8(65804)
+ 337 0106 9E01      		movw r18,r28
+ 338 0108 295F      		subi r18,lo8(-(7))
+ 339 010a 3F4F      		sbci r19,hi8(-(7))
+ 340 010c 04E0      		ldi r16,lo8(4)
+ 341 010e 10E0      		ldi r17,hi8(4)
+ 342 0110 0E94 0000 		call RNDIS_Host_QueryRNDISProperty
+ 343 0114 8823      		tst r24
+ 344 0116 01F0      		breq .L17
+ 345               	.LSM32:
+ 346 0118 80E0      		ldi r24,lo8(__c.4568)
+ 347 011a 90E0      		ldi r25,hi8(__c.4568)
+ 348               	.L19:
+ 349 011c 0E94 0000 		call puts_P
+ 350               	.LBB72:
+ 351               	.LBB73:
+ 352               	.LSM33:
+ 353 0120 8BB1      		in r24,43-32
+ 354 0122 8F70      		andi r24,lo8(15)
+ 355 0124 8069      		ori r24,lo8(-112)
+ 356 0126 8BB9      		out 43-32,r24
+ 357               	.LBE73:
+ 358               	.LBE72:
+ 359               	.LSM34:
+ 360 0128 80E0      		ldi r24,lo8(0)
+ 361 012a 0E94 0000 		call USB_Host_SetDeviceConfiguration
+ 362 012e 00C0      		rjmp .L18
+ 363               	.L17:
+ 364               	.LSM35:
+ 365 0130 00D0      		rcall .
+ 366 0132 00D0      		rcall .
+ 367 0134 00D0      		rcall .
+ 368 0136 80E0      		ldi r24,lo8(__c.4570)
+ 369 0138 90E0      		ldi r25,hi8(__c.4570)
+ 370 013a EDB7      		in r30,__SP_L__
+ 371 013c FEB7      		in r31,__SP_H__
+ 372 013e 9283      		std Z+2,r25
+ 373 0140 8183      		std Z+1,r24
+ 374 0142 8F81      		ldd r24,Y+7
+ 375 0144 9885      		ldd r25,Y+8
+ 376 0146 A985      		ldd r26,Y+9
+ 377 0148 BA85      		ldd r27,Y+10
+ 378               	.LVL6:
+ 379 014a 8383      		std Z+3,r24
+ 380 014c 9483      		std Z+4,r25
+ 381 014e A583      		std Z+5,r26
+ 382 0150 B683      		std Z+6,r27
+ 383 0152 0E94 0000 		call printf_P
+ 384               	.LSM36:
+ 385 0156 8DB7      		in r24,__SP_L__
+ 386 0158 9EB7      		in r25,__SP_H__
+ 387 015a 0696      		adiw r24,6
+ 388 015c 0FB6      		in __tmp_reg__,__SREG__
+ 389 015e F894      		cli
+ 390 0160 9EBF      		out __SP_H__,r25
+ 391 0162 0FBE      		out __SREG__,__tmp_reg__
+ 392 0164 8DBF      		out __SP_L__,r24
+ 393 0166 80E0      		ldi r24,lo8(__c.4572)
+ 394 0168 90E0      		ldi r25,hi8(__c.4572)
+ 395 016a 0E94 0000 		call puts_P
+ 396               	.LBB74:
+ 397               	.LBB75:
+ 398               	.LSM37:
+ 399 016e 8BB1      		in r24,43-32
+ 400 0170 8F70      		andi r24,lo8(15)
+ 401 0172 8066      		ori r24,lo8(96)
+ 402               	.L20:
+ 403 0174 8BB9      		out 43-32,r24
+ 404               	.L18:
+ 405               	/* epilogue start */
+ 406               	.LBE75:
+ 407               	.LBE74:
+ 408               	.LSM38:
+ 409 0176 C65F      		subi r28,lo8(-(522))
+ 410 0178 DD4F      		sbci r29,hi8(-(522))
+ 411 017a 0FB6      		in __tmp_reg__,__SREG__
+ 412 017c F894      		cli
+ 413 017e DEBF      		out __SP_H__,r29
+ 414 0180 0FBE      		out __SREG__,__tmp_reg__
+ 415 0182 CDBF      		out __SP_L__,r28
+ 416 0184 CF91      		pop r28
+ 417 0186 DF91      		pop r29
+ 418 0188 1F91      		pop r17
+ 419 018a 0F91      		pop r16
+ 420 018c 0895      		ret
+ 421               	.LFE147:
+ 423               		.section	.text.SetupHardware,"ax",@progbits
+ 424               	.global	SetupHardware
+ 426               	SetupHardware:
+ 427               	.LFB144:
+ 428               	.LSM39:
+ 429               	/* prologue: function */
+ 430               	/* frame size = 0 */
+ 431               	.LSM40:
+ 432 0000 84B7      		in r24,84-32
+ 433 0002 877F      		andi r24,lo8(-9)
+ 434 0004 84BF      		out 84-32,r24
+ 435               	.LSM41:
+ 436 0006 28E1      		ldi r18,lo8(24)
+ 437               	/* #APP */
+ 438               	 ;  116 "RNDISEthernetHost.c" 1
+ 439 0008 0FB6      		in __tmp_reg__, __SREG__
+ 440 000a F894      		cli
+ 441 000c 2093 6000 		sts 96, r18
+ 442 0010 1092 6000 		sts 96, __zero_reg__
+ 443 0014 0FBE      		out __SREG__,__tmp_reg__
+ 444               		
+ 445               	 ;  0 "" 2
+ 446               	/* #NOAPP */
+ 447               	.LBB76:
+ 448               	.LBB77:
+ 449               	.LSM42:
+ 450 0016 90E0      		ldi r25,lo8(0)
+ 451 0018 80E8      		ldi r24,lo8(-128)
+ 452               	/* #APP */
+ 453               	 ;  1394 "/usr/lib/gcc/avr/4.3.5/../../../avr/include/avr/power.h" 1
+ 454 001a 0FB6      		in __tmp_reg__,__SREG__
+ 455 001c F894      		cli
+ 456 001e 8093 6100 		sts 97, r24
+ 457 0022 9093 6100 		sts 97, r25
+ 458 0026 0FBE      		out __SREG__, __tmp_reg__
+ 459               	 ;  0 "" 2
+ 460               	/* #NOAPP */
+ 461               	.LBE77:
+ 462               	.LBE76:
+ 463               	.LBB78:
+ 464               	.LBB79:
+ 465               	.LSM43:
+ 466 0028 83E3      		ldi r24,lo8(51)
+ 467 002a 90E0      		ldi r25,hi8(51)
+ 468 002c 9093 CD00 		sts (204)+1,r25
+ 469 0030 8093 CC00 		sts 204,r24
+ 470               	.LSM44:
+ 471 0034 86E0      		ldi r24,lo8(6)
+ 472 0036 8093 CA00 		sts 202,r24
+ 473               	.LSM45:
+ 474 003a 1092 C800 		sts 200,__zero_reg__
+ 475               	.LSM46:
+ 476 003e 2093 C900 		sts 201,r18
+ 477               	.LSM47:
+ 478 0042 539A      		sbi 42-32,3
+ 479               	.LSM48:
+ 480 0044 5A9A      		sbi 43-32,2
+ 481               	.LBE79:
+ 482               	.LBE78:
+ 483               	.LBB80:
+ 484               	.LBB81:
+ 485               	.LSM49:
+ 486 0046 8AB1      		in r24,42-32
+ 487 0048 806F      		ori r24,lo8(-16)
+ 488 004a 8AB9      		out 42-32,r24
+ 489               	.LSM50:
+ 490 004c 8BB1      		in r24,43-32
+ 491 004e 8F70      		andi r24,lo8(15)
+ 492 0050 8BB9      		out 43-32,r24
+ 493               	.LBE81:
+ 494               	.LBE80:
+ 495               	.LSM51:
+ 496 0052 0E94 0000 		call USB_Init
+ 497               	.LBB82:
+ 498               	.LBB83:
+ 499               	.LSM52:
+ 500 0056 E0E0      		ldi r30,lo8(USARTSerialStream)
+ 501 0058 F0E0      		ldi r31,hi8(USARTSerialStream)
+ 502 005a F093 0000 		sts (__iob)+1,r31
+ 503 005e E093 0000 		sts __iob,r30
+ 504               	.LSM53:
+ 505 0062 F093 0000 		sts (__iob+2)+1,r31
+ 506 0066 E093 0000 		sts __iob+2,r30
+ 507               	.LSM54:
+ 508 006a 8EE0      		ldi r24,lo8(14)
+ 509 006c DF01      		movw r26,r30
+ 510 006e 1D92      		st X+,__zero_reg__
+ 511 0070 8A95      	        dec r24
+ 512 0072 01F4      		brne .-6
+ 513 0074 83E0      		ldi r24,lo8(3)
+ 514 0076 8093 0000 		sts USARTSerialStream+3,r24
+ 515 007a 80E0      		ldi r24,lo8(gs(Serial_putchar))
+ 516 007c 90E0      		ldi r25,hi8(gs(Serial_putchar))
+ 517 007e 9093 0000 		sts (USARTSerialStream+8)+1,r25
+ 518 0082 8093 0000 		sts USARTSerialStream+8,r24
+ 519 0086 80E0      		ldi r24,lo8(gs(Serial_getchar))
+ 520 0088 90E0      		ldi r25,hi8(gs(Serial_getchar))
+ 521 008a 9093 0000 		sts (USARTSerialStream+10)+1,r25
+ 522 008e 8093 0000 		sts USARTSerialStream+10,r24
+ 523               	/* epilogue start */
+ 524               	.LBE83:
+ 525               	.LBE82:
+ 526               	.LSM55:
+ 527 0092 0895      		ret
+ 528               	.LFE144:
+ 530               		.data
+ 531               	.LC0:
+ 532 0000 3078 2530 		.string	"0x%02x "
+ 532      3278 2000 
+ 533               		.section	.text.RNDISHost_Task,"ax",@progbits
+ 534               	.global	RNDISHost_Task
+ 536               	RNDISHost_Task:
+ 537               	.LFB143:
+ 538               	.LSM56:
+ 539 0000 EF92      		push r14
+ 540 0002 FF92      		push r15
+ 541 0004 0F93      		push r16
+ 542 0006 1F93      		push r17
+ 543 0008 DF93      		push r29
+ 544 000a CF93      		push r28
+ 545 000c 00D0      		rcall .
+ 546 000e CDB7      		in r28,__SP_L__
+ 547 0010 DEB7      		in r29,__SP_H__
+ 548               	/* prologue: function */
+ 549               	/* frame size = 2 */
+ 550               	.LSM57:
+ 551 0012 8091 0000 		lds r24,USB_HostState
+ 552 0016 8B30      		cpi r24,lo8(11)
+ 553 0018 01F0      		breq .+2
+ 554 001a 00C0      		rjmp .L28
+ 555               	.LSM58:
+ 556 001c 80E0      		ldi r24,lo8(Ethernet_RNDIS_Interface)
+ 557 001e 90E0      		ldi r25,hi8(Ethernet_RNDIS_Interface)
+ 558 0020 0E94 0000 		call RNDIS_Host_IsPacketReceived
+ 559 0024 8823      		tst r24
+ 560 0026 01F4      		brne .+2
+ 561 0028 00C0      		rjmp .L28
+ 562               	.LBB84:
+ 563               	.LBB85:
+ 564               	.LBB86:
+ 565               	.LSM59:
+ 566 002a 8BB1      		in r24,43-32
+ 567 002c 8F70      		andi r24,lo8(15)
+ 568 002e 8062      		ori r24,lo8(32)
+ 569 0030 8BB9      		out 43-32,r24
+ 570               	.LBE86:
+ 571               	.LBE85:
+ 572               	.LSM60:
+ 573 0032 80E0      		ldi r24,lo8(Ethernet_RNDIS_Interface)
+ 574 0034 90E0      		ldi r25,hi8(Ethernet_RNDIS_Interface)
+ 575 0036 60E0      		ldi r22,lo8(PacketBuffer)
+ 576 0038 70E0      		ldi r23,hi8(PacketBuffer)
+ 577 003a AE01      		movw r20,r28
+ 578 003c 4F5F      		subi r20,lo8(-(1))
+ 579 003e 5F4F      		sbci r21,hi8(-(1))
+ 580 0040 0E94 0000 		call RNDIS_Host_ReadPacket
+ 581               	.LSM61:
+ 582 0044 00D0      		rcall .
+ 583 0046 00D0      		rcall .
+ 584 0048 80E0      		ldi r24,lo8(__c.4519)
+ 585 004a 90E0      		ldi r25,hi8(__c.4519)
+ 586 004c EDB7      		in r30,__SP_L__
+ 587 004e FEB7      		in r31,__SP_H__
+ 588 0050 9283      		std Z+2,r25
+ 589 0052 8183      		std Z+1,r24
+ 590 0054 8981      		ldd r24,Y+1
+ 591 0056 9A81      		ldd r25,Y+2
+ 592               	.LVL7:
+ 593 0058 9483      		std Z+4,r25
+ 594 005a 8383      		std Z+3,r24
+ 595 005c 0E94 0000 		call printf_P
+ 596 0060 00E0      		ldi r16,lo8(0)
+ 597 0062 10E0      		ldi r17,hi8(0)
+ 598               	.LVL8:
+ 599 0064 0F90      		pop __tmp_reg__
+ 600 0066 0F90      		pop __tmp_reg__
+ 601 0068 0F90      		pop __tmp_reg__
+ 602 006a 0F90      		pop __tmp_reg__
+ 603               	.LBB87:
+ 604               	.LSM62:
+ 605 006c 80E0      		ldi r24,lo8(.LC0)
+ 606 006e E82E      		mov r14,r24
+ 607 0070 80E0      		ldi r24,hi8(.LC0)
+ 608 0072 F82E      		mov r15,r24
+ 609 0074 00C0      		rjmp .L26
+ 610               	.LVL9:
+ 611               	.L27:
+ 612 0076 00D0      		rcall .
+ 613 0078 00D0      		rcall .
+ 614 007a EDB7      		in r30,__SP_L__
+ 615 007c FEB7      		in r31,__SP_H__
+ 616 007e F282      		std Z+2,r15
+ 617 0080 E182      		std Z+1,r14
+ 618 0082 F801      		movw r30,r16
+ 619 0084 E050      		subi r30,lo8(-(PacketBuffer))
+ 620 0086 F040      		sbci r31,hi8(-(PacketBuffer))
+ 621 0088 8081      		ld r24,Z
+ 622               	.LVL10:
+ 623 008a 9927      		clr r25
+ 624 008c 87FD      		sbrc r24,7
+ 625 008e 9095      		com r25
+ 626 0090 EDB7      		in r30,__SP_L__
+ 627 0092 FEB7      		in r31,__SP_H__
+ 628 0094 9483      		std Z+4,r25
+ 629 0096 8383      		std Z+3,r24
+ 630 0098 0E94 0000 		call printf
+ 631               	.LSM63:
+ 632 009c 0F5F      		subi r16,lo8(-(1))
+ 633 009e 1F4F      		sbci r17,hi8(-(1))
+ 634 00a0 0F90      		pop __tmp_reg__
+ 635 00a2 0F90      		pop __tmp_reg__
+ 636 00a4 0F90      		pop __tmp_reg__
+ 637 00a6 0F90      		pop __tmp_reg__
+ 638               	.L26:
+ 639 00a8 8981      		ldd r24,Y+1
+ 640 00aa 9A81      		ldd r25,Y+2
+ 641 00ac 0817      		cp r16,r24
+ 642 00ae 1907      		cpc r17,r25
+ 643 00b0 00F0      		brlo .L27
+ 644               	.LVL11:
+ 645               	.LBE87:
+ 646               	.LSM64:
+ 647 00b2 00D0      		rcall .
+ 648 00b4 80E0      		ldi r24,lo8(__c.4525)
+ 649 00b6 90E0      		ldi r25,hi8(__c.4525)
+ 650               	.LVL12:
+ 651 00b8 EDB7      		in r30,__SP_L__
+ 652 00ba FEB7      		in r31,__SP_H__
+ 653 00bc 9283      		std Z+2,r25
+ 654 00be 8183      		std Z+1,r24
+ 655 00c0 0E94 0000 		call printf_P
+ 656               	.LBB88:
+ 657               	.LBB89:
+ 658               	.LSM65:
+ 659 00c4 8BB1      		in r24,43-32
+ 660 00c6 8F70      		andi r24,lo8(15)
+ 661 00c8 8066      		ori r24,lo8(96)
+ 662 00ca 8BB9      		out 43-32,r24
+ 663 00cc 0F90      		pop __tmp_reg__
+ 664 00ce 0F90      		pop __tmp_reg__
+ 665               	.L28:
+ 666               	/* epilogue start */
+ 667               	.LBE89:
+ 668               	.LBE88:
+ 669               	.LBE84:
+ 670               	.LSM66:
+ 671 00d0 0F90      		pop __tmp_reg__
+ 672 00d2 0F90      		pop __tmp_reg__
+ 673 00d4 CF91      		pop r28
+ 674 00d6 DF91      		pop r29
+ 675 00d8 1F91      		pop r17
+ 676 00da 0F91      		pop r16
+ 677               	.LVL13:
+ 678 00dc FF90      		pop r15
+ 679 00de EF90      		pop r14
+ 680 00e0 0895      		ret
+ 681               	.LFE143:
+ 683               		.section	.text.main,"ax",@progbits
+ 684               	.global	main
+ 686               	main:
+ 687               	.LFB142:
+ 688               	.LSM67:
+ 689               	/* prologue: function */
+ 690               	/* frame size = 0 */
+ 691               	.LSM68:
+ 692 0000 0E94 0000 		call SetupHardware
+ 693               	.LSM69:
+ 694 0004 80E0      		ldi r24,lo8(__c.4511)
+ 695 0006 90E0      		ldi r25,hi8(__c.4511)
+ 696 0008 0E94 0000 		call puts_P
+ 697               	.LBB90:
+ 698               	.LBB91:
+ 699               	.LSM70:
+ 700 000c 8BB1      		in r24,43-32
+ 701 000e 8F70      		andi r24,lo8(15)
+ 702 0010 8061      		ori r24,lo8(16)
+ 703 0012 8BB9      		out 43-32,r24
+ 704               	.LBE91:
+ 705               	.LBE90:
+ 706               	.LSM71:
+ 707               	/* #APP */
+ 708               	 ;  74 "RNDISEthernetHost.c" 1
+ 709 0014 7894      		sei
+ 710               	 ;  0 "" 2
+ 711               	/* #NOAPP */
+ 712               	.L30:
+ 713               	.LSM72:
+ 714 0016 0E94 0000 		call RNDISHost_Task
+ 715               	.LSM73:
+ 716 001a 0E94 0000 		call USB_USBTask
+ 717 001e 00C0      		rjmp .L30
+ 718               	.LFE142:
+ 720               	.global	Ethernet_RNDIS_Interface
+ 721               		.data
+ 724               	Ethernet_RNDIS_Interface:
+ 725 0008 01        		.byte	1
+ 726 0009 00        		.byte	0
+ 727 000a 02        		.byte	2
+ 728 000b 00        		.byte	0
+ 729 000c 03        		.byte	3
+ 730 000d 00        		.byte	0
+ 731 000e 00        		.byte	0
+ 732 000f 04        		.byte	4
+ 733 0010 00        		.byte	0
+ 734 0011 00        		.byte	0
+ 735 0012 0000 0000 		.skip 16,0
+ 735      0000 0000 
+ 735      0000 0000 
+ 735      0000 0000 
+ 736               		.section	.progmem.data,"a",@progbits
+ 739               	__c.4594:
+ 740 0000 1B5B 3331 		.ascii	"\033[31mDev Enum Error\r\n"
+ 740      6D44 6576 
+ 740      2045 6E75 
+ 740      6D20 4572 
+ 740      726F 720D 
+ 741 0015 202D 2D20 		.string	" -- Error Code %d\r\n -- Sub Error Code %d\r\n -- In State %d\r\n\033[37m"
+ 741      4572 726F 
+ 741      7220 436F 
+ 741      6465 2025 
+ 741      640D 0A20 
+ 744               	__c.4586:
+ 745 0056 1B5B 3331 		.string	"\033[31mHost Mode Error\r\n -- Error Code %d\r\n\033[37m"
+ 745      6D48 6F73 
+ 745      7420 4D6F 
+ 745      6465 2045 
+ 745      7272 6F72 
+ 748               	__c.4572:
+ 749 0085 524E 4449 		.string	"RNDIS Device Enumerated.\r\n"
+ 749      5320 4465 
+ 749      7669 6365 
+ 749      2045 6E75 
+ 749      6D65 7261 
+ 752               	__c.4570:
+ 753 00a0 4465 7669 		.string	"Device Vendor ID: 0x%08lX\r\n"
+ 753      6365 2056 
+ 753      656E 646F 
+ 753      7220 4944 
+ 753      3A20 3078 
+ 756               	__c.4568:
+ 757 00bc 4572 726F 		.string	"Error Getting Vendor ID.\r\n"
+ 757      7220 4765 
+ 757      7474 696E 
+ 757      6720 5665 
+ 757      6E64 6F72 
+ 760               	__c.4565:
+ 761 00d7 4572 726F 		.string	"Error Setting Device Packet Filter.\r\n"
+ 761      7220 5365 
+ 761      7474 696E 
+ 761      6720 4465 
+ 761      7669 6365 
+ 764               	__c.4562:
+ 765 00fd 4465 7669 		.string	"Device Max Transfer Size: %lu bytes.\r\n"
+ 765      6365 204D 
+ 765      6178 2054 
+ 765      7261 6E73 
+ 765      6665 7220 
+ 768               	__c.4560:
+ 769 0124 4572 726F 		.string	"Error Initializing Device.\r\n"
+ 769      7220 496E 
+ 769      6974 6961 
+ 769      6C69 7A69 
+ 769      6E67 2044 
+ 772               	__c.4558:
+ 773 0141 4572 726F 		.string	"Error Setting Device Configuration.\r\n"
+ 773      7220 5365 
+ 773      7474 696E 
+ 773      6720 4465 
+ 773      7669 6365 
+ 776               	__c.4556:
+ 777 0167 4174 7461 		.string	"Attached Device Not a Valid RNDIS Class Device.\r\n"
+ 777      6368 6564 
+ 777      2044 6576 
+ 777      6963 6520 
+ 777      4E6F 7420 
+ 780               	__c.4554:
+ 781 0199 4572 726F 		.string	"Error Retrieving Configuration Descriptor.\r\n"
+ 781      7220 5265 
+ 781      7472 6965 
+ 781      7669 6E67 
+ 781      2043 6F6E 
+ 784               	__c.4547:
+ 785 01c6 0D0A 4465 		.string	"\r\nDevice Unattached.\r\n"
+ 785      7669 6365 
+ 785      2055 6E61 
+ 785      7474 6163 
+ 785      6865 642E 
+ 788               	__c.4542:
+ 789 01dd 4465 7669 		.string	"Device Attached.\r\n"
+ 789      6365 2041 
+ 789      7474 6163 
+ 789      6865 642E 
+ 789      0D0A 00
+ 792               	__c.4525:
+ 793 01f0 0D0A 0D0A 		.string	"\r\n\r\n"
+ 793      00
+ 796               	__c.4519:
+ 797 01f5 2A2A 2A50 		.string	"***PACKET (Size %d)***\r\n"
+ 797      4143 4B45 
+ 797      5420 2853 
+ 797      697A 6520 
+ 797      2564 292A 
+ 800               	__c.4511:
+ 801 020e 1B5B 3336 		.string	"\033[36mRNDIS Host Demo running.\r\n\033[37m"
+ 801      6D52 4E44 
+ 801      4953 2048 
+ 801      6F73 7420 
+ 801      4465 6D6F 
+ 802               		.lcomm PacketBuffer,1024
+ 883               	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 RNDISEthernetHost.c
+     /tmp/ccGRMJ29.s:2      *ABS*:0000003f __SREG__
+     /tmp/ccGRMJ29.s:3      *ABS*:0000003e __SP_H__
+     /tmp/ccGRMJ29.s:4      *ABS*:0000003d __SP_L__
+     /tmp/ccGRMJ29.s:5      *ABS*:00000034 __CCP__
+     /tmp/ccGRMJ29.s:6      *ABS*:00000000 __tmp_reg__
+     /tmp/ccGRMJ29.s:7      *ABS*:00000001 __zero_reg__
+     /tmp/ccGRMJ29.s:19     .text.EVENT_USB_Host_DeviceEnumerationFailed:00000000 EVENT_USB_Host_DeviceEnumerationFailed
+     /tmp/ccGRMJ29.s:739    .progmem.data:00000000 __c.4594
+     /tmp/ccGRMJ29.s:81     .text.EVENT_USB_Host_HostError:00000000 EVENT_USB_Host_HostError
+     /tmp/ccGRMJ29.s:744    .progmem.data:00000056 __c.4586
+     /tmp/ccGRMJ29.s:129    .text.EVENT_USB_Host_DeviceUnattached:00000000 EVENT_USB_Host_DeviceUnattached
+     /tmp/ccGRMJ29.s:784    .progmem.data:000001c6 __c.4547
+     /tmp/ccGRMJ29.s:155    .text.EVENT_USB_Host_DeviceAttached:00000000 EVENT_USB_Host_DeviceAttached
+     /tmp/ccGRMJ29.s:788    .progmem.data:000001dd __c.4542
+     /tmp/ccGRMJ29.s:181    .text.EVENT_USB_Host_DeviceEnumerationComplete:00000000 EVENT_USB_Host_DeviceEnumerationComplete
+     /tmp/ccGRMJ29.s:780    .progmem.data:00000199 __c.4554
+     /tmp/ccGRMJ29.s:724    .data:00000008 Ethernet_RNDIS_Interface
+     /tmp/ccGRMJ29.s:776    .progmem.data:00000167 __c.4556
+     /tmp/ccGRMJ29.s:772    .progmem.data:00000141 __c.4558
+     /tmp/ccGRMJ29.s:768    .progmem.data:00000124 __c.4560
+     /tmp/ccGRMJ29.s:764    .progmem.data:000000fd __c.4562
+     /tmp/ccGRMJ29.s:760    .progmem.data:000000d7 __c.4565
+     /tmp/ccGRMJ29.s:756    .progmem.data:000000bc __c.4568
+     /tmp/ccGRMJ29.s:752    .progmem.data:000000a0 __c.4570
+     /tmp/ccGRMJ29.s:748    .progmem.data:00000085 __c.4572
+     /tmp/ccGRMJ29.s:426    .text.SetupHardware:00000000 SetupHardware
+     /tmp/ccGRMJ29.s:536    .text.RNDISHost_Task:00000000 RNDISHost_Task
+                             .bss:00000000 PacketBuffer
+     /tmp/ccGRMJ29.s:796    .progmem.data:000001f5 __c.4519
+     /tmp/ccGRMJ29.s:792    .progmem.data:000001f0 __c.4525
+     /tmp/ccGRMJ29.s:686    .text.main:00000000 main
+     /tmp/ccGRMJ29.s:800    .progmem.data:0000020e __c.4511
+
+UNDEFINED SYMBOLS
+USB_HostState
+printf_P
+USB_Disable
+puts_P
+USB_Host_GetDeviceConfigDescriptor
+RNDIS_Host_ConfigurePipes
+USB_Host_SetDeviceConfiguration
+RNDIS_Host_InitializeDevice
+RNDIS_Host_SetRNDISProperty
+RNDIS_Host_QueryRNDISProperty
+USB_Init
+USARTSerialStream
+__iob
+Serial_putchar
+Serial_getchar
+RNDIS_Host_IsPacketReceived
+RNDIS_Host_ReadPacket
+printf
+USB_USBTask
+__do_copy_data
+__do_clear_bss

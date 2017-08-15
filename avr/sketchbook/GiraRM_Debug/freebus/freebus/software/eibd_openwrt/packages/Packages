@@ -1,0 +1,30 @@
+Package: eibd
+Version: 20100304
+Depends: pthsem, uclibcxx, libusb
+Provides: 
+Source: package/bcusdk
+Section: net
+Priority: optional
+Maintainer: Matthias Fechner <idefix@fechner.net>
+Architecture: brcm47xx
+Installed-Size: 283200
+Filename: eibd_20100304_brcm47xx.ipk
+Size: 95432
+MD5Sum: bc59e3572d0129768fc44bd9334dc0cc
+Description:  Eib KNX deamon
+
+Package: pthsem
+Version: 2.0.8-2
+Depends: 
+Provides: 
+Source: package/pthsem
+Section: libs
+Priority: optional
+Maintainer: Matthias Fechner <idefix@fechner.net>
+Architecture: brcm47xx
+Installed-Size: 70807
+Filename: pthsem_2.0.8-2_brcm47xx.ipk
+Size: 30308
+MD5Sum: 19b250ec6be50bdcff66423d688e21ff
+Description:  Pth threads with semaphore support
+

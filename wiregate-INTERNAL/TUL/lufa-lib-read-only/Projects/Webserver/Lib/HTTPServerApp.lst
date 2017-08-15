@@ -1,0 +1,734 @@
+   1               		.file	"HTTPServerApp.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__CCP__  = 0x34
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+  15               	.Ltext0:
+  16               		.data
+  17               	.LC0:
+  18 0000 2000      		.string	" "
+  19               		.section	.text.HTTPServerApp_Callback,"ax",@progbits
+  20               	.global	HTTPServerApp_Callback
+  22               	HTTPServerApp_Callback:
+  23               	.LFB8:
+  24               	.LSM0:
+  25 0000 AF92      		push r10
+  26 0002 BF92      		push r11
+  27 0004 CF92      		push r12
+  28 0006 DF92      		push r13
+  29 0008 EF92      		push r14
+  30 000a FF92      		push r15
+  31 000c 0F93      		push r16
+  32 000e 1F93      		push r17
+  33 0010 CF93      		push r28
+  34 0012 DF93      		push r29
+  35               	/* prologue: function */
+  36               	/* frame size = 0 */
+  37               	.LSM1:
+  38 0014 C091 0000 		lds r28,uip_conn
+  39 0018 D091 0000 		lds r29,(uip_conn)+1
+  40               	.LSM2:
+  41 001c 2091 0000 		lds r18,uip_flags
+  42 0020 25FD      		sbrc r18,5
+  43 0022 00C0      		rjmp .L2
+  44 0024 27FD      		sbrc r18,7
+  45 0026 00C0      		rjmp .L2
+  46 0028 24FF      		sbrs r18,4
+  47 002a 00C0      		rjmp .L3
+  48               	.L2:
+  49               	.LSM3:
+  50 002c 83E0      		ldi r24,lo8(3)
+  51 002e 8C8F      		std Y+28,r24
+  52               	.LSM4:
+  53 0030 8D8F      		std Y+29,r24
+  54               	.L3:
+  55               	.LSM5:
+  56 0032 8091 0000 		lds r24,uip_flags
+  57 0036 86FF      		sbrs r24,6
+  58 0038 00C0      		rjmp .L4
+  59               	.LSM6:
+  60 003a 1C8E      		std Y+28,__zero_reg__
+  61               	.LSM7:
+  62 003c 1D8E      		std Y+29,__zero_reg__
+  63               	.LSM8:
+  64 003e C659      		subi r28,lo8(-(106))
+  65 0040 DF4F      		sbci r29,hi8(-(106))
+  66 0042 1992      		st Y+,__zero_reg__
+  67               	.LSM9:
+  68 0044 1992      		st Y+,__zero_reg__
+  69 0046 1992      		st Y+,__zero_reg__
+  70 0048 1992      		st Y+,__zero_reg__
+  71 004a 1992      		st Y+,__zero_reg__
+  72               	.LSM10:
+  73 004c 1982      		std Y+1,__zero_reg__
+  74 004e 1882      		st Y,__zero_reg__
+  75 0050 CF56      		subi r28,lo8(-(-111))
+  76 0052 D040      		sbci r29,hi8(-(-111))
+  77               	.L4:
+  78               	.LSM11:
+  79 0054 8091 0000 		lds r24,uip_flags
+  80 0058 80FF      		sbrs r24,0
+  81 005a 00C0      		rjmp .L5
+  82               	.LSM12:
+  83 005c FE01      		movw r30,r28
+  84 005e E559      		subi r30,lo8(-(107))
+  85 0060 FF4F      		sbci r31,hi8(-(107))
+  86 0062 C159      		subi r28,lo8(-(111))
+  87 0064 DF4F      		sbci r29,hi8(-(111))
+  88 0066 8881      		ld r24,Y
+  89 0068 9981      		ldd r25,Y+1
+  90 006a CF56      		subi r28,lo8(-(-111))
+  91 006c D040      		sbci r29,hi8(-(-111))
+  92 006e A0E0      		ldi r26,lo8(0)
+  93 0070 B0E0      		ldi r27,hi8(0)
+  94 0072 2081      		ld r18,Z
+  95 0074 3181      		ldd r19,Z+1
+  96 0076 4281      		ldd r20,Z+2
+  97 0078 5381      		ldd r21,Z+3
+  98 007a 820F      		add r24,r18
+  99 007c 931F      		adc r25,r19
+ 100 007e A41F      		adc r26,r20
+ 101 0080 B51F      		adc r27,r21
+ 102 0082 8083      		st Z,r24
+ 103 0084 9183      		std Z+1,r25
+ 104 0086 A283      		std Z+2,r26
+ 105 0088 B383      		std Z+3,r27
+ 106               	.LSM13:
+ 107 008a 8D8D      		ldd r24,Y+29
+ 108 008c 8C8F      		std Y+28,r24
+ 109               	.L5:
+ 110               	.LSM14:
+ 111 008e 8091 0000 		lds r24,uip_flags
+ 112 0092 82FF      		sbrs r24,2
+ 113 0094 00C0      		rjmp .L6
+ 114               	.LSM15:
+ 115 0096 C559      		subi r28,lo8(-(107))
+ 116 0098 DF4F      		sbci r29,hi8(-(107))
+ 117 009a 4881      		ld r20,Y
+ 118 009c 5981      		ldd r21,Y+1
+ 119 009e 6A81      		ldd r22,Y+2
+ 120 00a0 7B81      		ldd r23,Y+3
+ 121 00a2 CB56      		subi r28,lo8(-(-107))
+ 122 00a4 D040      		sbci r29,hi8(-(-107))
+ 123 00a6 CE01      		movw r24,r28
+ 124 00a8 805B      		subi r24,lo8(-(80))
+ 125 00aa 9F4F      		sbci r25,hi8(-(80))
+ 126 00ac 0E94 0000 		call f_lseek
+ 127               	.L6:
+ 128               	.LSM16:
+ 129 00b0 8091 0000 		lds r24,uip_flags
+ 130 00b4 282F      		mov r18,r24
+ 131 00b6 30E0      		ldi r19,lo8(0)
+ 132 00b8 82FD      		sbrc r24,2
+ 133 00ba 00C0      		rjmp .L7
+ 134 00bc C901      		movw r24,r18
+ 135 00be 8370      		andi r24,lo8(3)
+ 136 00c0 9070      		andi r25,hi8(3)
+ 137 00c2 892B      		or r24,r25
+ 138 00c4 01F4      		brne .L7
+ 139 00c6 C901      		movw r24,r18
+ 140 00c8 8874      		andi r24,lo8(72)
+ 141 00ca 9070      		andi r25,hi8(72)
+ 142 00cc 892B      		or r24,r25
+ 143 00ce 01F4      		brne .+2
+ 144 00d0 00C0      		rjmp .L22
+ 145               	.L7:
+ 146               	.LSM17:
+ 147 00d2 8C8D      		ldd r24,Y+28
+ 148 00d4 8130      		cpi r24,lo8(1)
+ 149 00d6 01F4      		brne .+2
+ 150 00d8 00C0      		rjmp .L10
+ 151 00da 8130      		cpi r24,lo8(1)
+ 152 00dc 00F0      		brlo .L9
+ 153 00de 8230      		cpi r24,lo8(2)
+ 154 00e0 01F4      		brne .+2
+ 155 00e2 00C0      		rjmp .L11
+ 156 00e4 8330      		cpi r24,lo8(3)
+ 157 00e6 01F0      		breq .+2
+ 158 00e8 00C0      		rjmp .L22
+ 159 00ea 00C0      		rjmp .L27
+ 160               	.L9:
+ 161               	.LBB11:
+ 162               	.LBB12:
+ 163               	.LSM18:
+ 164 00ec E090 0000 		lds r14,uip_conn
+ 165 00f0 F090 0000 		lds r15,(uip_conn)+1
+ 166               	.LSM19:
+ 167 00f4 8091 0000 		lds r24,uip_appdata
+ 168 00f8 9091 0000 		lds r25,(uip_appdata)+1
+ 169               	.LSM20:
+ 170 00fc 21FF      		sbrs r18,1
+ 171 00fe 00C0      		rjmp .L22
+ 172               	.LBE12:
+ 173               	.LSM21:
+ 174 0100 60E0      		ldi r22,lo8(.LC0)
+ 175 0102 70E0      		ldi r23,hi8(.LC0)
+ 176 0104 0E94 0000 		call strtok
+ 177 0108 8C01      		movw r16,r24
+ 178               	.LVL0:
+ 179               	.LSM22:
+ 180 010a 80E0      		ldi r24,lo8(0)
+ 181 010c 90E0      		ldi r25,hi8(0)
+ 182 010e 60E0      		ldi r22,lo8(.LC0)
+ 183 0110 70E0      		ldi r23,hi8(.LC0)
+ 184 0112 0E94 0000 		call strtok
+ 185 0116 EC01      		movw r28,r24
+ 186               	.LVL1:
+ 187               	.LSM23:
+ 188 0118 C801      		movw r24,r16
+ 189 011a 60E0      		ldi r22,lo8(__c.1870)
+ 190 011c 70E0      		ldi r23,hi8(__c.1870)
+ 191 011e 0E94 0000 		call strcmp_P
+ 192               	.LBB13:
+ 193 0122 892B      		or r24,r25
+ 194 0124 01F0      		breq .L13
+ 195               	.LSM24:
+ 196 0126 80E2      		ldi r24,lo8(32)
+ 197 0128 8093 0000 		sts uip_flags,r24
+ 198 012c 00C0      		rjmp .L22
+ 199               	.L13:
+ 200               	.LSM25:
+ 201 012e 8701      		movw r16,r14
+ 202               	.LVL2:
+ 203 0130 025E      		subi r16,lo8(-(30))
+ 204 0132 1F4F      		sbci r17,hi8(-(30))
+ 205 0134 2196      		adiw r28,1
+ 206 0136 C801      		movw r24,r16
+ 207 0138 BE01      		movw r22,r28
+ 208 013a 42E3      		ldi r20,lo8(50)
+ 209 013c 50E0      		ldi r21,hi8(50)
+ 210 013e 0E94 0000 		call strlcpy
+ 211               	.LBE13:
+ 212               	.LSM26:
+ 213 0142 D801      		movw r26,r16
+ 214 0144 0D90      		ld __tmp_reg__,X+
+ 215 0146 0020      		tst __tmp_reg__
+ 216 0148 01F4      		brne .-6
+ 217 014a 1197      		sbiw r26,1
+ 218 014c A01B      		sub r26,r16
+ 219 014e B10B      		sbc r27,r17
+ 220               	.LBB14:
+ 221 0150 9A2F      		mov r25,r26
+ 222               	.LVL3:
+ 223               	.LSM27:
+ 224 0152 F701      		movw r30,r14
+ 225 0154 EA0F      		add r30,r26
+ 226 0156 F11D      		adc r31,__zero_reg__
+ 227 0158 858D      		ldd r24,Z+29
+ 228 015a 8F32      		cpi r24,lo8(47)
+ 229 015c 01F0      		breq .L14
+ 230               	.LVL4:
+ 231 015e AA23      		tst r26
+ 232               	.LVL5:
+ 233 0160 01F4      		brne .L15
+ 234               	.LVL6:
+ 235               	.L14:
+ 236               	.LSM28:
+ 237 0162 892F      		mov r24,r25
+ 238 0164 90E0      		ldi r25,lo8(0)
+ 239               	.LVL7:
+ 240 0166 42E3      		ldi r20,lo8(50)
+ 241 0168 50E0      		ldi r21,hi8(50)
+ 242 016a 481B      		sub r20,r24
+ 243 016c 590B      		sbc r21,r25
+ 244 016e 4E96      		adiw r24,30
+ 245 0170 8E0D      		add r24,r14
+ 246 0172 9F1D      		adc r25,r15
+ 247 0174 60E0      		ldi r22,lo8(DefaultDirFileName)
+ 248 0176 70E0      		ldi r23,hi8(DefaultDirFileName)
+ 249 0178 0E94 0000 		call strlcpy_P
+ 250               	.LVL8:
+ 251               	.L15:
+ 252               	.LBE14:
+ 253               	.LSM29:
+ 254 017c C701      		movw r24,r14
+ 255 017e 805B      		subi r24,lo8(-(80))
+ 256 0180 9F4F      		sbci r25,hi8(-(80))
+ 257 0182 B801      		movw r22,r16
+ 258 0184 41E0      		ldi r20,lo8(1)
+ 259 0186 0E94 0000 		call f_open
+ 260               	.LVL9:
+ 261               	.LBB15:
+ 262 018a F701      		movw r30,r14
+ 263 018c E659      		subi r30,lo8(-(106))
+ 264 018e FF4F      		sbci r31,hi8(-(106))
+ 265 0190 1082      		st Z,__zero_reg__
+ 266 0192 8823      		tst r24
+ 267 0194 01F4      		brne .L16
+ 268 0196 81E0      		ldi r24,lo8(1)
+ 269 0198 8083      		st Z,r24
+ 270               	.L16:
+ 271               	.LSM30:
+ 272 019a 81E0      		ldi r24,lo8(1)
+ 273 019c F701      		movw r30,r14
+ 274 019e 848F      		std Z+28,r24
+ 275 01a0 00C0      		rjmp .L24
+ 276               	.LVL10:
+ 277               	.L10:
+ 278               	.LBE15:
+ 279               	.LBE11:
+ 280               	.LBB16:
+ 281               	.LBB17:
+ 282               	.LSM31:
+ 283 01a2 C090 0000 		lds r12,uip_conn
+ 284 01a6 D090 0000 		lds r13,(uip_conn)+1
+ 285               	.LSM32:
+ 286 01aa 0091 0000 		lds r16,uip_appdata
+ 287 01ae 1091 0000 		lds r17,(uip_appdata)+1
+ 288               	.LVL11:
+ 289               	.LSM33:
+ 290 01b2 E601      		movw r28,r12
+ 291 01b4 6E96      		adiw r28,30
+ 292               	.LBE17:
+ 293 01b6 CE01      		movw r24,r28
+ 294 01b8 6EE2      		ldi r22,lo8(46)
+ 295 01ba 70E0      		ldi r23,hi8(46)
+ 296 01bc 0E94 0000 		call strchr
+ 297 01c0 5C01      		movw r10,r24
+ 298               	.LVL12:
+ 299               	.LBB20:
+ 300               	.LSM34:
+ 301 01c2 2AE6      		ldi r18,lo8(106)
+ 302 01c4 30E0      		ldi r19,hi8(106)
+ 303 01c6 C20E      		add r12,r18
+ 304 01c8 D31E      		adc r13,r19
+ 305 01ca F601      		movw r30,r12
+ 306 01cc 8081      		ld r24,Z
+ 307 01ce 26E9      		ldi r18,lo8(-106)
+ 308 01d0 3FEF      		ldi r19,hi8(-106)
+ 309 01d2 C20E      		add r12,r18
+ 310 01d4 D31E      		adc r13,r19
+ 311 01d6 8823      		tst r24
+ 312 01d8 01F4      		brne .L17
+ 313               	.LSM35:
+ 314 01da C801      		movw r24,r16
+ 315 01dc 60E0      		ldi r22,lo8(HTTP404Header)
+ 316 01de 70E0      		ldi r23,hi8(HTTP404Header)
+ 317 01e0 0E94 0000 		call strcpy_P
+ 318               	.LBE20:
+ 319               	.LSM36:
+ 320 01e4 F801      		movw r30,r16
+ 321 01e6 0190      		ld __tmp_reg__,Z+
+ 322 01e8 0020      		tst __tmp_reg__
+ 323 01ea 01F4      		brne .-6
+ 324               	.LBB21:
+ 325 01ec CF01      		movw r24,r30
+ 326 01ee 0197      		sbiw r24,1
+ 327 01f0 BE01      		movw r22,r28
+ 328 01f2 0E94 0000 		call strcpy
+ 329               	.LBE21:
+ 330               	.LSM37:
+ 331 01f6 F801      		movw r30,r16
+ 332 01f8 0190      		ld __tmp_reg__,Z+
+ 333 01fa 0020      		tst __tmp_reg__
+ 334 01fc 01F4      		brne .-6
+ 335 01fe 3197      		sbiw r30,1
+ 336 0200 E01B      		sub r30,r16
+ 337 0202 F10B      		sbc r31,r17
+ 338               	.LBB22:
+ 339 0204 C801      		movw r24,r16
+ 340 0206 BF01      		movw r22,r30
+ 341 0208 0E94 0000 		call uip_send
+ 342               	.LSM38:
+ 343 020c 83E0      		ldi r24,lo8(3)
+ 344 020e 00C0      		rjmp .L26
+ 345               	.L17:
+ 346               	.LSM39:
+ 347 0210 C801      		movw r24,r16
+ 348 0212 60E0      		ldi r22,lo8(HTTP200Header)
+ 349 0214 70E0      		ldi r23,hi8(HTTP200Header)
+ 350 0216 0E94 0000 		call strcpy_P
+ 351               	.LSM40:
+ 352 021a A114      		cp r10,__zero_reg__
+ 353 021c B104      		cpc r11,__zero_reg__
+ 354 021e 01F0      		breq .L18
+ 355 0220 90E0      		ldi r25,lo8(MIMETypes)
+ 356 0222 E92E      		mov r14,r25
+ 357 0224 90E0      		ldi r25,hi8(MIMETypes)
+ 358 0226 F92E      		mov r15,r25
+ 359 0228 C0E0      		ldi r28,lo8(0)
+ 360 022a D0E0      		ldi r29,hi8(0)
+ 361               	.LBE22:
+ 362               	.LSM41:
+ 363 022c 0894      		sec
+ 364 022e A11C      		adc r10,__zero_reg__
+ 365 0230 B11C      		adc r11,__zero_reg__
+ 366               	.LVL13:
+ 367               	.L21:
+ 368 0232 F701      		movw r30,r14
+ 369 0234 6081      		ld r22,Z
+ 370 0236 7181      		ldd r23,Z+1
+ 371 0238 C501      		movw r24,r10
+ 372 023a 0E94 0000 		call strcmp
+ 373               	.LBB23:
+ 374               	.LBB18:
+ 375 023e 892B      		or r24,r25
+ 376 0240 01F4      		brne .L19
+ 377               	.LBE18:
+ 378               	.LBE23:
+ 379               	.LSM42:
+ 380 0242 F801      		movw r30,r16
+ 381 0244 0190      		ld __tmp_reg__,Z+
+ 382 0246 0020      		tst __tmp_reg__
+ 383 0248 01F4      		brne .-6
+ 384               	.LBB24:
+ 385               	.LBB19:
+ 386 024a CC0F      		lsl r28
+ 387 024c DD1F      		rol r29
+ 388 024e CC0F      		lsl r28
+ 389 0250 DD1F      		rol r29
+ 390 0252 C050      		subi r28,lo8(-(MIMETypes+2))
+ 391 0254 D040      		sbci r29,hi8(-(MIMETypes+2))
+ 392 0256 6881      		ld r22,Y
+ 393 0258 7981      		ldd r23,Y+1
+ 394 025a CF01      		movw r24,r30
+ 395 025c 0197      		sbiw r24,1
+ 396 025e 0E94 0000 		call strcpy
+ 397 0262 00C0      		rjmp .L20
+ 398               	.L19:
+ 399 0264 2196      		adiw r28,1
+ 400 0266 24E0      		ldi r18,lo8(4)
+ 401 0268 30E0      		ldi r19,hi8(4)
+ 402 026a E20E      		add r14,r18
+ 403 026c F31E      		adc r15,r19
+ 404               	.LSM43:
+ 405 026e CA30      		cpi r28,10
+ 406 0270 D105      		cpc r29,__zero_reg__
+ 407 0272 01F4      		brne .L21
+ 408               	.LVL14:
+ 409               	.L18:
+ 410               	.LBE19:
+ 411               	.LBE24:
+ 412               	.LSM44:
+ 413 0274 F801      		movw r30,r16
+ 414 0276 0190      		ld __tmp_reg__,Z+
+ 415 0278 0020      		tst __tmp_reg__
+ 416 027a 01F4      		brne .-6
+ 417               	.LBB25:
+ 418 027c CF01      		movw r24,r30
+ 419 027e 0197      		sbiw r24,1
+ 420 0280 60E0      		ldi r22,lo8(DefaultMIMEType)
+ 421 0282 70E0      		ldi r23,hi8(DefaultMIMEType)
+ 422 0284 0E94 0000 		call strcpy_P
+ 423               	.L20:
+ 424               	.LBE25:
+ 425               	.LSM45:
+ 426 0288 F801      		movw r30,r16
+ 427 028a 0190      		ld __tmp_reg__,Z+
+ 428 028c 0020      		tst __tmp_reg__
+ 429 028e 01F4      		brne .-6
+ 430 0290 CF01      		movw r24,r30
+ 431 0292 0197      		sbiw r24,1
+ 432 0294 60E0      		ldi r22,lo8(__c.1907)
+ 433 0296 70E0      		ldi r23,hi8(__c.1907)
+ 434 0298 0E94 0000 		call strcpy_P
+ 435               	.LSM46:
+ 436 029c F801      		movw r30,r16
+ 437 029e 0190      		ld __tmp_reg__,Z+
+ 438 02a0 0020      		tst __tmp_reg__
+ 439 02a2 01F4      		brne .-6
+ 440 02a4 3197      		sbiw r30,1
+ 441 02a6 E01B      		sub r30,r16
+ 442 02a8 F10B      		sbc r31,r17
+ 443               	.LBB26:
+ 444 02aa C801      		movw r24,r16
+ 445 02ac BF01      		movw r22,r30
+ 446 02ae 0E94 0000 		call uip_send
+ 447               	.LSM47:
+ 448 02b2 82E0      		ldi r24,lo8(2)
+ 449               	.L26:
+ 450 02b4 F601      		movw r30,r12
+ 451               	.LVL15:
+ 452               	.L24:
+ 453 02b6 858F      		std Z+29,r24
+ 454 02b8 00C0      		rjmp .L22
+ 455               	.LVL16:
+ 456               	.L11:
+ 457               	.LBE26:
+ 458               	.LBE16:
+ 459               	.LBB27:
+ 460               	.LBB28:
+ 461               	.LSM48:
+ 462 02ba C091 0000 		lds r28,uip_conn
+ 463 02be D091 0000 		lds r29,(uip_conn)+1
+ 464               	.LSM49:
+ 465 02c2 E090 0000 		lds r14,uip_appdata
+ 466 02c6 F090 0000 		lds r15,(uip_appdata)+1
+ 467               	.LVL17:
+ 468               	.LSM50:
+ 469 02ca CA88      		ldd r12,Y+18
+ 470 02cc DB88      		ldd r13,Y+19
+ 471               	.LVL18:
+ 472               	.LSM51:
+ 473 02ce 8E01      		movw r16,r28
+ 474 02d0 0159      		subi r16,lo8(-(111))
+ 475 02d2 1F4F      		sbci r17,hi8(-(111))
+ 476 02d4 CE01      		movw r24,r28
+ 477 02d6 805B      		subi r24,lo8(-(80))
+ 478 02d8 9F4F      		sbci r25,hi8(-(80))
+ 479 02da B701      		movw r22,r14
+ 480 02dc A601      		movw r20,r12
+ 481 02de 9801      		movw r18,r16
+ 482 02e0 0E94 0000 		call f_read
+ 483               	.LSM52:
+ 484 02e4 F801      		movw r30,r16
+ 485 02e6 6081      		ld r22,Z
+ 486 02e8 7181      		ldd r23,Z+1
+ 487 02ea C701      		movw r24,r14
+ 488 02ec 0E94 0000 		call uip_send
+ 489               	.LSM53:
+ 490 02f0 F801      		movw r30,r16
+ 491 02f2 8081      		ld r24,Z
+ 492 02f4 9181      		ldd r25,Z+1
+ 493 02f6 C816      		cp r12,r24
+ 494 02f8 D906      		cpc r13,r25
+ 495 02fa 01F0      		breq .L22
+ 496               	.LSM54:
+ 497 02fc 83E0      		ldi r24,lo8(3)
+ 498 02fe 00C0      		rjmp .L25
+ 499               	.LVL19:
+ 500               	.L27:
+ 501               	.LBE28:
+ 502               	.LBE27:
+ 503               	.LSM55:
+ 504 0300 CE01      		movw r24,r28
+ 505 0302 805B      		subi r24,lo8(-(80))
+ 506 0304 9F4F      		sbci r25,hi8(-(80))
+ 507 0306 0E94 0000 		call f_close
+ 508               	.LSM56:
+ 509 030a C659      		subi r28,lo8(-(106))
+ 510 030c DF4F      		sbci r29,hi8(-(106))
+ 511 030e 1882      		st Y,__zero_reg__
+ 512 0310 CA56      		subi r28,lo8(-(-106))
+ 513 0312 D040      		sbci r29,hi8(-(-106))
+ 514               	.LSM57:
+ 515 0314 80E1      		ldi r24,lo8(16)
+ 516 0316 8093 0000 		sts uip_flags,r24
+ 517               	.LSM58:
+ 518 031a 84E0      		ldi r24,lo8(4)
+ 519 031c 8C8F      		std Y+28,r24
+ 520               	.LVL20:
+ 521               	.L25:
+ 522               	.LSM59:
+ 523 031e 8D8F      		std Y+29,r24
+ 524               	.LVL21:
+ 525               	.L22:
+ 526               	/* epilogue start */
+ 527               	.LSM60:
+ 528 0320 DF91      		pop r29
+ 529 0322 CF91      		pop r28
+ 530               	.LVL22:
+ 531 0324 1F91      		pop r17
+ 532 0326 0F91      		pop r16
+ 533               	.LVL23:
+ 534 0328 FF90      		pop r15
+ 535 032a EF90      		pop r14
+ 536               	.LVL24:
+ 537 032c DF90      		pop r13
+ 538 032e CF90      		pop r12
+ 539               	.LVL25:
+ 540 0330 BF90      		pop r11
+ 541 0332 AF90      		pop r10
+ 542               	.LVL26:
+ 543 0334 0895      		ret
+ 544               	.LFE8:
+ 546               		.section	.text.HTTPServerApp_Init,"ax",@progbits
+ 547               	.global	HTTPServerApp_Init
+ 549               	HTTPServerApp_Init:
+ 550               	.LFB7:
+ 551               	.LSM61:
+ 552               	/* prologue: function */
+ 553               	/* frame size = 0 */
+ 554               	.LSM62:
+ 555 0000 80E0      		ldi r24,lo8(20480)
+ 556 0002 90E5      		ldi r25,hi8(20480)
+ 557 0004 0E94 0000 		call uip_listen
+ 558               	.LSM63:
+ 559 0008 80E0      		ldi r24,lo8(0)
+ 560 000a 60E0      		ldi r22,lo8(DiskFATState)
+ 561 000c 70E0      		ldi r23,hi8(DiskFATState)
+ 562 000e 0E94 0000 		call f_mount
+ 563               	/* epilogue start */
+ 564               	.LSM64:
+ 565 0012 0895      		ret
+ 566               	.LFE7:
+ 568               	.global	HTTP200Header
+ 569               		.section	.progmem.data,"a",@progbits
+ 572               	HTTP200Header:
+ 573 0000 4854 5450 		.ascii	"HTTP/1.1 200 OK\r\nServer: L"
+ 573      2F31 2E31 
+ 573      2032 3030 
+ 573      204F 4B0D 
+ 573      0A53 6572 
+ 574 001a 5546 4120 		.string	"UFA XXXXXX\r\nConnection: close\r\nMIME-version: 1.0\r\nContent-Type: "
+ 574      5858 5858 
+ 574      5858 0D0A 
+ 574      436F 6E6E 
+ 574      6563 7469 
+ 575               	.global	HTTP404Header
+ 578               	HTTP404Header:
+ 579 005b 4854 5450 		.ascii	"HTTP/1.1 404 Not Found\r\nServer: LUFA XXXXXX\r\nConnection:"
+ 579      2F31 2E31 
+ 579      2034 3034 
+ 579      204E 6F74 
+ 579      2046 6F75 
+ 580 0093 2063 6C6F 		.ascii	" close\r\nMIME-versio"
+ 580      7365 0D0A 
+ 580      4D49 4D45 
+ 580      2D76 6572 
+ 580      7369 6F
+ 581 00a6 6E3A 2031 		.string	"n: 1.0\r\nContent-Type: text/plain\r\n\r\nError 404: File Not Found: /"
+ 581      2E30 0D0A 
+ 581      436F 6E74 
+ 581      656E 742D 
+ 581      5479 7065 
+ 582               	.global	DefaultDirFileName
+ 585               	DefaultDirFileName:
+ 586 00e7 696E 6465 		.string	"index.htm"
+ 586      782E 6874 
+ 586      6D00 
+ 587               	.global	DefaultMIMEType
+ 590               	DefaultMIMEType:
+ 591 00f1 7465 7874 		.string	"text/plain"
+ 591      2F70 6C61 
+ 591      696E 00
+ 592               	.global	MIMETypes
+ 593               		.data
+ 594               	.LC1:
+ 595 0002 6874 6D00 		.string	"htm"
+ 596               	.LC2:
+ 597 0006 7465 7874 		.string	"text/html"
+ 597      2F68 746D 
+ 597      6C00 
+ 598               	.LC3:
+ 599 0010 6A70 6700 		.string	"jpg"
+ 600               	.LC4:
+ 601 0014 696D 6167 		.string	"image/jpeg"
+ 601      652F 6A70 
+ 601      6567 00
+ 602               	.LC5:
+ 603 001f 6769 6600 		.string	"gif"
+ 604               	.LC6:
+ 605 0023 696D 6167 		.string	"image/gif"
+ 605      652F 6769 
+ 605      6600 
+ 606               	.LC7:
+ 607 002d 626D 7000 		.string	"bmp"
+ 608               	.LC8:
+ 609 0031 696D 6167 		.string	"image/bmp"
+ 609      652F 626D 
+ 609      7000 
+ 610               	.LC9:
+ 611 003b 706E 6700 		.string	"png"
+ 612               	.LC10:
+ 613 003f 696D 6167 		.string	"image/png"
+ 613      652F 706E 
+ 613      6700 
+ 614               	.LC11:
+ 615 0049 6963 6F00 		.string	"ico"
+ 616               	.LC12:
+ 617 004d 696D 6167 		.string	"image/x-icon"
+ 617      652F 782D 
+ 617      6963 6F6E 
+ 617      00
+ 618               	.LC13:
+ 619 005a 6578 6500 		.string	"exe"
+ 620               	.LC14:
+ 621 005e 6170 706C 		.string	"application/octet-stream"
+ 621      6963 6174 
+ 621      696F 6E2F 
+ 621      6F63 7465 
+ 621      742D 7374 
+ 622               	.LC15:
+ 623 0077 677A 00   		.string	"gz"
+ 624               	.LC16:
+ 625 007a 6170 706C 		.string	"application/x-gzip"
+ 625      6963 6174 
+ 625      696F 6E2F 
+ 625      782D 677A 
+ 625      6970 00
+ 626               	.LC17:
+ 627 008d 7A69 7000 		.string	"zip"
+ 628               	.LC18:
+ 629 0091 6170 706C 		.string	"application/zip"
+ 629      6963 6174 
+ 629      696F 6E2F 
+ 629      7A69 7000 
+ 630               	.LC19:
+ 631 00a1 7064 6600 		.string	"pdf"
+ 632               	.LC20:
+ 633 00a5 6170 706C 		.string	"application/pdf"
+ 633      6963 6174 
+ 633      696F 6E2F 
+ 633      7064 6600 
+ 636               	MIMETypes:
+ 637 00b5 0000      		.word	.LC1
+ 638 00b7 0000      		.word	.LC2
+ 639 00b9 0000      		.word	.LC3
+ 640 00bb 0000      		.word	.LC4
+ 641 00bd 0000      		.word	.LC5
+ 642 00bf 0000      		.word	.LC6
+ 643 00c1 0000      		.word	.LC7
+ 644 00c3 0000      		.word	.LC8
+ 645 00c5 0000      		.word	.LC9
+ 646 00c7 0000      		.word	.LC10
+ 647 00c9 0000      		.word	.LC11
+ 648 00cb 0000      		.word	.LC12
+ 649 00cd 0000      		.word	.LC13
+ 650 00cf 0000      		.word	.LC14
+ 651 00d1 0000      		.word	.LC15
+ 652 00d3 0000      		.word	.LC16
+ 653 00d5 0000      		.word	.LC17
+ 654 00d7 0000      		.word	.LC18
+ 655 00d9 0000      		.word	.LC19
+ 656 00db 0000      		.word	.LC20
+ 657               		.section	.progmem.data
+ 660               	__c.1870:
+ 661 00fc 4745 5400 		.string	"GET"
+ 664               	__c.1907:
+ 665 0100 0D0A 0D0A 		.string	"\r\n\r\n"
+ 665      00
+ 666               		.comm DiskFATState,546,1
+ 699               	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 HTTPServerApp.c
+     /tmp/cchkhR74.s:2      *ABS*:0000003f __SREG__
+     /tmp/cchkhR74.s:3      *ABS*:0000003e __SP_H__
+     /tmp/cchkhR74.s:4      *ABS*:0000003d __SP_L__
+     /tmp/cchkhR74.s:5      *ABS*:00000034 __CCP__
+     /tmp/cchkhR74.s:6      *ABS*:00000000 __tmp_reg__
+     /tmp/cchkhR74.s:7      *ABS*:00000001 __zero_reg__
+     /tmp/cchkhR74.s:22     .text.HTTPServerApp_Callback:00000000 HTTPServerApp_Callback
+     /tmp/cchkhR74.s:660    .progmem.data:000000fc __c.1870
+     /tmp/cchkhR74.s:585    .progmem.data:000000e7 DefaultDirFileName
+     /tmp/cchkhR74.s:578    .progmem.data:0000005b HTTP404Header
+     /tmp/cchkhR74.s:572    .progmem.data:00000000 HTTP200Header
+     /tmp/cchkhR74.s:636    .data:000000b5 MIMETypes
+     /tmp/cchkhR74.s:590    .progmem.data:000000f1 DefaultMIMEType
+     /tmp/cchkhR74.s:664    .progmem.data:00000100 __c.1907
+     /tmp/cchkhR74.s:549    .text.HTTPServerApp_Init:00000000 HTTPServerApp_Init
+                            *COM*:00000222 DiskFATState
+
+UNDEFINED SYMBOLS
+uip_conn
+uip_flags
+f_lseek
+uip_appdata
+strtok
+strcmp_P
+strlcpy
+strlcpy_P
+f_open
+strchr
+strcpy_P
+strcpy
+uip_send
+strcmp
+f_read
+f_close
+uip_listen
+f_mount
+__do_copy_data
+__do_clear_bss

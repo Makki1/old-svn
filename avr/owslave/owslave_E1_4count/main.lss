@@ -1,0 +1,2057 @@
+
+main.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         00000c90  00000000  00000000  00000094  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         0000001c  00800060  00000c90  00000d24  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .bss          0000003b  0080007c  0080007c  00000d40  2**0
+                  ALLOC
+  3 .stab         00000d08  00000000  00000000  00000d40  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  4 .stabstr      00000231  00000000  00000000  00001a48  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .comment      00000011  00000000  00000000  00001c79  2**0
+                  CONTENTS, READONLY
+  6 .debug_aranges 00000028  00000000  00000000  00001c8a  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_info   00000c15  00000000  00000000  00001cb2  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_abbrev 000001d8  00000000  00000000  000028c7  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_line   000002b1  00000000  00000000  00002a9f  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_frame  000001b4  00000000  00000000  00002d50  2**2
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_str    00000423  00000000  00000000  00002f04  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 12 .debug_loc    00000858  00000000  00000000  00003327  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 13 .debug_ranges 00000018  00000000  00000000  00003b7f  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	34 c0       	rjmp	.+104    	; 0x6a <__ctors_end>
+   2:	4f c0       	rjmp	.+158    	; 0xa2 <__vector_1>
+   4:	b8 c3       	rjmp	.+1904   	; 0x776 <__vector_2>
+   6:	17 c4       	rjmp	.+2094   	; 0x836 <__vector_3>
+   8:	41 c5       	rjmp	.+2690   	; 0xa8c <__vector_4>
+   a:	4a c0       	rjmp	.+148    	; 0xa0 <__bad_interrupt>
+   c:	49 c0       	rjmp	.+146    	; 0xa0 <__bad_interrupt>
+   e:	48 c0       	rjmp	.+144    	; 0xa0 <__bad_interrupt>
+  10:	47 c0       	rjmp	.+142    	; 0xa0 <__bad_interrupt>
+  12:	46 c0       	rjmp	.+140    	; 0xa0 <__bad_interrupt>
+  14:	45 c0       	rjmp	.+138    	; 0xa0 <__bad_interrupt>
+  16:	98 c0       	rjmp	.+304    	; 0x148 <__vector_11>
+  18:	43 c0       	rjmp	.+134    	; 0xa0 <__bad_interrupt>
+  1a:	42 c0       	rjmp	.+132    	; 0xa0 <__bad_interrupt>
+  1c:	41 c0       	rjmp	.+130    	; 0xa0 <__bad_interrupt>
+  1e:	40 c0       	rjmp	.+128    	; 0xa0 <__bad_interrupt>
+  20:	3f c0       	rjmp	.+126    	; 0xa0 <__bad_interrupt>
+  22:	61 c0       	rjmp	.+194    	; 0xe6 <__vector_1+0x44>
+  24:	7d c0       	rjmp	.+250    	; 0x120 <__vector_1+0x7e>
+  26:	7c c0       	rjmp	.+248    	; 0x120 <__vector_1+0x7e>
+  28:	6e c0       	rjmp	.+220    	; 0x106 <__vector_1+0x64>
+  2a:	68 c0       	rjmp	.+208    	; 0xfc <__vector_1+0x5a>
+  2c:	6c c0       	rjmp	.+216    	; 0x106 <__vector_1+0x64>
+  2e:	6b c0       	rjmp	.+214    	; 0x106 <__vector_1+0x64>
+  30:	77 c0       	rjmp	.+238    	; 0x120 <__vector_1+0x7e>
+  32:	6e c0       	rjmp	.+220    	; 0x110 <__vector_1+0x6e>
+  34:	68 c0       	rjmp	.+208    	; 0x106 <__vector_1+0x64>
+  36:	6a c0       	rjmp	.+212    	; 0x10c <__vector_1+0x6a>
+  38:	69 c0       	rjmp	.+210    	; 0x10c <__vector_1+0x6a>
+  3a:	65 c0       	rjmp	.+202    	; 0x106 <__vector_1+0x64>
+  3c:	cf c0       	rjmp	.+414    	; 0x1dc <__vector_11+0x94>
+  3e:	d9 c0       	rjmp	.+434    	; 0x1f2 <__vector_11+0xaa>
+  40:	da c0       	rjmp	.+436    	; 0x1f6 <__vector_11+0xae>
+  42:	09 c1       	rjmp	.+530    	; 0x256 <__vector_11+0x10e>
+  44:	30 c1       	rjmp	.+608    	; 0x2a6 <__stack+0x47>
+  46:	46 c1       	rjmp	.+652    	; 0x2d4 <__stack+0x75>
+  48:	48 c3       	rjmp	.+1680   	; 0x6da <__stack+0x47b>
+  4a:	47 c3       	rjmp	.+1678   	; 0x6da <__stack+0x47b>
+  4c:	46 c3       	rjmp	.+1676   	; 0x6da <__stack+0x47b>
+  4e:	45 c3       	rjmp	.+1674   	; 0x6da <__stack+0x47b>
+  50:	21 c3       	rjmp	.+1602   	; 0x694 <__stack+0x435>
+  52:	12 c2       	rjmp	.+1060   	; 0x478 <__stack+0x219>
+  54:	62 c1       	rjmp	.+708    	; 0x31a <__stack+0xbb>
+  56:	7a c1       	rjmp	.+756    	; 0x34c <__stack+0xed>
+  58:	86 c1       	rjmp	.+780    	; 0x366 <__stack+0x107>
+  5a:	a6 c1       	rjmp	.+844    	; 0x3a8 <__stack+0x149>
+  5c:	be c1       	rjmp	.+892    	; 0x3da <__stack+0x17b>
+  5e:	ce c1       	rjmp	.+924    	; 0x3fc <__stack+0x19d>
+  60:	f7 c1       	rjmp	.+1006   	; 0x450 <__stack+0x1f1>
+  62:	f6 c1       	rjmp	.+1004   	; 0x450 <__stack+0x1f1>
+  64:	f5 c1       	rjmp	.+1002   	; 0x450 <__stack+0x1f1>
+  66:	cf c1       	rjmp	.+926    	; 0x406 <__stack+0x1a7>
+  68:	dc c1       	rjmp	.+952    	; 0x422 <__stack+0x1c3>
+
+0000006a <__ctors_end>:
+  6a:	11 24       	eor	r1, r1
+  6c:	1f be       	out	0x3f, r1	; 63
+  6e:	cf e5       	ldi	r28, 0x5F	; 95
+  70:	d2 e0       	ldi	r29, 0x02	; 2
+  72:	de bf       	out	0x3e, r29	; 62
+  74:	cd bf       	out	0x3d, r28	; 61
+
+00000076 <__do_copy_data>:
+  76:	10 e0       	ldi	r17, 0x00	; 0
+  78:	a0 e6       	ldi	r26, 0x60	; 96
+  7a:	b0 e0       	ldi	r27, 0x00	; 0
+  7c:	e0 e9       	ldi	r30, 0x90	; 144
+  7e:	fc e0       	ldi	r31, 0x0C	; 12
+  80:	02 c0       	rjmp	.+4      	; 0x86 <__do_copy_data+0x10>
+  82:	05 90       	lpm	r0, Z+
+  84:	0d 92       	st	X+, r0
+  86:	ac 37       	cpi	r26, 0x7C	; 124
+  88:	b1 07       	cpc	r27, r17
+  8a:	d9 f7       	brne	.-10     	; 0x82 <__do_copy_data+0xc>
+
+0000008c <__do_clear_bss>:
+  8c:	10 e0       	ldi	r17, 0x00	; 0
+  8e:	ac e7       	ldi	r26, 0x7C	; 124
+  90:	b0 e0       	ldi	r27, 0x00	; 0
+  92:	01 c0       	rjmp	.+2      	; 0x96 <.do_clear_bss_start>
+
+00000094 <.do_clear_bss_loop>:
+  94:	1d 92       	st	X+, r1
+
+00000096 <.do_clear_bss_start>:
+  96:	a7 3b       	cpi	r26, 0xB7	; 183
+  98:	b1 07       	cpc	r27, r17
+  9a:	e1 f7       	brne	.-8      	; 0x94 <.do_clear_bss_loop>
+  9c:	1c d5       	rcall	.+2616   	; 0xad6 <main>
+  9e:	f6 c5       	rjmp	.+3052   	; 0xc8c <_exit>
+
+000000a0 <__bad_interrupt>:
+  a0:	af cf       	rjmp	.-162    	; 0x0 <__vectors>
+
+000000a2 <__vector_1>:
+      uint32_t u32_2;
+    };
+} eewrite_t;
+eewrite_t eewrite_buf;
+
+PIN_INT {
+  a2:	1f 92       	push	r1
+  a4:	0f 92       	push	r0
+  a6:	0f b6       	in	r0, 0x3f	; 63
+  a8:	0f 92       	push	r0
+  aa:	11 24       	eor	r1, r1
+  ac:	2f 93       	push	r18
+  ae:	8f 93       	push	r24
+  b0:	9f 93       	push	r25
+  b2:	ef 93       	push	r30
+  b4:	ff 93       	push	r31
+    uint8_t lwmode=wmode;  //let this variables in registers
+  b6:	80 91 90 00 	lds	r24, 0x0090
+    uint8_t lmode=mode;
+  ba:	90 91 9b 00 	lds	r25, 0x009B
+    if (lwmode==OWW_WRITE_0) { //if necessary set 0-Bit
+  be:	81 11       	cpse	r24, r1
+  c0:	03 c0       	rjmp	.+6      	; 0xc8 <__vector_1+0x26>
+        SET_LOW;
+  c2:	ba 9a       	sbi	0x17, 2	; 23
+  c4:	c2 98       	cbi	0x18, 2	; 24
+        lwmode=OWW_NO_WRITE;
+  c6:	82 e0       	ldi	r24, 0x02	; 2
+    }
+    DIS_OWINT; //disable interrupt, only in OWM_SLEEP mode it is active
+  c8:	2b b7       	in	r18, 0x3b	; 59
+  ca:	2f 7b       	andi	r18, 0xBF	; 191
+  cc:	2b bf       	out	0x3b, r18	; 59
+  ce:	10 92 84 00 	sts	0x0084, r1
+    sleepmode=SLEEP_MODE_IDLE; //powerdown is set in TIMER_INT on OWM_SLEEP only!
+  d2:	10 92 84 00 	sts	0x0084, r1
+    switch (lmode) {
+  d6:	e9 2f       	mov	r30, r25
+  d8:	f0 e0       	ldi	r31, 0x00	; 0
+  da:	ed 30       	cpi	r30, 0x0D	; 13
+  dc:	f1 05       	cpc	r31, r1
+  de:	00 f5       	brcc	.+64     	; 0x120 <__vector_1+0x7e>
+  e0:	ef 5e       	subi	r30, 0xEF	; 239
+  e2:	ff 4f       	sbci	r31, 0xFF	; 255
+  e4:	09 94       	ijmp
+        case OWM_SLEEP:
+            TCNT_REG=~(OWT_MIN_RESET);
+  e6:	2c ec       	ldi	r18, 0xCC	; 204
+  e8:	22 bf       	out	0x32, r18	; 50
+            //RESET_LOW;  //??? Set pin as input again ???
+            EN_OWINT; SET_OWINT_RISING; //other edges ?
+  ea:	2b b7       	in	r18, 0x3b	; 59
+  ec:	20 64       	ori	r18, 0x40	; 64
+  ee:	2b bf       	out	0x3b, r18	; 59
+  f0:	20 e4       	ldi	r18, 0x40	; 64
+  f2:	2a bf       	out	0x3a, r18	; 58
+  f4:	23 e0       	ldi	r18, 0x03	; 3
+  f6:	25 bf       	out	0x35, r18	; 53
+            OWRXLED_PORT &= ~(1<<OWRXLED_PIN); /* led off */
+  f8:	da 98       	cbi	0x1b, 2	; 27
+            break;
+  fa:	12 c0       	rjmp	.+36     	; 0x120 <__vector_1+0x7e>
+        case OWM_READ_COMMAND:
+        case OWM_WRITE_FUNC:
+            TCNT_REG=~(OWT_READLINE); //wait a time for reading
+            break;
+        case OWM_SEARCH_ROM:   //Search algorithm waiting for receive or send
+            if (srcount<2) { //this means bit or complement is writing,
+  fc:	20 91 99 00 	lds	r18, 0x0099
+ 100:	22 30       	cpi	r18, 0x02	; 2
+ 102:	08 f4       	brcc	.+2      	; 0x106 <__vector_1+0x64>
+ 104:	03 c0       	rjmp	.+6      	; 0x10c <__vector_1+0x6a>
+                TCNT_REG=~(OWT_LOWTIME);
+            } else
+                TCNT_REG=~(OWT_READLINE);  //init for read answer of master
+ 106:	2d ef       	ldi	r18, 0xFD	; 253
+ 108:	22 bf       	out	0x32, r18	; 50
+ 10a:	0a c0       	rjmp	.+20     	; 0x120 <__vector_1+0x7e>
+            break;
+        case OWM_READ_SCRATCHPAD:
+        case OWM_WRITE_PAGE_TO_MASTER:
+            TCNT_REG=~(OWT_LOWTIME);
+ 10c:	2c ef       	ldi	r18, 0xFC	; 252
+ 10e:	fc cf       	rjmp	.-8      	; 0x108 <__vector_1+0x66>
+            break;
+        case OWM_CHK_RESET:  //rising edge of reset pulse
+            SET_OWINT_FALLING;
+ 110:	92 e0       	ldi	r25, 0x02	; 2
+ 112:	95 bf       	out	0x35, r25	; 53
+ 114:	95 b7       	in	r25, 0x35	; 53
+ 116:	9e 7f       	andi	r25, 0xFE	; 254
+ 118:	95 bf       	out	0x35, r25	; 53
+            TCNT_REG=~(OWT_RESET_PRESENCE);  //waiting for sending presence pulse
+ 11a:	9b ef       	ldi	r25, 0xFB	; 251
+ 11c:	92 bf       	out	0x32, r25	; 50
+            lmode=OWM_RESET;
+ 11e:	91 e0       	ldi	r25, 0x01	; 1
+            break;
+    }
+    EN_TIMER;
+ 120:	29 b7       	in	r18, 0x39	; 57
+ 122:	21 60       	ori	r18, 0x01	; 1
+ 124:	29 bf       	out	0x39, r18	; 57
+ 126:	28 b7       	in	r18, 0x38	; 56
+ 128:	21 60       	ori	r18, 0x01	; 1
+ 12a:	28 bf       	out	0x38, r18	; 56
+    mode=lmode;
+ 12c:	90 93 9b 00 	sts	0x009B, r25
+    wmode=lwmode;
+ 130:	80 93 90 00 	sts	0x0090, r24
+}
+ 134:	ff 91       	pop	r31
+ 136:	ef 91       	pop	r30
+ 138:	9f 91       	pop	r25
+ 13a:	8f 91       	pop	r24
+ 13c:	2f 91       	pop	r18
+ 13e:	0f 90       	pop	r0
+ 140:	0f be       	out	0x3f, r0	; 63
+ 142:	0f 90       	pop	r0
+ 144:	1f 90       	pop	r1
+ 146:	18 95       	reti
+
+00000148 <__vector_11>:
+
+TIMER_INT {
+ 148:	1f 92       	push	r1
+ 14a:	0f 92       	push	r0
+ 14c:	0f b6       	in	r0, 0x3f	; 63
+ 14e:	0f 92       	push	r0
+ 150:	11 24       	eor	r1, r1
+ 152:	cf 92       	push	r12
+ 154:	df 92       	push	r13
+ 156:	ff 92       	push	r15
+ 158:	0f 93       	push	r16
+ 15a:	1f 93       	push	r17
+ 15c:	2f 93       	push	r18
+ 15e:	3f 93       	push	r19
+ 160:	4f 93       	push	r20
+ 162:	5f 93       	push	r21
+ 164:	6f 93       	push	r22
+ 166:	7f 93       	push	r23
+ 168:	8f 93       	push	r24
+ 16a:	9f 93       	push	r25
+ 16c:	af 93       	push	r26
+ 16e:	bf 93       	push	r27
+ 170:	ef 93       	push	r30
+ 172:	ff 93       	push	r31
+ 174:	cf 93       	push	r28
+ 176:	df 93       	push	r29
+ 178:	1f 92       	push	r1
+ 17a:	cd b7       	in	r28, 0x3d	; 61
+ 17c:	de b7       	in	r29, 0x3e	; 62
+    uint8_t lwmode=wmode; //let this variables in registers
+ 17e:	00 91 90 00 	lds	r16, 0x0090
+    uint8_t lmode=mode;
+ 182:	30 91 9b 00 	lds	r19, 0x009B
+    uint8_t lbytep=bytep;
+ 186:	10 91 a4 00 	lds	r17, 0x00A4
+    uint8_t lbitp=bitp;
+ 18a:	60 91 98 00 	lds	r22, 0x0098
+    uint8_t lsrcount=srcount;
+ 18e:	f0 90 99 00 	lds	r15, 0x0099
+    uint8_t lactbit=actbit;
+ 192:	20 91 92 00 	lds	r18, 0x0092
+    uint16_t lscrc=scrc;
+ 196:	c0 90 a9 00 	lds	r12, 0x00A9
+ 19a:	d0 90 aa 00 	lds	r13, 0x00AA
+    //Ask input line sate
+    uint8_t p=((OW_PIN&OW_PINN)==OW_PINN);
+ 19e:	76 b3       	in	r23, 0x16	; 22
+ 1a0:	72 fb       	bst	r23, 2
+ 1a2:	77 27       	eor	r23, r23
+ 1a4:	70 f9       	bld	r23, 0
+
+    OWRXLED_PORT ^= (1<<OWRXLED_PIN); /* toolge RX-led */
+ 1a6:	8b b3       	in	r24, 0x1b	; 27
+ 1a8:	94 e0       	ldi	r25, 0x04	; 4
+ 1aa:	89 27       	eor	r24, r25
+ 1ac:	8b bb       	out	0x1b, r24	; 27
+
+    //Interrupt still active ?
+    if (CHK_INT_EN) {
+ 1ae:	0b b6       	in	r0, 0x3b	; 59
+ 1b0:	06 fe       	sbrs	r0, 6
+ 1b2:	09 c0       	rjmp	.+18     	; 0x1c6 <__vector_11+0x7e>
+        //maybe reset pulse
+        if (p==0) {
+ 1b4:	71 11       	cpse	r23, r1
+ 1b6:	03 c0       	rjmp	.+6      	; 0x1be <__vector_11+0x76>
+            lmode=OWM_CHK_RESET;  //wait for rising edge
+            SET_OWINT_RISING;
+ 1b8:	83 e0       	ldi	r24, 0x03	; 3
+ 1ba:	85 bf       	out	0x35, r24	; 53
+
+    //Interrupt still active ?
+    if (CHK_INT_EN) {
+        //maybe reset pulse
+        if (p==0) {
+            lmode=OWM_CHK_RESET;  //wait for rising edge
+ 1bc:	38 e0       	ldi	r19, 0x08	; 8
+            SET_OWINT_RISING;
+        }
+        DIS_TIMER;
+ 1be:	89 b7       	in	r24, 0x39	; 57
+ 1c0:	8e 7f       	andi	r24, 0xFE	; 254
+ 1c2:	89 bf       	out	0x39, r24	; 57
+ 1c4:	8a c2       	rjmp	.+1300   	; 0x6da <__stack+0x47b>
+    } else
+    switch (lmode) {
+ 1c6:	83 2f       	mov	r24, r19
+ 1c8:	90 e0       	ldi	r25, 0x00	; 0
+ 1ca:	fc 01       	movw	r30, r24
+ 1cc:	31 97       	sbiw	r30, 0x01	; 1
+ 1ce:	ec 30       	cpi	r30, 0x0C	; 12
+ 1d0:	f1 05       	cpc	r31, r1
+ 1d2:	08 f0       	brcs	.+2      	; 0x1d6 <__vector_11+0x8e>
+ 1d4:	82 c2       	rjmp	.+1284   	; 0x6da <__stack+0x47b>
+ 1d6:	e2 5e       	subi	r30, 0xE2	; 226
+ 1d8:	ff 4f       	sbci	r31, 0xFF	; 255
+ 1da:	09 94       	ijmp
+        case OWM_RESET:  //Reset pulse and time after is finished, now go in presence state
+            lmode=OWM_PRESENCE;
+            SET_LOW;
+ 1dc:	ba 9a       	sbi	0x17, 2	; 23
+ 1de:	c2 98       	cbi	0x18, 2	; 24
+            TCNT_REG=~(OWT_PRESENCE);
+ 1e0:	8b ee       	ldi	r24, 0xEB	; 235
+ 1e2:	82 bf       	out	0x32, r24	; 50
+            DIS_OWINT;  //No Pin interrupt necessary only wait for presence is done
+ 1e4:	8b b7       	in	r24, 0x3b	; 59
+ 1e6:	8f 7b       	andi	r24, 0xBF	; 191
+ 1e8:	8b bf       	out	0x3b, r24	; 59
+ 1ea:	10 92 84 00 	sts	0x0084, r1
+        }
+        DIS_TIMER;
+    } else
+    switch (lmode) {
+        case OWM_RESET:  //Reset pulse and time after is finished, now go in presence state
+            lmode=OWM_PRESENCE;
+ 1ee:	32 e0       	ldi	r19, 0x02	; 2
+            SET_LOW;
+            TCNT_REG=~(OWT_PRESENCE);
+            DIS_OWINT;  //No Pin interrupt necessary only wait for presence is done
+            break;
+ 1f0:	90 c2       	rjmp	.+1312   	; 0x712 <__stack+0x4b3>
+        case OWM_PRESENCE:
+            RESET_LOW;  //Presence is done now wait for a command
+ 1f2:	ba 98       	cbi	0x17, 2	; 23
+ 1f4:	6a c0       	rjmp	.+212    	; 0x2ca <__stack+0x6b>
+            lmode=OWM_READ_COMMAND;
+            cbuf=0;lbitp=1;  //Command buffer have to set zero, only set bits will write in
+            break;
+        case OWM_READ_COMMAND:
+            if (p) {  //Set bit if line high
+ 1f6:	77 23       	and	r23, r23
+ 1f8:	29 f0       	breq	.+10     	; 0x204 <__vector_11+0xbc>
+                cbuf|=lbitp;
+ 1fa:	80 91 a5 00 	lds	r24, 0x00A5
+ 1fe:	86 2b       	or	r24, r22
+ 200:	80 93 a5 00 	sts	0x00A5, r24
+            }
+            lbitp=(lbitp<<1);
+ 204:	66 0f       	add	r22, r22
+            if (!lbitp) { //8-Bits read - weird syntax?
+ 206:	09 f0       	breq	.+2      	; 0x20a <__vector_11+0xc2>
+ 208:	7b c2       	rjmp	.+1270   	; 0x700 <__stack+0x4a1>
+                lbitp=1;
+                switch (cbuf) {
+ 20a:	80 91 a5 00 	lds	r24, 0x00A5
+ 20e:	85 35       	cpi	r24, 0x55	; 85
+ 210:	09 f4       	brne	.+2      	; 0x214 <__vector_11+0xcc>
+ 212:	90 c2       	rjmp	.+1312   	; 0x734 <__stack+0x4d5>
+ 214:	20 f4       	brcc	.+8      	; 0x21e <__vector_11+0xd6>
+ 216:	8f 34       	cpi	r24, 0x4F	; 79
+ 218:	09 f0       	breq	.+2      	; 0x21c <__vector_11+0xd4>
+ 21a:	92 c2       	rjmp	.+1316   	; 0x740 <__stack+0x4e1>
+ 21c:	14 c0       	rjmp	.+40     	; 0x246 <__vector_11+0xfe>
+ 21e:	8e 3b       	cpi	r24, 0xBE	; 190
+ 220:	61 f0       	breq	.+24     	; 0x23a <__vector_11+0xf2>
+ 222:	80 3f       	cpi	r24, 0xF0	; 240
+ 224:	09 f0       	breq	.+2      	; 0x228 <__vector_11+0xe0>
+ 226:	8c c2       	rjmp	.+1304   	; 0x740 <__stack+0x4e1>
+                        break;
+                    case 0xF0:  //initialize search rom
+                        lmode=OWM_SEARCH_ROM;
+                        lsrcount=0;
+                        lbytep=0;
+                        lactbit=(owid[lbytep]&lbitp)==lbitp; //set actual bit
+ 228:	00 91 66 00 	lds	r16, 0x0066
+ 22c:	01 70       	andi	r16, 0x01	; 1
+ 22e:	20 2f       	mov	r18, r16
+                        lbytep=0;
+                        lmode=OWM_MATCH_ROM;
+                        break;
+                    case 0xF0:  //initialize search rom
+                        lmode=OWM_SEARCH_ROM;
+                        lsrcount=0;
+ 230:	f1 2c       	mov	r15, r1
+            if (p) {  //Set bit if line high
+                cbuf|=lbitp;
+            }
+            lbitp=(lbitp<<1);
+            if (!lbitp) { //8-Bits read - weird syntax?
+                lbitp=1;
+ 232:	61 e0       	ldi	r22, 0x01	; 1
+                        lmode=OWM_MATCH_ROM;
+                        break;
+                    case 0xF0:  //initialize search rom
+                        lmode=OWM_SEARCH_ROM;
+                        lsrcount=0;
+                        lbytep=0;
+ 234:	10 e0       	ldi	r17, 0x00	; 0
+                    case 0x55://Match ROM
+                        lbytep=0;
+                        lmode=OWM_MATCH_ROM;
+                        break;
+                    case 0xF0:  //initialize search rom
+                        lmode=OWM_SEARCH_ROM;
+ 236:	34 e0       	ldi	r19, 0x04	; 4
+                        lsrcount=0;
+                        lbytep=0;
+                        lactbit=(owid[lbytep]&lbitp)==lbitp; //set actual bit
+                        lwmode=lactbit;  //prepare for writing when next falling edge
+                        break;
+ 238:	65 c2       	rjmp	.+1226   	; 0x704 <__stack+0x4a5>
+                    //FIXME: case 0xEC:  //alarm search rom - TODO
+                    case 0xBE: //read scratchpad
+                        lmode=OWM_GET_ADRESS; //first the master sends an address
+                        lbytep=0;
+                        page=0;
+ 23a:	10 92 a6 00 	sts	0x00A6, r1
+            if (p) {  //Set bit if line high
+                cbuf|=lbitp;
+            }
+            lbitp=(lbitp<<1);
+            if (!lbitp) { //8-Bits read - weird syntax?
+                lbitp=1;
+ 23e:	61 e0       	ldi	r22, 0x01	; 1
+                        lwmode=lactbit;  //prepare for writing when next falling edge
+                        break;
+                    //FIXME: case 0xEC:  //alarm search rom - TODO
+                    case 0xBE: //read scratchpad
+                        lmode=OWM_GET_ADRESS; //first the master sends an address
+                        lbytep=0;
+ 240:	10 e0       	ldi	r17, 0x00	; 0
+                        lactbit=(owid[lbytep]&lbitp)==lbitp; //set actual bit
+                        lwmode=lactbit;  //prepare for writing when next falling edge
+                        break;
+                    //FIXME: case 0xEC:  //alarm search rom - TODO
+                    case 0xBE: //read scratchpad
+                        lmode=OWM_GET_ADRESS; //first the master sends an address
+ 242:	36 e0       	ldi	r19, 0x06	; 6
+                        lbytep=0;
+                        page=0;
+                        //EN_OWINT; SET_OWINT_LOWLEVEL; sleepmode=SLEEP_MODE_PWR_DOWN; //Testing if we can charge-up?
+                        break;
+ 244:	5f c2       	rjmp	.+1214   	; 0x704 <__stack+0x4a5>
+                    case OWC_WRITE_FUNC:
+                        lmode=OWM_WRITE_FUNC; //first the master sends an address(page/func), then 8bytes + crc
+                        lbytep=0;
+                        lscrc=0;
+                        scratchpad.page1=0;
+ 246:	10 92 85 00 	sts	0x0085, r1
+                        //EN_OWINT; SET_OWINT_LOWLEVEL; sleepmode=SLEEP_MODE_PWR_DOWN; //Testing if we can charge-up?
+                        break;
+                    case OWC_WRITE_FUNC:
+                        lmode=OWM_WRITE_FUNC; //first the master sends an address(page/func), then 8bytes + crc
+                        lbytep=0;
+                        lscrc=0;
+ 24a:	c1 2c       	mov	r12, r1
+ 24c:	d1 2c       	mov	r13, r1
+            if (p) {  //Set bit if line high
+                cbuf|=lbitp;
+            }
+            lbitp=(lbitp<<1);
+            if (!lbitp) { //8-Bits read - weird syntax?
+                lbitp=1;
+ 24e:	61 e0       	ldi	r22, 0x01	; 1
+                        page=0;
+                        //EN_OWINT; SET_OWINT_LOWLEVEL; sleepmode=SLEEP_MODE_PWR_DOWN; //Testing if we can charge-up?
+                        break;
+                    case OWC_WRITE_FUNC:
+                        lmode=OWM_WRITE_FUNC; //first the master sends an address(page/func), then 8bytes + crc
+                        lbytep=0;
+ 250:	10 e0       	ldi	r17, 0x00	; 0
+                        lbytep=0;
+                        page=0;
+                        //EN_OWINT; SET_OWINT_LOWLEVEL; sleepmode=SLEEP_MODE_PWR_DOWN; //Testing if we can charge-up?
+                        break;
+                    case OWC_WRITE_FUNC:
+                        lmode=OWM_WRITE_FUNC; //first the master sends an address(page/func), then 8bytes + crc
+ 252:	3c e0       	ldi	r19, 0x0C	; 12
+                        lbytep=0;
+                        lscrc=0;
+                        scratchpad.page1=0;
+                        break;
+ 254:	57 c2       	rjmp	.+1198   	; 0x704 <__stack+0x4a5>
+                        lmode=OWM_SLEEP;  //all other commands do nothing
+                }
+            }
+            break;
+        case OWM_SEARCH_ROM:
+            RESET_LOW;  //Set low also if nothing send (branch takes time and memory)
+ 256:	ba 98       	cbi	0x17, 2	; 23
+            lsrcount++;  //next search rom mode
+ 258:	f3 94       	inc	r15
+            switch (lsrcount) {
+ 25a:	81 e0       	ldi	r24, 0x01	; 1
+ 25c:	f8 16       	cp	r15, r24
+ 25e:	21 f0       	breq	.+8      	; 0x268 <__stack+0x9>
+ 260:	a3 e0       	ldi	r26, 0x03	; 3
+ 262:	fa 12       	cpse	r15, r26
+ 264:	4d c2       	rjmp	.+1178   	; 0x700 <__stack+0x4a1>
+ 266:	06 c0       	rjmp	.+12     	; 0x274 <__stack+0x15>
+                case 1:lwmode=!lactbit;  //preparation sending complement
+ 268:	01 e0       	ldi	r16, 0x01	; 1
+ 26a:	22 23       	and	r18, r18
+ 26c:	09 f4       	brne	.+2      	; 0x270 <__stack+0x11>
+ 26e:	48 c2       	rjmp	.+1168   	; 0x700 <__stack+0x4a1>
+ 270:	00 e0       	ldi	r16, 0x00	; 0
+                    break;
+ 272:	46 c2       	rjmp	.+1164   	; 0x700 <__stack+0x4a1>
+                case 3:
+                    if (p!=(lactbit==1)) {  //check master bit
+ 274:	81 e0       	ldi	r24, 0x01	; 1
+ 276:	21 30       	cpi	r18, 0x01	; 1
+ 278:	09 f0       	breq	.+2      	; 0x27c <__stack+0x1d>
+ 27a:	80 e0       	ldi	r24, 0x00	; 0
+ 27c:	78 13       	cpse	r23, r24
+ 27e:	2f c2       	rjmp	.+1118   	; 0x6de <__stack+0x47f>
+                        lmode=OWM_SLEEP;  //not the same go sleep
+                    } else {
+                        lbitp=(lbitp<<1);  //prepare next bit
+ 280:	66 0f       	add	r22, r22
+                        if (lbitp==0) {
+ 282:	29 f4       	brne	.+10     	; 0x28e <__stack+0x2f>
+                            lbitp=1;
+                            lbytep++;
+ 284:	1f 5f       	subi	r17, 0xFF	; 255
+                    if (p!=(lactbit==1)) {  //check master bit
+                        lmode=OWM_SLEEP;  //not the same go sleep
+                    } else {
+                        lbitp=(lbitp<<1);  //prepare next bit
+                        if (lbitp==0) {
+                            lbitp=1;
+ 286:	61 e0       	ldi	r22, 0x01	; 1
+                            lbytep++;
+                            if (lbytep>=8) {
+ 288:	18 30       	cpi	r17, 0x08	; 8
+ 28a:	08 f0       	brcs	.+2      	; 0x28e <__stack+0x2f>
+ 28c:	28 c2       	rjmp	.+1104   	; 0x6de <__stack+0x47f>
+                                lmode=OWM_SLEEP;  //all bits processed
+                                break;
+                            }
+                        }
+                        lsrcount=0;
+                        lactbit=(owid[lbytep]&lbitp)==lbitp;
+ 28e:	e1 2f       	mov	r30, r17
+ 290:	f0 e0       	ldi	r31, 0x00	; 0
+ 292:	ea 59       	subi	r30, 0x9A	; 154
+ 294:	ff 4f       	sbci	r31, 0xFF	; 255
+ 296:	80 81       	ld	r24, Z
+ 298:	86 23       	and	r24, r22
+ 29a:	21 e0       	ldi	r18, 0x01	; 1
+ 29c:	86 13       	cpse	r24, r22
+ 29e:	20 e0       	ldi	r18, 0x00	; 0
+                        lwmode=lactbit;
+ 2a0:	02 2f       	mov	r16, r18
+                            if (lbytep>=8) {
+                                lmode=OWM_SLEEP;  //all bits processed
+                                break;
+                            }
+                        }
+                        lsrcount=0;
+ 2a2:	f1 2c       	mov	r15, r1
+ 2a4:	2d c2       	rjmp	.+1114   	; 0x700 <__stack+0x4a1>
+                    }
+                    break;
+            }
+            break;
+        case OWM_MATCH_ROM:
+            if (p==((owid[lbytep]&lbitp)==lbitp)) {  //Compare with ID Buffer
+ 2a6:	e1 2f       	mov	r30, r17
+ 2a8:	f0 e0       	ldi	r31, 0x00	; 0
+ 2aa:	ea 59       	subi	r30, 0x9A	; 154
+ 2ac:	ff 4f       	sbci	r31, 0xFF	; 255
+ 2ae:	80 81       	ld	r24, Z
+ 2b0:	86 23       	and	r24, r22
+ 2b2:	91 e0       	ldi	r25, 0x01	; 1
+ 2b4:	86 13       	cpse	r24, r22
+ 2b6:	90 e0       	ldi	r25, 0x00	; 0
+ 2b8:	79 13       	cpse	r23, r25
+ 2ba:	11 c2       	rjmp	.+1058   	; 0x6de <__stack+0x47f>
+                lbitp=(lbitp<<1);
+ 2bc:	66 0f       	add	r22, r22
+                if (!lbitp) {
+ 2be:	09 f0       	breq	.+2      	; 0x2c2 <__stack+0x63>
+ 2c0:	1f c2       	rjmp	.+1086   	; 0x700 <__stack+0x4a1>
+                    lbytep++;
+ 2c2:	1f 5f       	subi	r17, 0xFF	; 255
+                    lbitp=1;
+                    if (lbytep>=8) {
+ 2c4:	18 30       	cpi	r17, 0x08	; 8
+ 2c6:	08 f4       	brcc	.+2      	; 0x2ca <__stack+0x6b>
+ 2c8:	39 c2       	rjmp	.+1138   	; 0x73c <__stack+0x4dd>
+                        lmode=OWM_READ_COMMAND;  //same? get next command
+                        cbuf=0;
+ 2ca:	10 92 a5 00 	sts	0x00A5, r1
+        case OWM_MATCH_ROM:
+            if (p==((owid[lbytep]&lbitp)==lbitp)) {  //Compare with ID Buffer
+                lbitp=(lbitp<<1);
+                if (!lbitp) {
+                    lbytep++;
+                    lbitp=1;
+ 2ce:	61 e0       	ldi	r22, 0x01	; 1
+                    if (lbytep>=8) {
+                        lmode=OWM_READ_COMMAND;  //same? get next command
+ 2d0:	33 e0       	ldi	r19, 0x03	; 3
+                        cbuf=0;
+                        break;
+ 2d2:	18 c2       	rjmp	.+1072   	; 0x704 <__stack+0x4a5>
+            } else {
+                lmode=OWM_SLEEP;
+            }
+            break;
+        case OWM_GET_ADRESS:
+            if (p) { //Get the Address for reading
+ 2d4:	77 23       	and	r23, r23
+ 2d6:	29 f0       	breq	.+10     	; 0x2e2 <__stack+0x83>
+                page|=lbitp;
+ 2d8:	80 91 a6 00 	lds	r24, 0x00A6
+ 2dc:	86 2b       	or	r24, r22
+ 2de:	80 93 a6 00 	sts	0x00A6, r24
+            }
+            lbitp=(lbitp<<1);
+ 2e2:	66 0f       	add	r22, r22
+            if (!lbitp) {
+ 2e4:	09 f0       	breq	.+2      	; 0x2e8 <__stack+0x89>
+ 2e6:	0c c2       	rjmp	.+1048   	; 0x700 <__stack+0x4a1>
+                lbytep++;
+ 2e8:	1f 5f       	subi	r17, 0xFF	; 255
+                lbitp=1;
+                if (lbytep==1) {
+ 2ea:	11 30       	cpi	r17, 0x01	; 1
+ 2ec:	09 f0       	breq	.+2      	; 0x2f0 <__stack+0x91>
+ 2ee:	c1 c0       	rjmp	.+386    	; 0x472 <__stack+0x213>
+                    lmode=OWM_WRITE_PAGE_TO_MASTER;
+                    lbytep=0;lscrc=0; //from first position
+                    memset( &scratchpad.bytes, 0, 10 );
+ 2f0:	8a e0       	ldi	r24, 0x0A	; 10
+ 2f2:	e5 e8       	ldi	r30, 0x85	; 133
+ 2f4:	f0 e0       	ldi	r31, 0x00	; 0
+ 2f6:	df 01       	movw	r26, r30
+ 2f8:	1d 92       	st	X+, r1
+ 2fa:	8a 95       	dec	r24
+ 2fc:	e9 f7       	brne	.-6      	; 0x2f8 <__stack+0x99>
+                    switch (page) {
+ 2fe:	e0 91 a6 00 	lds	r30, 0x00A6
+ 302:	f0 e0       	ldi	r31, 0x00	; 0
+                        scratchpad.page1 = page;
+                        scratchpad.u32_31 = eeprom_read_dword((const uint32_t *) (EE_LABEL_OFFSET+8));
+                        scratchpad.u32_32 = eeprom_read_dword((const uint32_t *) (EE_LABEL_OFFSET+12));
+                        break;
+                      default:
+                        scratchpad.page1 = page;
+ 304:	80 91 a6 00 	lds	r24, 0x00A6
+ 308:	80 93 85 00 	sts	0x0085, r24
+                lbitp=1;
+                if (lbytep==1) {
+                    lmode=OWM_WRITE_PAGE_TO_MASTER;
+                    lbytep=0;lscrc=0; //from first position
+                    memset( &scratchpad.bytes, 0, 10 );
+                    switch (page) {
+ 30c:	eb 30       	cpi	r30, 0x0B	; 11
+ 30e:	f1 05       	cpc	r31, r1
+ 310:	08 f0       	brcs	.+2      	; 0x314 <__stack+0xb5>
+ 312:	9e c0       	rjmp	.+316    	; 0x450 <__stack+0x1f1>
+ 314:	e6 5d       	subi	r30, 0xD6	; 214
+ 316:	ff 4f       	sbci	r31, 0xFF	; 255
+ 318:	09 94       	ijmp
+                      case 0:
+                        scratchpad.page1 = page;
+                        scratchpad.u8_11 = stype;
+ 31a:	80 91 63 00 	lds	r24, 0x0063
+ 31e:	80 93 86 00 	sts	0x0086, r24
+                        scratchpad.u8_12 = eflag;
+ 322:	80 91 9a 00 	lds	r24, 0x009A
+ 326:	80 93 87 00 	sts	0x0087, r24
+                        scratchpad.u16_13 = version;
+ 32a:	80 91 64 00 	lds	r24, 0x0064
+ 32e:	90 91 65 00 	lds	r25, 0x0065
+ 332:	90 93 89 00 	sts	0x0089, r25
+ 336:	80 93 88 00 	sts	0x0088, r24
+                        scratchpad.u32_14 = uptime;
+ 33a:	80 91 80 00 	lds	r24, 0x0080
+ 33e:	90 91 81 00 	lds	r25, 0x0081
+ 342:	a0 91 82 00 	lds	r26, 0x0082
+ 346:	b0 91 83 00 	lds	r27, 0x0083
+ 34a:	25 c0       	rjmp	.+74     	; 0x396 <__stack+0x137>
+                        break;
+                      case 1:
+                        scratchpad.page1 = page;
+                        scratchpad.u16_21 = rcnt;
+ 34c:	80 91 60 00 	lds	r24, 0x0060
+ 350:	90 91 61 00 	lds	r25, 0x0061
+ 354:	90 93 87 00 	sts	0x0087, r25
+ 358:	80 93 86 00 	sts	0x0086, r24
+                        //scratchpad.u16_22 = ADC1
+                        //scratchpad.u16_23 = ADC2
+                        scratchpad.u16_24 = crcerrcnt; //temp/debug
+ 35c:	80 91 7c 00 	lds	r24, 0x007C
+ 360:	80 93 8c 00 	sts	0x008C, r24
+                        //scratchpad.u16_24 = freeRam;
+                        break;
+ 364:	7c c0       	rjmp	.+248    	; 0x45e <__stack+0x1ff>
+                      case 2:
+                        scratchpad.page1 = page;
+                        scratchpad.u32_31 = Counter1;
+ 366:	80 91 9c 00 	lds	r24, 0x009C
+ 36a:	90 91 9d 00 	lds	r25, 0x009D
+ 36e:	a0 91 9e 00 	lds	r26, 0x009E
+ 372:	b0 91 9f 00 	lds	r27, 0x009F
+ 376:	80 93 86 00 	sts	0x0086, r24
+ 37a:	90 93 87 00 	sts	0x0087, r25
+ 37e:	a0 93 88 00 	sts	0x0088, r26
+ 382:	b0 93 89 00 	sts	0x0089, r27
+                        scratchpad.u32_32 = Counter2;
+ 386:	80 91 ab 00 	lds	r24, 0x00AB
+ 38a:	90 91 ac 00 	lds	r25, 0x00AC
+ 38e:	a0 91 ad 00 	lds	r26, 0x00AD
+ 392:	b0 91 ae 00 	lds	r27, 0x00AE
+ 396:	80 93 8a 00 	sts	0x008A, r24
+ 39a:	90 93 8b 00 	sts	0x008B, r25
+ 39e:	a0 93 8c 00 	sts	0x008C, r26
+ 3a2:	b0 93 8d 00 	sts	0x008D, r27
+                        break;
+ 3a6:	5b c0       	rjmp	.+182    	; 0x45e <__stack+0x1ff>
+                      case 3:
+                        scratchpad.page1 = page;
+                        scratchpad.u32_31 = Counter3;
+ 3a8:	80 91 a0 00 	lds	r24, 0x00A0
+ 3ac:	90 91 a1 00 	lds	r25, 0x00A1
+ 3b0:	a0 91 a2 00 	lds	r26, 0x00A2
+ 3b4:	b0 91 a3 00 	lds	r27, 0x00A3
+ 3b8:	80 93 86 00 	sts	0x0086, r24
+ 3bc:	90 93 87 00 	sts	0x0087, r25
+ 3c0:	a0 93 88 00 	sts	0x0088, r26
+ 3c4:	b0 93 89 00 	sts	0x0089, r27
+                        scratchpad.u32_32 = Counter4;
+ 3c8:	80 91 93 00 	lds	r24, 0x0093
+ 3cc:	90 91 94 00 	lds	r25, 0x0094
+ 3d0:	a0 91 95 00 	lds	r26, 0x0095
+ 3d4:	b0 91 96 00 	lds	r27, 0x0096
+ 3d8:	de cf       	rjmp	.-68     	; 0x396 <__stack+0x137>
+                        break;
+                      case 4:
+                        scratchpad.page1 = page;
+                        //pin-input-state
+                        //FIXME: make 1 byte with relevant pins only
+                        scratchpad.u8_41 = pinstatA;
+ 3da:	80 91 a7 00 	lds	r24, 0x00A7
+ 3de:	80 93 86 00 	sts	0x0086, r24
+                        scratchpad.u8_42 = pinstatB;
+ 3e2:	80 91 91 00 	lds	r24, 0x0091
+ 3e6:	80 93 87 00 	sts	0x0087, r24
+                        scratchpad.u8_43 = pullupcfg;
+ 3ea:	80 91 62 00 	lds	r24, 0x0062
+ 3ee:	80 93 88 00 	sts	0x0088, r24
+                        scratchpad.u8_44 = outstate;
+ 3f2:	80 91 7d 00 	lds	r24, 0x007D
+ 3f6:	80 93 89 00 	sts	0x0089, r24
+                        break;
+ 3fa:	31 c0       	rjmp	.+98     	; 0x45e <__stack+0x1ff>
+                      case 5:
+                        scratchpad.page1 = page;
+                        //FIXME: untested, might be broken!
+                        //FIXME: make 1 byte with relevant pins only
+                        scratchpad.u8_41 = outstate;
+ 3fc:	80 91 7d 00 	lds	r24, 0x007D
+ 400:	80 93 86 00 	sts	0x0086, r24
+                        break;
+ 404:	2c c0       	rjmp	.+88     	; 0x45e <__stack+0x1ff>
+                      case 9:
+                        scratchpad.page1 = page;
+                        scratchpad.u32_31 = eeprom_read_dword((const uint32_t *) (EE_LABEL_OFFSET+0));
+ 406:	82 e3       	ldi	r24, 0x32	; 50
+ 408:	90 e0       	ldi	r25, 0x00	; 0
+ 40a:	f2 d3       	rcall	.+2020   	; 0xbf0 <__eerd_dword_tn84>
+ 40c:	60 93 86 00 	sts	0x0086, r22
+ 410:	70 93 87 00 	sts	0x0087, r23
+ 414:	80 93 88 00 	sts	0x0088, r24
+ 418:	90 93 89 00 	sts	0x0089, r25
+                        scratchpad.u32_32 = eeprom_read_dword((const uint32_t *) (EE_LABEL_OFFSET+4));
+ 41c:	86 e3       	ldi	r24, 0x36	; 54
+ 41e:	90 e0       	ldi	r25, 0x00	; 0
+ 420:	0d c0       	rjmp	.+26     	; 0x43c <__stack+0x1dd>
+                        break;
+                      case 10:
+                        scratchpad.page1 = page;
+                        scratchpad.u32_31 = eeprom_read_dword((const uint32_t *) (EE_LABEL_OFFSET+8));
+ 422:	8a e3       	ldi	r24, 0x3A	; 58
+ 424:	90 e0       	ldi	r25, 0x00	; 0
+ 426:	e4 d3       	rcall	.+1992   	; 0xbf0 <__eerd_dword_tn84>
+ 428:	60 93 86 00 	sts	0x0086, r22
+ 42c:	70 93 87 00 	sts	0x0087, r23
+ 430:	80 93 88 00 	sts	0x0088, r24
+ 434:	90 93 89 00 	sts	0x0089, r25
+                        scratchpad.u32_32 = eeprom_read_dword((const uint32_t *) (EE_LABEL_OFFSET+12));
+ 438:	8e e3       	ldi	r24, 0x3E	; 62
+ 43a:	90 e0       	ldi	r25, 0x00	; 0
+ 43c:	d9 d3       	rcall	.+1970   	; 0xbf0 <__eerd_dword_tn84>
+ 43e:	60 93 8a 00 	sts	0x008A, r22
+ 442:	70 93 8b 00 	sts	0x008B, r23
+ 446:	80 93 8c 00 	sts	0x008C, r24
+ 44a:	90 93 8d 00 	sts	0x008D, r25
+                        break;
+ 44e:	07 c0       	rjmp	.+14     	; 0x45e <__stack+0x1ff>
+                      default:
+                        scratchpad.page1 = page;
+                        scratchpad.u8_11 = 0xff;
+ 450:	8f ef       	ldi	r24, 0xFF	; 255
+ 452:	80 93 86 00 	sts	0x0086, r24
+                        scratchpad.u8_12 = page; //this is actually an error! page unknown
+ 456:	80 91 a6 00 	lds	r24, 0x00A6
+ 45a:	80 93 87 00 	sts	0x0087, r24
+                        break;
+                    }
+                    lactbit=(lbitp&scratchpad.bytes[0])==lbitp;
+ 45e:	00 91 85 00 	lds	r16, 0x0085
+ 462:	01 70       	andi	r16, 0x01	; 1
+ 464:	20 2f       	mov	r18, r16
+            if (!lbitp) {
+                lbytep++;
+                lbitp=1;
+                if (lbytep==1) {
+                    lmode=OWM_WRITE_PAGE_TO_MASTER;
+                    lbytep=0;lscrc=0; //from first position
+ 466:	c1 2c       	mov	r12, r1
+ 468:	d1 2c       	mov	r13, r1
+                page|=lbitp;
+            }
+            lbitp=(lbitp<<1);
+            if (!lbitp) {
+                lbytep++;
+                lbitp=1;
+ 46a:	61 e0       	ldi	r22, 0x01	; 1
+                if (lbytep==1) {
+                    lmode=OWM_WRITE_PAGE_TO_MASTER;
+                    lbytep=0;lscrc=0; //from first position
+ 46c:	10 e0       	ldi	r17, 0x00	; 0
+            lbitp=(lbitp<<1);
+            if (!lbitp) {
+                lbytep++;
+                lbitp=1;
+                if (lbytep==1) {
+                    lmode=OWM_WRITE_PAGE_TO_MASTER;
+ 46e:	3b e0       	ldi	r19, 0x0B	; 11
+                        scratchpad.u8_12 = page; //this is actually an error! page unknown
+                        break;
+                    }
+                    lactbit=(lbitp&scratchpad.bytes[0])==lbitp;
+                    lwmode=lactbit; //prepare for send firs bit
+                    break;
+ 470:	49 c1       	rjmp	.+658    	; 0x704 <__stack+0x4a5>
+                } else page=0; // never happens, should be page[lbytepos]
+ 472:	10 92 a6 00 	sts	0x00A6, r1
+ 476:	62 c1       	rjmp	.+708    	; 0x73c <__stack+0x4dd>
+            }
+            break;
+        case OWM_WRITE_FUNC:
+            if (p) {
+ 478:	77 23       	and	r23, r23
+ 47a:	39 f0       	breq	.+14     	; 0x48a <__stack+0x22b>
+                scratchpad.bytes[lbytep]|=lbitp;
+ 47c:	e1 2f       	mov	r30, r17
+ 47e:	f0 e0       	ldi	r31, 0x00	; 0
+ 480:	eb 57       	subi	r30, 0x7B	; 123
+ 482:	ff 4f       	sbci	r31, 0xFF	; 255
+ 484:	80 81       	ld	r24, Z
+ 486:	86 2b       	or	r24, r22
+ 488:	80 83       	st	Z, r24
+            }
+            /* Page(function) is part of CRC! */
+            if ((lscrc&1)!=p) lscrc=(lscrc>>1)^0x8c; else lscrc >>=1;
+ 48a:	a6 01       	movw	r20, r12
+ 48c:	41 70       	andi	r20, 0x01	; 1
+ 48e:	55 27       	eor	r21, r21
+ 490:	87 2f       	mov	r24, r23
+ 492:	90 e0       	ldi	r25, 0x00	; 0
+ 494:	d6 94       	lsr	r13
+ 496:	c7 94       	ror	r12
+ 498:	48 17       	cp	r20, r24
+ 49a:	59 07       	cpc	r21, r25
+ 49c:	11 f0       	breq	.+4      	; 0x4a2 <__stack+0x243>
+ 49e:	bc e8       	ldi	r27, 0x8C	; 140
+ 4a0:	cb 26       	eor	r12, r27
+            lbitp=(lbitp<<1);
+ 4a2:	66 0f       	add	r22, r22
+            if (!lbitp) {
+ 4a4:	09 f0       	breq	.+2      	; 0x4a8 <__stack+0x249>
+ 4a6:	2c c1       	rjmp	.+600    	; 0x700 <__stack+0x4a1>
+                lbytep++;
+ 4a8:	1f 5f       	subi	r17, 0xFF	; 255
+                lbitp=1;
+                if (lbytep==10) {
+ 4aa:	1a 30       	cpi	r17, 0x0A	; 10
+ 4ac:	09 f0       	breq	.+2      	; 0x4b0 <__stack+0x251>
+ 4ae:	e7 c0       	rjmp	.+462    	; 0x67e <__stack+0x41f>
+                    /* now process received Write-function(s) if crc matches */
+                    if (scratchpad.bytes[9] != scratchpad.bytes[10])
+ 4b0:	90 91 8e 00 	lds	r25, 0x008E
+ 4b4:	80 91 8f 00 	lds	r24, 0x008F
+ 4b8:	98 17       	cp	r25, r24
+ 4ba:	31 f0       	breq	.+12     	; 0x4c8 <__stack+0x269>
+                      crcerrcnt++;
+ 4bc:	80 91 7c 00 	lds	r24, 0x007C
+ 4c0:	8f 5f       	subi	r24, 0xFF	; 255
+ 4c2:	80 93 7c 00 	sts	0x007C, r24
+ 4c6:	3c c1       	rjmp	.+632    	; 0x740 <__stack+0x4e1>
+                    else {
+                      switch (scratchpad.bytes[0]) { /* "page" or function-id */
+ 4c8:	80 91 85 00 	lds	r24, 0x0085
+ 4cc:	82 32       	cpi	r24, 0x22	; 34
+ 4ce:	09 f4       	brne	.+2      	; 0x4d2 <__stack+0x273>
+ 4d0:	8e c0       	rjmp	.+284    	; 0x5ee <__stack+0x38f>
+ 4d2:	88 f4       	brcc	.+34     	; 0x4f6 <__stack+0x297>
+ 4d4:	84 31       	cpi	r24, 0x14	; 20
+ 4d6:	09 f4       	brne	.+2      	; 0x4da <__stack+0x27b>
+ 4d8:	57 c0       	rjmp	.+174    	; 0x588 <__stack+0x329>
+ 4da:	30 f4       	brcc	.+12     	; 0x4e8 <__stack+0x289>
+ 4dc:	81 30       	cpi	r24, 0x01	; 1
+ 4de:	e9 f0       	breq	.+58     	; 0x51a <__stack+0x2bb>
+ 4e0:	80 31       	cpi	r24, 0x10	; 16
+ 4e2:	09 f0       	breq	.+2      	; 0x4e6 <__stack+0x287>
+ 4e4:	2d c1       	rjmp	.+602    	; 0x740 <__stack+0x4e1>
+ 4e6:	3f c0       	rjmp	.+126    	; 0x566 <__stack+0x307>
+ 4e8:	88 31       	cpi	r24, 0x18	; 24
+ 4ea:	09 f4       	brne	.+2      	; 0x4ee <__stack+0x28f>
+ 4ec:	5e c0       	rjmp	.+188    	; 0x5aa <__stack+0x34b>
+ 4ee:	8c 31       	cpi	r24, 0x1C	; 28
+ 4f0:	09 f0       	breq	.+2      	; 0x4f4 <__stack+0x295>
+ 4f2:	26 c1       	rjmp	.+588    	; 0x740 <__stack+0x4e1>
+ 4f4:	6b c0       	rjmp	.+214    	; 0x5cc <__stack+0x36d>
+ 4f6:	8c 34       	cpi	r24, 0x4C	; 76
+ 4f8:	09 f4       	brne	.+2      	; 0x4fc <__stack+0x29d>
+ 4fa:	a7 c0       	rjmp	.+334    	; 0x64a <__stack+0x3eb>
+ 4fc:	38 f4       	brcc	.+14     	; 0x50c <__stack+0x2ad>
+ 4fe:	83 32       	cpi	r24, 0x23	; 35
+ 500:	09 f4       	brne	.+2      	; 0x504 <__stack+0x2a5>
+ 502:	92 c0       	rjmp	.+292    	; 0x628 <__stack+0x3c9>
+ 504:	88 34       	cpi	r24, 0x48	; 72
+ 506:	09 f0       	breq	.+2      	; 0x50a <__stack+0x2ab>
+ 508:	1b c1       	rjmp	.+566    	; 0x740 <__stack+0x4e1>
+ 50a:	9f c0       	rjmp	.+318    	; 0x64a <__stack+0x3eb>
+ 50c:	80 35       	cpi	r24, 0x50	; 80
+ 50e:	09 f4       	brne	.+2      	; 0x512 <__stack+0x2b3>
+ 510:	9c c0       	rjmp	.+312    	; 0x64a <__stack+0x3eb>
+ 512:	84 35       	cpi	r24, 0x54	; 84
+ 514:	09 f0       	breq	.+2      	; 0x518 <__stack+0x2b9>
+ 516:	14 c1       	rjmp	.+552    	; 0x740 <__stack+0x4e1>
+ 518:	98 c0       	rjmp	.+304    	; 0x64a <__stack+0x3eb>
+                        case 1: /* reset-functions */
+                          if (scratchpad.bytes[1] == 1) /* reset counterX */ {
+ 51a:	80 91 86 00 	lds	r24, 0x0086
+ 51e:	81 30       	cpi	r24, 0x01	; 1
+ 520:	09 f0       	breq	.+2      	; 0x524 <__stack+0x2c5>
+ 522:	0e c1       	rjmp	.+540    	; 0x740 <__stack+0x4e1>
+                            Counter1=0;Counter2=0;Counter3=0;Counter4=0;
+ 524:	10 92 9c 00 	sts	0x009C, r1
+ 528:	10 92 9d 00 	sts	0x009D, r1
+ 52c:	10 92 9e 00 	sts	0x009E, r1
+ 530:	10 92 9f 00 	sts	0x009F, r1
+ 534:	10 92 ab 00 	sts	0x00AB, r1
+ 538:	10 92 ac 00 	sts	0x00AC, r1
+ 53c:	10 92 ad 00 	sts	0x00AD, r1
+ 540:	10 92 ae 00 	sts	0x00AE, r1
+ 544:	10 92 a0 00 	sts	0x00A0, r1
+ 548:	10 92 a1 00 	sts	0x00A1, r1
+ 54c:	10 92 a2 00 	sts	0x00A2, r1
+ 550:	10 92 a3 00 	sts	0x00A3, r1
+ 554:	10 92 93 00 	sts	0x0093, r1
+ 558:	10 92 94 00 	sts	0x0094, r1
+ 55c:	10 92 95 00 	sts	0x0095, r1
+ 560:	10 92 96 00 	sts	0x0096, r1
+ 564:	ed c0       	rjmp	.+474    	; 0x740 <__stack+0x4e1>
+                          }
+                          break;
+                        case 16:
+                          Counter1 = scratchpad.u32_31;
+ 566:	80 91 86 00 	lds	r24, 0x0086
+ 56a:	90 91 87 00 	lds	r25, 0x0087
+ 56e:	a0 91 88 00 	lds	r26, 0x0088
+ 572:	b0 91 89 00 	lds	r27, 0x0089
+ 576:	80 93 9c 00 	sts	0x009C, r24
+ 57a:	90 93 9d 00 	sts	0x009D, r25
+ 57e:	a0 93 9e 00 	sts	0x009E, r26
+ 582:	b0 93 9f 00 	sts	0x009F, r27
+ 586:	dc c0       	rjmp	.+440    	; 0x740 <__stack+0x4e1>
+                          break;
+                        case 20:
+                          Counter2 = scratchpad.u32_31;
+ 588:	80 91 86 00 	lds	r24, 0x0086
+ 58c:	90 91 87 00 	lds	r25, 0x0087
+ 590:	a0 91 88 00 	lds	r26, 0x0088
+ 594:	b0 91 89 00 	lds	r27, 0x0089
+ 598:	80 93 ab 00 	sts	0x00AB, r24
+ 59c:	90 93 ac 00 	sts	0x00AC, r25
+ 5a0:	a0 93 ad 00 	sts	0x00AD, r26
+ 5a4:	b0 93 ae 00 	sts	0x00AE, r27
+ 5a8:	cb c0       	rjmp	.+406    	; 0x740 <__stack+0x4e1>
+                          break;
+                        case 24:
+                          Counter3 = scratchpad.u32_31;
+ 5aa:	80 91 86 00 	lds	r24, 0x0086
+ 5ae:	90 91 87 00 	lds	r25, 0x0087
+ 5b2:	a0 91 88 00 	lds	r26, 0x0088
+ 5b6:	b0 91 89 00 	lds	r27, 0x0089
+ 5ba:	80 93 a0 00 	sts	0x00A0, r24
+ 5be:	90 93 a1 00 	sts	0x00A1, r25
+ 5c2:	a0 93 a2 00 	sts	0x00A2, r26
+ 5c6:	b0 93 a3 00 	sts	0x00A3, r27
+ 5ca:	ba c0       	rjmp	.+372    	; 0x740 <__stack+0x4e1>
+                          break;
+                        case 28:
+                          Counter4 = scratchpad.u32_31;
+ 5cc:	80 91 86 00 	lds	r24, 0x0086
+ 5d0:	90 91 87 00 	lds	r25, 0x0087
+ 5d4:	a0 91 88 00 	lds	r26, 0x0088
+ 5d8:	b0 91 89 00 	lds	r27, 0x0089
+ 5dc:	80 93 93 00 	sts	0x0093, r24
+ 5e0:	90 93 94 00 	sts	0x0094, r25
+ 5e4:	a0 93 95 00 	sts	0x0095, r26
+ 5e8:	b0 93 96 00 	sts	0x0096, r27
+ 5ec:	a9 c0       	rjmp	.+338    	; 0x740 <__stack+0x4e1>
+                          break;
+                        case 34:
+                          //Pullups XXX = scratchpad.u8_11;
+                          //FIXME: Bitwise! each separate
+                          if (scratchpad.bytes[1] == 0) {
+ 5ee:	80 91 86 00 	lds	r24, 0x0086
+ 5f2:	81 11       	cpse	r24, r1
+ 5f4:	04 c0       	rjmp	.+8      	; 0x5fe <__stack+0x39f>
+                            PORTB &= ~( (1<<PB1) ); /* disable internal Pull-Up PB1 */ \
+ 5f6:	c1 98       	cbi	0x18, 1	; 24
+                            PORTA &= ~( (1<<PA3)|(1<<PA4)|(1<<PA5) ); /* disable internal Pull-Up PA3-5 */ \
+ 5f8:	8b b3       	in	r24, 0x1b	; 27
+ 5fa:	87 7c       	andi	r24, 0xC7	; 199
+ 5fc:	07 c0       	rjmp	.+14     	; 0x60c <__stack+0x3ad>
+                          } else if (scratchpad.bytes[1] == 1) {
+ 5fe:	80 91 86 00 	lds	r24, 0x0086
+ 602:	81 30       	cpi	r24, 0x01	; 1
+ 604:	21 f4       	brne	.+8      	; 0x60e <__stack+0x3af>
+                            PORTB |= ( (1<<PB1) ); /* activate internal Pull-Up PB1 */ \
+ 606:	c1 9a       	sbi	0x18, 1	; 24
+                            PORTA |= ( (1<<PA3)|(1<<PA4)|(1<<PA5) ); /* activate internal Pull-Up PA3-5 */ \
+ 608:	8b b3       	in	r24, 0x1b	; 27
+ 60a:	88 63       	ori	r24, 0x38	; 56
+ 60c:	8b bb       	out	0x1b, r24	; 27
+                          }
+                          pullupcfg = scratchpad.bytes[1];
+ 60e:	80 91 86 00 	lds	r24, 0x0086
+ 612:	80 93 62 00 	sts	0x0062, r24
+                          eeprom_write_byte((uint8_t *) (EE_PULLUP_OFFSET+0), scratchpad.bytes[1]);
+ 616:	60 91 86 00 	lds	r22, 0x0086
+ 61a:	8f e2       	ldi	r24, 0x2F	; 47
+ 61c:	90 e0       	ldi	r25, 0x00	; 0
+ 61e:	29 83       	std	Y+1, r18	; 0x01
+ 620:	0f d3       	rcall	.+1566   	; 0xc40 <__eewr_byte_tn84>
+            /* Page(function) is part of CRC! */
+            if ((lscrc&1)!=p) lscrc=(lscrc>>1)^0x8c; else lscrc >>=1;
+            lbitp=(lbitp<<1);
+            if (!lbitp) {
+                lbytep++;
+                lbitp=1;
+ 622:	61 e0       	ldi	r22, 0x01	; 1
+                            PORTB |= ( (1<<PB1) ); /* activate internal Pull-Up PB1 */ \
+                            PORTA |= ( (1<<PA3)|(1<<PA4)|(1<<PA5) ); /* activate internal Pull-Up PA3-5 */ \
+                          }
+                          pullupcfg = scratchpad.bytes[1];
+                          eeprom_write_byte((uint8_t *) (EE_PULLUP_OFFSET+0), scratchpad.bytes[1]);
+                          break;
+ 624:	29 81       	ldd	r18, Y+1	; 0x01
+ 626:	5b c0       	rjmp	.+182    	; 0x6de <__stack+0x47f>
+                        case 35:
+                          /* TODO / FIXME: Set output ports/Check! */
+                          outstate = scratchpad.bytes[1]; /* EEprom-save is done on pwrdown only! */
+ 628:	80 91 86 00 	lds	r24, 0x0086
+ 62c:	80 93 7d 00 	sts	0x007D, r24
+                          /* Quirky FIXME */
+                          if (outstate & 0x01)
+ 630:	80 ff       	sbrs	r24, 0
+ 632:	02 c0       	rjmp	.+4      	; 0x638 <__stack+0x3d9>
+                            OUTA_PORT |= (1 <<OUTA_PIN);
+ 634:	d8 9a       	sbi	0x1b, 0	; 27
+ 636:	01 c0       	rjmp	.+2      	; 0x63a <__stack+0x3db>
+                          else
+                            OUTA_PORT &= ~(1 <<OUTA_PIN);
+ 638:	d8 98       	cbi	0x1b, 0	; 27
+                          if (outstate & 0x02)
+ 63a:	80 91 7d 00 	lds	r24, 0x007D
+ 63e:	81 ff       	sbrs	r24, 1
+ 640:	02 c0       	rjmp	.+4      	; 0x646 <__stack+0x3e7>
+                            OUTB_PORT |= (1 <<OUTB_PIN);
+ 642:	d9 9a       	sbi	0x1b, 1	; 27
+ 644:	7d c0       	rjmp	.+250    	; 0x740 <__stack+0x4e1>
+                          else
+                            OUTB_PORT &= ~(1 <<OUTB_PIN);
+ 646:	d9 98       	cbi	0x1b, 1	; 27
+ 648:	7b c0       	rjmp	.+246    	; 0x740 <__stack+0x4e1>
+                          break;
+                        case 72:
+                        case 76:
+                        case 80:
+                        case 84:
+                          if (ewrite_flag > 0) //last write still pending!
+ 64a:	80 91 a8 00 	lds	r24, 0x00A8
+ 64e:	81 11       	cpse	r24, r1
+ 650:	77 c0       	rjmp	.+238    	; 0x740 <__stack+0x4e1>
+                            break;
+                          eewrite_buf.u32_1 = scratchpad.u32_31;
+ 652:	80 91 86 00 	lds	r24, 0x0086
+ 656:	90 91 87 00 	lds	r25, 0x0087
+ 65a:	a0 91 88 00 	lds	r26, 0x0088
+ 65e:	b0 91 89 00 	lds	r27, 0x0089
+ 662:	80 93 af 00 	sts	0x00AF, r24
+ 666:	90 93 b0 00 	sts	0x00B0, r25
+ 66a:	a0 93 b1 00 	sts	0x00B1, r26
+ 66e:	b0 93 b2 00 	sts	0x00B2, r27
+                          ewrite_flag = (scratchpad.page1) - 72 + EE_LABEL_OFFSET;
+ 672:	80 91 85 00 	lds	r24, 0x0085
+ 676:	86 51       	subi	r24, 0x16	; 22
+ 678:	80 93 a8 00 	sts	0x00A8, r24
+ 67c:	61 c0       	rjmp	.+194    	; 0x740 <__stack+0x4e1>
+                          break;
+                      }
+                    }
+                    lmode=OWM_SLEEP;
+                    break;
+                } else scratchpad.bytes[lbytep]=0;
+ 67e:	e1 2f       	mov	r30, r17
+ 680:	f0 e0       	ldi	r31, 0x00	; 0
+ 682:	eb 57       	subi	r30, 0x7B	; 123
+ 684:	ff 4f       	sbci	r31, 0xFF	; 255
+ 686:	10 82       	st	Z, r1
+                if (lbytep==9) {
+ 688:	19 30       	cpi	r17, 0x09	; 9
+ 68a:	09 f0       	breq	.+2      	; 0x68e <__stack+0x42f>
+ 68c:	57 c0       	rjmp	.+174    	; 0x73c <__stack+0x4dd>
+                    //copy calculated CRC to last scratchpad-byte as we receive it with next byte!
+                    scratchpad.bytes[10] = lscrc;
+ 68e:	c0 92 8f 00 	sts	0x008F, r12
+ 692:	54 c0       	rjmp	.+168    	; 0x73c <__stack+0x4dd>
+                }
+            }
+            break;
+        case OWM_WRITE_PAGE_TO_MASTER:
+            RESET_LOW;
+ 694:	ba 98       	cbi	0x17, 2	; 23
+            if ((lscrc&1)!=lactbit) lscrc=(lscrc>>1)^0x8c; else lscrc >>=1;
+ 696:	a6 01       	movw	r20, r12
+ 698:	41 70       	andi	r20, 0x01	; 1
+ 69a:	55 27       	eor	r21, r21
+ 69c:	82 2f       	mov	r24, r18
+ 69e:	90 e0       	ldi	r25, 0x00	; 0
+ 6a0:	d6 94       	lsr	r13
+ 6a2:	c7 94       	ror	r12
+ 6a4:	48 17       	cp	r20, r24
+ 6a6:	59 07       	cpc	r21, r25
+ 6a8:	11 f0       	breq	.+4      	; 0x6ae <__stack+0x44f>
+ 6aa:	ec e8       	ldi	r30, 0x8C	; 140
+ 6ac:	ce 26       	eor	r12, r30
+            lbitp=(lbitp<<1);
+ 6ae:	66 0f       	add	r22, r22
+            if (!lbitp) {
+ 6b0:	49 f4       	brne	.+18     	; 0x6c4 <__stack+0x465>
+                lbytep++;
+ 6b2:	1f 5f       	subi	r17, 0xFF	; 255
+                lbitp=1;
+                if (lbytep>=10) {
+ 6b4:	1a 30       	cpi	r17, 0x0A	; 10
+ 6b6:	08 f0       	brcs	.+2      	; 0x6ba <__stack+0x45b>
+ 6b8:	43 c0       	rjmp	.+134    	; 0x740 <__stack+0x4e1>
+                    lmode=OWM_SLEEP;
+                    break;
+                } else if (lbytep==9) scratchpad.bytes[9]=lscrc;
+ 6ba:	19 30       	cpi	r17, 0x09	; 9
+ 6bc:	11 f4       	brne	.+4      	; 0x6c2 <__stack+0x463>
+ 6be:	c0 92 8e 00 	sts	0x008E, r12
+            RESET_LOW;
+            if ((lscrc&1)!=lactbit) lscrc=(lscrc>>1)^0x8c; else lscrc >>=1;
+            lbitp=(lbitp<<1);
+            if (!lbitp) {
+                lbytep++;
+                lbitp=1;
+ 6c2:	61 e0       	ldi	r22, 0x01	; 1
+                if (lbytep>=10) {
+                    lmode=OWM_SLEEP;
+                    break;
+                } else if (lbytep==9) scratchpad.bytes[9]=lscrc;
+            }
+            lactbit=(lbitp&scratchpad.bytes[lbytep])==lbitp;
+ 6c4:	e1 2f       	mov	r30, r17
+ 6c6:	f0 e0       	ldi	r31, 0x00	; 0
+ 6c8:	eb 57       	subi	r30, 0x7B	; 123
+ 6ca:	ff 4f       	sbci	r31, 0xFF	; 255
+ 6cc:	80 81       	ld	r24, Z
+ 6ce:	86 23       	and	r24, r22
+ 6d0:	21 e0       	ldi	r18, 0x01	; 1
+ 6d2:	86 13       	cpse	r24, r22
+ 6d4:	20 e0       	ldi	r18, 0x00	; 0
+            lwmode=lactbit;
+ 6d6:	02 2f       	mov	r16, r18
+            break;
+ 6d8:	13 c0       	rjmp	.+38     	; 0x700 <__stack+0x4a1>
+        }
+        if (lmode==OWM_SLEEP) {
+ 6da:	31 11       	cpse	r19, r1
+ 6dc:	11 c0       	rjmp	.+34     	; 0x700 <__stack+0x4a1>
+          //RESET_LOW;  //??? Set pin as input again ???
+          DIS_TIMER;
+ 6de:	89 b7       	in	r24, 0x39	; 57
+ 6e0:	8e 7f       	andi	r24, 0xFE	; 254
+ 6e2:	89 bf       	out	0x39, r24	; 57
+          EN_OWINT; SET_OWINT_LOWLEVEL;
+ 6e4:	8b b7       	in	r24, 0x3b	; 59
+ 6e6:	80 64       	ori	r24, 0x40	; 64
+ 6e8:	8b bf       	out	0x3b, r24	; 59
+ 6ea:	80 e4       	ldi	r24, 0x40	; 64
+ 6ec:	8a bf       	out	0x3a, r24	; 58
+ 6ee:	85 b7       	in	r24, 0x35	; 53
+ 6f0:	8c 7f       	andi	r24, 0xFC	; 252
+ 6f2:	85 bf       	out	0x35, r24	; 53
+          sleepmode=SLEEP_MODE_PWR_DOWN; //sleep deep
+ 6f4:	80 e1       	ldi	r24, 0x10	; 16
+ 6f6:	80 93 84 00 	sts	0x0084, r24
+          OWRXLED_PORT &= ~(1<<OWRXLED_PIN); /* led off */
+ 6fa:	da 98       	cbi	0x1b, 2	; 27
+ 6fc:	30 e0       	ldi	r19, 0x00	; 0
+ 6fe:	02 c0       	rjmp	.+4      	; 0x704 <__stack+0x4a5>
+        } else {
+          //sleepmode=SLEEP_MODE_IDLE; //no sleep
+        }
+
+        if (lmode!=OWM_PRESENCE)  {
+ 700:	32 30       	cpi	r19, 0x02	; 2
+ 702:	39 f0       	breq	.+14     	; 0x712 <__stack+0x4b3>
+            TCNT_REG=~(OWT_MIN_RESET-OWT_READLINE);  //OWT_READLINE around OWT_LOWTIME
+ 704:	8e ec       	ldi	r24, 0xCE	; 206
+ 706:	82 bf       	out	0x32, r24	; 50
+            EN_OWINT;
+ 708:	8b b7       	in	r24, 0x3b	; 59
+ 70a:	80 64       	ori	r24, 0x40	; 64
+ 70c:	8b bf       	out	0x3b, r24	; 59
+ 70e:	80 e4       	ldi	r24, 0x40	; 64
+ 710:	8a bf       	out	0x3a, r24	; 58
+        }
+        mode=lmode;
+ 712:	30 93 9b 00 	sts	0x009B, r19
+        wmode=lwmode;
+ 716:	00 93 90 00 	sts	0x0090, r16
+        bytep=lbytep;
+ 71a:	10 93 a4 00 	sts	0x00A4, r17
+        bitp=lbitp;
+ 71e:	60 93 98 00 	sts	0x0098, r22
+        srcount=lsrcount;
+ 722:	f0 92 99 00 	sts	0x0099, r15
+        actbit=lactbit;
+ 726:	20 93 92 00 	sts	0x0092, r18
+        scrc=lscrc;
+ 72a:	d0 92 aa 00 	sts	0x00AA, r13
+ 72e:	c0 92 a9 00 	sts	0x00A9, r12
+ 732:	08 c0       	rjmp	.+16     	; 0x744 <__stack+0x4e5>
+            if (p) {  //Set bit if line high
+                cbuf|=lbitp;
+            }
+            lbitp=(lbitp<<1);
+            if (!lbitp) { //8-Bits read - weird syntax?
+                lbitp=1;
+ 734:	61 e0       	ldi	r22, 0x01	; 1
+                switch (cbuf) {
+                    case 0x55://Match ROM
+                        lbytep=0;
+ 736:	10 e0       	ldi	r17, 0x00	; 0
+                        lmode=OWM_MATCH_ROM;
+ 738:	35 e0       	ldi	r19, 0x05	; 5
+ 73a:	e4 cf       	rjmp	.-56     	; 0x704 <__stack+0x4a5>
+            /* Page(function) is part of CRC! */
+            if ((lscrc&1)!=p) lscrc=(lscrc>>1)^0x8c; else lscrc >>=1;
+            lbitp=(lbitp<<1);
+            if (!lbitp) {
+                lbytep++;
+                lbitp=1;
+ 73c:	61 e0       	ldi	r22, 0x01	; 1
+ 73e:	e0 cf       	rjmp	.-64     	; 0x700 <__stack+0x4a1>
+            RESET_LOW;
+            if ((lscrc&1)!=lactbit) lscrc=(lscrc>>1)^0x8c; else lscrc >>=1;
+            lbitp=(lbitp<<1);
+            if (!lbitp) {
+                lbytep++;
+                lbitp=1;
+ 740:	61 e0       	ldi	r22, 0x01	; 1
+ 742:	cd cf       	rjmp	.-102    	; 0x6de <__stack+0x47f>
+        bytep=lbytep;
+        bitp=lbitp;
+        srcount=lsrcount;
+        actbit=lactbit;
+        scrc=lscrc;
+}
+ 744:	0f 90       	pop	r0
+ 746:	df 91       	pop	r29
+ 748:	cf 91       	pop	r28
+ 74a:	ff 91       	pop	r31
+ 74c:	ef 91       	pop	r30
+ 74e:	bf 91       	pop	r27
+ 750:	af 91       	pop	r26
+ 752:	9f 91       	pop	r25
+ 754:	8f 91       	pop	r24
+ 756:	7f 91       	pop	r23
+ 758:	6f 91       	pop	r22
+ 75a:	5f 91       	pop	r21
+ 75c:	4f 91       	pop	r20
+ 75e:	3f 91       	pop	r19
+ 760:	2f 91       	pop	r18
+ 762:	1f 91       	pop	r17
+ 764:	0f 91       	pop	r16
+ 766:	ff 90       	pop	r15
+ 768:	df 90       	pop	r13
+ 76a:	cf 90       	pop	r12
+ 76c:	0f 90       	pop	r0
+ 76e:	0f be       	out	0x3f, r0	; 63
+ 770:	0f 90       	pop	r0
+ 772:	1f 90       	pop	r1
+ 774:	18 95       	reti
+
+00000776 <__vector_2>:
+
+#ifdef PC_INT_ISR
+PC_INT_ISR  //for counting  defined for specific device
+#elif defined PC_INT_ISRA
+PC_INT_ISRA
+ 776:	1f 92       	push	r1
+ 778:	0f 92       	push	r0
+ 77a:	0f b6       	in	r0, 0x3f	; 63
+ 77c:	0f 92       	push	r0
+ 77e:	11 24       	eor	r1, r1
+ 780:	8f 93       	push	r24
+ 782:	9f 93       	push	r25
+ 784:	af 93       	push	r26
+ 786:	bf 93       	push	r27
+ 788:	cb 99       	sbic	0x19, 3	; 25
+ 78a:	17 c0       	rjmp	.+46     	; 0x7ba <__vector_2+0x44>
+ 78c:	80 91 a7 00 	lds	r24, 0x00A7
+ 790:	83 ff       	sbrs	r24, 3
+ 792:	13 c0       	rjmp	.+38     	; 0x7ba <__vector_2+0x44>
+ 794:	80 91 ab 00 	lds	r24, 0x00AB
+ 798:	90 91 ac 00 	lds	r25, 0x00AC
+ 79c:	a0 91 ad 00 	lds	r26, 0x00AD
+ 7a0:	b0 91 ae 00 	lds	r27, 0x00AE
+ 7a4:	01 96       	adiw	r24, 0x01	; 1
+ 7a6:	a1 1d       	adc	r26, r1
+ 7a8:	b1 1d       	adc	r27, r1
+ 7aa:	80 93 ab 00 	sts	0x00AB, r24
+ 7ae:	90 93 ac 00 	sts	0x00AC, r25
+ 7b2:	a0 93 ad 00 	sts	0x00AD, r26
+ 7b6:	b0 93 ae 00 	sts	0x00AE, r27
+ 7ba:	cc 99       	sbic	0x19, 4	; 25
+ 7bc:	17 c0       	rjmp	.+46     	; 0x7ec <__vector_2+0x76>
+ 7be:	80 91 a7 00 	lds	r24, 0x00A7
+ 7c2:	84 ff       	sbrs	r24, 4
+ 7c4:	13 c0       	rjmp	.+38     	; 0x7ec <__vector_2+0x76>
+ 7c6:	80 91 a0 00 	lds	r24, 0x00A0
+ 7ca:	90 91 a1 00 	lds	r25, 0x00A1
+ 7ce:	a0 91 a2 00 	lds	r26, 0x00A2
+ 7d2:	b0 91 a3 00 	lds	r27, 0x00A3
+ 7d6:	01 96       	adiw	r24, 0x01	; 1
+ 7d8:	a1 1d       	adc	r26, r1
+ 7da:	b1 1d       	adc	r27, r1
+ 7dc:	80 93 a0 00 	sts	0x00A0, r24
+ 7e0:	90 93 a1 00 	sts	0x00A1, r25
+ 7e4:	a0 93 a2 00 	sts	0x00A2, r26
+ 7e8:	b0 93 a3 00 	sts	0x00A3, r27
+ 7ec:	cd 99       	sbic	0x19, 5	; 25
+ 7ee:	17 c0       	rjmp	.+46     	; 0x81e <__vector_2+0xa8>
+ 7f0:	80 91 a7 00 	lds	r24, 0x00A7
+ 7f4:	85 ff       	sbrs	r24, 5
+ 7f6:	13 c0       	rjmp	.+38     	; 0x81e <__vector_2+0xa8>
+ 7f8:	80 91 93 00 	lds	r24, 0x0093
+ 7fc:	90 91 94 00 	lds	r25, 0x0094
+ 800:	a0 91 95 00 	lds	r26, 0x0095
+ 804:	b0 91 96 00 	lds	r27, 0x0096
+ 808:	01 96       	adiw	r24, 0x01	; 1
+ 80a:	a1 1d       	adc	r26, r1
+ 80c:	b1 1d       	adc	r27, r1
+ 80e:	80 93 93 00 	sts	0x0093, r24
+ 812:	90 93 94 00 	sts	0x0094, r25
+ 816:	a0 93 95 00 	sts	0x0095, r26
+ 81a:	b0 93 96 00 	sts	0x0096, r27
+ 81e:	89 b3       	in	r24, 0x19	; 25
+ 820:	80 93 a7 00 	sts	0x00A7, r24
+ 824:	bf 91       	pop	r27
+ 826:	af 91       	pop	r26
+ 828:	9f 91       	pop	r25
+ 82a:	8f 91       	pop	r24
+ 82c:	0f 90       	pop	r0
+ 82e:	0f be       	out	0x3f, r0	; 63
+ 830:	0f 90       	pop	r0
+ 832:	1f 90       	pop	r1
+ 834:	18 95       	reti
+
+00000836 <__vector_3>:
+PC_INT_ISRB
+ 836:	1f 92       	push	r1
+ 838:	0f 92       	push	r0
+ 83a:	0f b6       	in	r0, 0x3f	; 63
+ 83c:	0f 92       	push	r0
+ 83e:	11 24       	eor	r1, r1
+ 840:	2f 93       	push	r18
+ 842:	3f 93       	push	r19
+ 844:	4f 93       	push	r20
+ 846:	5f 93       	push	r21
+ 848:	6f 93       	push	r22
+ 84a:	7f 93       	push	r23
+ 84c:	8f 93       	push	r24
+ 84e:	9f 93       	push	r25
+ 850:	af 93       	push	r26
+ 852:	bf 93       	push	r27
+ 854:	ef 93       	push	r30
+ 856:	ff 93       	push	r31
+ 858:	b1 99       	sbic	0x16, 1	; 22
+ 85a:	17 c0       	rjmp	.+46     	; 0x88a <__vector_3+0x54>
+ 85c:	80 91 91 00 	lds	r24, 0x0091
+ 860:	81 ff       	sbrs	r24, 1
+ 862:	13 c0       	rjmp	.+38     	; 0x88a <__vector_3+0x54>
+ 864:	80 91 9c 00 	lds	r24, 0x009C
+ 868:	90 91 9d 00 	lds	r25, 0x009D
+ 86c:	a0 91 9e 00 	lds	r26, 0x009E
+ 870:	b0 91 9f 00 	lds	r27, 0x009F
+ 874:	01 96       	adiw	r24, 0x01	; 1
+ 876:	a1 1d       	adc	r26, r1
+ 878:	b1 1d       	adc	r27, r1
+ 87a:	80 93 9c 00 	sts	0x009C, r24
+ 87e:	90 93 9d 00 	sts	0x009D, r25
+ 882:	a0 93 9e 00 	sts	0x009E, r26
+ 886:	b0 93 9f 00 	sts	0x009F, r27
+ 88a:	b0 99       	sbic	0x16, 0	; 22
+ 88c:	35 c0       	rjmp	.+106    	; 0x8f8 <__vector_3+0xc2>
+ 88e:	80 91 91 00 	lds	r24, 0x0091
+ 892:	80 ff       	sbrs	r24, 0
+ 894:	31 c0       	rjmp	.+98     	; 0x8f8 <__vector_3+0xc2>
+ 896:	40 91 9c 00 	lds	r20, 0x009C
+ 89a:	50 91 9d 00 	lds	r21, 0x009D
+ 89e:	60 91 9e 00 	lds	r22, 0x009E
+ 8a2:	70 91 9f 00 	lds	r23, 0x009F
+ 8a6:	8c e0       	ldi	r24, 0x0C	; 12
+ 8a8:	90 e0       	ldi	r25, 0x00	; 0
+ 8aa:	be d1       	rcall	.+892    	; 0xc28 <__eeupd_dword_tn84>
+ 8ac:	40 91 ab 00 	lds	r20, 0x00AB
+ 8b0:	50 91 ac 00 	lds	r21, 0x00AC
+ 8b4:	60 91 ad 00 	lds	r22, 0x00AD
+ 8b8:	70 91 ae 00 	lds	r23, 0x00AE
+ 8bc:	80 e1       	ldi	r24, 0x10	; 16
+ 8be:	90 e0       	ldi	r25, 0x00	; 0
+ 8c0:	b3 d1       	rcall	.+870    	; 0xc28 <__eeupd_dword_tn84>
+ 8c2:	40 91 a0 00 	lds	r20, 0x00A0
+ 8c6:	50 91 a1 00 	lds	r21, 0x00A1
+ 8ca:	60 91 a2 00 	lds	r22, 0x00A2
+ 8ce:	70 91 a3 00 	lds	r23, 0x00A3
+ 8d2:	84 e1       	ldi	r24, 0x14	; 20
+ 8d4:	90 e0       	ldi	r25, 0x00	; 0
+ 8d6:	a8 d1       	rcall	.+848    	; 0xc28 <__eeupd_dword_tn84>
+ 8d8:	40 91 93 00 	lds	r20, 0x0093
+ 8dc:	50 91 94 00 	lds	r21, 0x0094
+ 8e0:	60 91 95 00 	lds	r22, 0x0095
+ 8e4:	70 91 96 00 	lds	r23, 0x0096
+ 8e8:	88 e1       	ldi	r24, 0x18	; 24
+ 8ea:	90 e0       	ldi	r25, 0x00	; 0
+ 8ec:	9d d1       	rcall	.+826    	; 0xc28 <__eeupd_dword_tn84>
+ 8ee:	60 91 7d 00 	lds	r22, 0x007D
+ 8f2:	80 e3       	ldi	r24, 0x30	; 48
+ 8f4:	90 e0       	ldi	r25, 0x00	; 0
+ 8f6:	86 d1       	rcall	.+780    	; 0xc04 <__eeupd_byte_tn84>
+ 8f8:	86 b3       	in	r24, 0x16	; 22
+ 8fa:	80 93 91 00 	sts	0x0091, r24
+ 8fe:	ff 91       	pop	r31
+ 900:	ef 91       	pop	r30
+ 902:	bf 91       	pop	r27
+ 904:	af 91       	pop	r26
+ 906:	9f 91       	pop	r25
+ 908:	8f 91       	pop	r24
+ 90a:	7f 91       	pop	r23
+ 90c:	6f 91       	pop	r22
+ 90e:	5f 91       	pop	r21
+ 910:	4f 91       	pop	r20
+ 912:	3f 91       	pop	r19
+ 914:	2f 91       	pop	r18
+ 916:	0f 90       	pop	r0
+ 918:	0f be       	out	0x3f, r0	; 63
+ 91a:	0f 90       	pop	r0
+ 91c:	1f 90       	pop	r1
+ 91e:	18 95       	reti
+
+00000920 <init_eeprom>:
+#endif
+
+void init_eeprom(void) {
+ 920:	0f 93       	push	r16
+ 922:	1f 93       	push	r17
+ 924:	cf 93       	push	r28
+ 926:	df 93       	push	r29
+    /* check magic, read slave address and counter values, resetcount, init-name, */
+    if (eeprom_read_word((const uint16_t *) (EE_MAGIC_OFFSET+0)) == EE_MAGIC_NUMBER) {
+ 928:	80 e0       	ldi	r24, 0x00	; 0
+ 92a:	90 e0       	ldi	r25, 0x00	; 0
+ 92c:	66 d1       	rcall	.+716    	; 0xbfa <__eerd_word_tn84>
+ 92e:	82 3e       	cpi	r24, 0xE2	; 226
+ 930:	91 4e       	sbci	r25, 0xE1	; 225
+ 932:	09 f0       	breq	.+2      	; 0x936 <init_eeprom+0x16>
+ 934:	5d c0       	rjmp	.+186    	; 0x9f0 <init_eeprom+0xd0>
+ 936:	06 e6       	ldi	r16, 0x66	; 102
+ 938:	10 e0       	ldi	r17, 0x00	; 0
+ 93a:	c2 e0       	ldi	r28, 0x02	; 2
+ 93c:	d0 e0       	ldi	r29, 0x00	; 0
+      //EEPROM valid -> read counters & settings
+      for (uint16_t i=EE_OWID_OFFSET;i<EE_OWID_OFFSET+8;i++)
+        owid[i-EE_OWID_OFFSET] = eeprom_read_byte((uint8_t *) i);
+ 93e:	ce 01       	movw	r24, r28
+ 940:	4f d1       	rcall	.+670    	; 0xbe0 <__eerd_byte_tn84>
+ 942:	f8 01       	movw	r30, r16
+ 944:	81 93       	st	Z+, r24
+ 946:	8f 01       	movw	r16, r30
+
+void init_eeprom(void) {
+    /* check magic, read slave address and counter values, resetcount, init-name, */
+    if (eeprom_read_word((const uint16_t *) (EE_MAGIC_OFFSET+0)) == EE_MAGIC_NUMBER) {
+      //EEPROM valid -> read counters & settings
+      for (uint16_t i=EE_OWID_OFFSET;i<EE_OWID_OFFSET+8;i++)
+ 948:	21 96       	adiw	r28, 0x01	; 1
+ 94a:	ca 30       	cpi	r28, 0x0A	; 10
+ 94c:	d1 05       	cpc	r29, r1
+ 94e:	b9 f7       	brne	.-18     	; 0x93e <init_eeprom+0x1e>
+        owid[i-EE_OWID_OFFSET] = eeprom_read_byte((uint8_t *) i);
+      rcnt = eeprom_read_word((const uint16_t *) (EE_RCNT_OFFSET+0)) + 1;
+ 950:	8a e0       	ldi	r24, 0x0A	; 10
+ 952:	90 e0       	ldi	r25, 0x00	; 0
+ 954:	52 d1       	rcall	.+676    	; 0xbfa <__eerd_word_tn84>
+ 956:	bc 01       	movw	r22, r24
+ 958:	6f 5f       	subi	r22, 0xFF	; 255
+ 95a:	7f 4f       	sbci	r23, 0xFF	; 255
+ 95c:	70 93 61 00 	sts	0x0061, r23
+ 960:	60 93 60 00 	sts	0x0060, r22
+      eeprom_update_word((uint16_t *) (EE_RCNT_OFFSET+0), rcnt);
+ 964:	8a e0       	ldi	r24, 0x0A	; 10
+ 966:	90 e0       	ldi	r25, 0x00	; 0
+ 968:	67 d1       	rcall	.+718    	; 0xc38 <__eeupd_word_tn84>
+      //FIXME: this eats flashmem!
+      Counter1 = eeprom_read_dword((const uint32_t *) (EE_COUNTER_OFFSET+0));
+ 96a:	8c e0       	ldi	r24, 0x0C	; 12
+ 96c:	90 e0       	ldi	r25, 0x00	; 0
+ 96e:	40 d1       	rcall	.+640    	; 0xbf0 <__eerd_dword_tn84>
+ 970:	60 93 9c 00 	sts	0x009C, r22
+ 974:	70 93 9d 00 	sts	0x009D, r23
+ 978:	80 93 9e 00 	sts	0x009E, r24
+ 97c:	90 93 9f 00 	sts	0x009F, r25
+      Counter2 = eeprom_read_dword((const uint32_t *) (EE_COUNTER_OFFSET+4));
+ 980:	80 e1       	ldi	r24, 0x10	; 16
+ 982:	90 e0       	ldi	r25, 0x00	; 0
+ 984:	35 d1       	rcall	.+618    	; 0xbf0 <__eerd_dword_tn84>
+ 986:	60 93 ab 00 	sts	0x00AB, r22
+ 98a:	70 93 ac 00 	sts	0x00AC, r23
+ 98e:	80 93 ad 00 	sts	0x00AD, r24
+ 992:	90 93 ae 00 	sts	0x00AE, r25
+      Counter3 = eeprom_read_dword((const uint32_t *) (EE_COUNTER_OFFSET+8));
+ 996:	84 e1       	ldi	r24, 0x14	; 20
+ 998:	90 e0       	ldi	r25, 0x00	; 0
+ 99a:	2a d1       	rcall	.+596    	; 0xbf0 <__eerd_dword_tn84>
+ 99c:	60 93 a0 00 	sts	0x00A0, r22
+ 9a0:	70 93 a1 00 	sts	0x00A1, r23
+ 9a4:	80 93 a2 00 	sts	0x00A2, r24
+ 9a8:	90 93 a3 00 	sts	0x00A3, r25
+      Counter4 = eeprom_read_dword((const uint32_t *) (EE_COUNTER_OFFSET+12));
+ 9ac:	88 e1       	ldi	r24, 0x18	; 24
+ 9ae:	90 e0       	ldi	r25, 0x00	; 0
+ 9b0:	1f d1       	rcall	.+574    	; 0xbf0 <__eerd_dword_tn84>
+ 9b2:	60 93 93 00 	sts	0x0093, r22
+ 9b6:	70 93 94 00 	sts	0x0094, r23
+ 9ba:	80 93 95 00 	sts	0x0095, r24
+ 9be:	90 93 96 00 	sts	0x0096, r25
+      //FIXME: read/write if counting on falling/rising-edge ?
+      version = eeprom_read_word((const uint16_t *) (EE_VERSION_OFFSET+0));
+ 9c2:	8d e2       	ldi	r24, 0x2D	; 45
+ 9c4:	90 e0       	ldi	r25, 0x00	; 0
+ 9c6:	19 d1       	rcall	.+562    	; 0xbfa <__eerd_word_tn84>
+ 9c8:	90 93 65 00 	sts	0x0065, r25
+ 9cc:	80 93 64 00 	sts	0x0064, r24
+      stype = eeprom_read_byte((uint8_t *) (EE_TYPE_OFFSET+0));
+ 9d0:	8c e2       	ldi	r24, 0x2C	; 44
+ 9d2:	90 e0       	ldi	r25, 0x00	; 0
+ 9d4:	05 d1       	rcall	.+522    	; 0xbe0 <__eerd_byte_tn84>
+ 9d6:	80 93 63 00 	sts	0x0063, r24
+      pullupcfg = eeprom_read_byte((uint8_t *) (EE_PULLUP_OFFSET+0));
+ 9da:	8f e2       	ldi	r24, 0x2F	; 47
+ 9dc:	90 e0       	ldi	r25, 0x00	; 0
+ 9de:	00 d1       	rcall	.+512    	; 0xbe0 <__eerd_byte_tn84>
+ 9e0:	80 93 62 00 	sts	0x0062, r24
+      outstate = eeprom_read_byte((uint8_t *) (EE_OUTPUT_OFFSET+0));
+ 9e4:	80 e3       	ldi	r24, 0x30	; 48
+ 9e6:	90 e0       	ldi	r25, 0x00	; 0
+ 9e8:	fb d0       	rcall	.+502    	; 0xbe0 <__eerd_byte_tn84>
+ 9ea:	80 93 7d 00 	sts	0x007D, r24
+ 9ee:	49 c0       	rjmp	.+146    	; 0xa82 <init_eeprom+0x162>
+    } else {
+      //Init values
+      /* should cli(); here no sei(); yet enabled in main.. */
+      eeprom_write_word((uint16_t *) (EE_MAGIC_OFFSET+0), EE_MAGIC_NUMBER);
+ 9f0:	62 ee       	ldi	r22, 0xE2	; 226
+ 9f2:	71 ee       	ldi	r23, 0xE1	; 225
+ 9f4:	80 e0       	ldi	r24, 0x00	; 0
+ 9f6:	90 e0       	ldi	r25, 0x00	; 0
+ 9f8:	36 d1       	rcall	.+620    	; 0xc66 <__eewr_word_tn84>
+ 9fa:	06 e6       	ldi	r16, 0x66	; 102
+ 9fc:	10 e0       	ldi	r17, 0x00	; 0
+      for (uint16_t i=EE_OWID_OFFSET;i<EE_OWID_OFFSET+8;i++)
+ 9fe:	c2 e0       	ldi	r28, 0x02	; 2
+ a00:	d0 e0       	ldi	r29, 0x00	; 0
+        eeprom_write_byte((uint8_t *) i,owid[i-EE_OWID_OFFSET]);
+ a02:	f8 01       	movw	r30, r16
+ a04:	61 91       	ld	r22, Z+
+ a06:	8f 01       	movw	r16, r30
+ a08:	ce 01       	movw	r24, r28
+ a0a:	1a d1       	rcall	.+564    	; 0xc40 <__eewr_byte_tn84>
+      outstate = eeprom_read_byte((uint8_t *) (EE_OUTPUT_OFFSET+0));
+    } else {
+      //Init values
+      /* should cli(); here no sei(); yet enabled in main.. */
+      eeprom_write_word((uint16_t *) (EE_MAGIC_OFFSET+0), EE_MAGIC_NUMBER);
+      for (uint16_t i=EE_OWID_OFFSET;i<EE_OWID_OFFSET+8;i++)
+ a0c:	21 96       	adiw	r28, 0x01	; 1
+ a0e:	ca 30       	cpi	r28, 0x0A	; 10
+ a10:	d1 05       	cpc	r29, r1
+ a12:	b9 f7       	brne	.-18     	; 0xa02 <init_eeprom+0xe2>
+        eeprom_write_byte((uint8_t *) i,owid[i-EE_OWID_OFFSET]);
+      eeprom_write_word((uint16_t *) (EE_RCNT_OFFSET+0), rcnt);
+ a14:	60 91 60 00 	lds	r22, 0x0060
+ a18:	70 91 61 00 	lds	r23, 0x0061
+ a1c:	8a e0       	ldi	r24, 0x0A	; 10
+ a1e:	90 e0       	ldi	r25, 0x00	; 0
+ a20:	22 d1       	rcall	.+580    	; 0xc66 <__eewr_word_tn84>
+      //FIXME: this eats flashmem!
+      eeprom_write_dword((uint32_t *) (EE_COUNTER_OFFSET+0),0);
+ a22:	40 e0       	ldi	r20, 0x00	; 0
+ a24:	50 e0       	ldi	r21, 0x00	; 0
+ a26:	ba 01       	movw	r22, r20
+ a28:	8c e0       	ldi	r24, 0x0C	; 12
+ a2a:	90 e0       	ldi	r25, 0x00	; 0
+ a2c:	17 d1       	rcall	.+558    	; 0xc5c <__eewr_dword_tn84>
+      eeprom_write_dword((uint32_t *) (EE_COUNTER_OFFSET+4),0);
+ a2e:	40 e0       	ldi	r20, 0x00	; 0
+ a30:	50 e0       	ldi	r21, 0x00	; 0
+ a32:	ba 01       	movw	r22, r20
+ a34:	80 e1       	ldi	r24, 0x10	; 16
+ a36:	90 e0       	ldi	r25, 0x00	; 0
+ a38:	11 d1       	rcall	.+546    	; 0xc5c <__eewr_dword_tn84>
+      eeprom_write_dword((uint32_t *) (EE_COUNTER_OFFSET+8),0);
+ a3a:	40 e0       	ldi	r20, 0x00	; 0
+ a3c:	50 e0       	ldi	r21, 0x00	; 0
+ a3e:	ba 01       	movw	r22, r20
+ a40:	84 e1       	ldi	r24, 0x14	; 20
+ a42:	90 e0       	ldi	r25, 0x00	; 0
+ a44:	0b d1       	rcall	.+534    	; 0xc5c <__eewr_dword_tn84>
+      eeprom_write_dword((uint32_t *) (EE_COUNTER_OFFSET+12),0);
+ a46:	40 e0       	ldi	r20, 0x00	; 0
+ a48:	50 e0       	ldi	r21, 0x00	; 0
+ a4a:	ba 01       	movw	r22, r20
+ a4c:	88 e1       	ldi	r24, 0x18	; 24
+ a4e:	90 e0       	ldi	r25, 0x00	; 0
+ a50:	05 d1       	rcall	.+522    	; 0xc5c <__eewr_dword_tn84>
+      eeprom_write_byte((uint8_t *) (EE_TYPE_OFFSET+0), stype);
+ a52:	60 91 63 00 	lds	r22, 0x0063
+ a56:	8c e2       	ldi	r24, 0x2C	; 44
+ a58:	90 e0       	ldi	r25, 0x00	; 0
+ a5a:	f2 d0       	rcall	.+484    	; 0xc40 <__eewr_byte_tn84>
+      eeprom_write_word((uint16_t *) (EE_VERSION_OFFSET+0), version);
+ a5c:	60 91 64 00 	lds	r22, 0x0064
+ a60:	70 91 65 00 	lds	r23, 0x0065
+ a64:	8d e2       	ldi	r24, 0x2D	; 45
+ a66:	90 e0       	ldi	r25, 0x00	; 0
+ a68:	fe d0       	rcall	.+508    	; 0xc66 <__eewr_word_tn84>
+      eeprom_write_byte((uint8_t *) (EE_PULLUP_OFFSET+0), 1);
+ a6a:	61 e0       	ldi	r22, 0x01	; 1
+ a6c:	8f e2       	ldi	r24, 0x2F	; 47
+ a6e:	90 e0       	ldi	r25, 0x00	; 0
+ a70:	e7 d0       	rcall	.+462    	; 0xc40 <__eewr_byte_tn84>
+      eeprom_write_byte((uint8_t *) (EE_OUTPUT_OFFSET+0), 0);
+ a72:	60 e0       	ldi	r22, 0x00	; 0
+ a74:	80 e3       	ldi	r24, 0x30	; 48
+ a76:	90 e0       	ldi	r25, 0x00	; 0
+    }
+}
+ a78:	df 91       	pop	r29
+ a7a:	cf 91       	pop	r28
+ a7c:	1f 91       	pop	r17
+ a7e:	0f 91       	pop	r16
+      eeprom_write_dword((uint32_t *) (EE_COUNTER_OFFSET+8),0);
+      eeprom_write_dword((uint32_t *) (EE_COUNTER_OFFSET+12),0);
+      eeprom_write_byte((uint8_t *) (EE_TYPE_OFFSET+0), stype);
+      eeprom_write_word((uint16_t *) (EE_VERSION_OFFSET+0), version);
+      eeprom_write_byte((uint8_t *) (EE_PULLUP_OFFSET+0), 1);
+      eeprom_write_byte((uint8_t *) (EE_OUTPUT_OFFSET+0), 0);
+ a80:	df c0       	rjmp	.+446    	; 0xc40 <__eewr_byte_tn84>
+    }
+}
+ a82:	df 91       	pop	r29
+ a84:	cf 91       	pop	r28
+ a86:	1f 91       	pop	r17
+ a88:	0f 91       	pop	r16
+ a8a:	08 95       	ret
+
+00000a8c <__vector_4>:
+
+//FIXME: enable real watchdog?
+ISR(WDT_vect) {
+ a8c:	1f 92       	push	r1
+ a8e:	0f 92       	push	r0
+ a90:	0f b6       	in	r0, 0x3f	; 63
+ a92:	0f 92       	push	r0
+ a94:	11 24       	eor	r1, r1
+ a96:	8f 93       	push	r24
+ a98:	9f 93       	push	r25
+ a9a:	af 93       	push	r26
+ a9c:	bf 93       	push	r27
+  uptime += 2;
+ a9e:	80 91 80 00 	lds	r24, 0x0080
+ aa2:	90 91 81 00 	lds	r25, 0x0081
+ aa6:	a0 91 82 00 	lds	r26, 0x0082
+ aaa:	b0 91 83 00 	lds	r27, 0x0083
+ aae:	02 96       	adiw	r24, 0x02	; 2
+ ab0:	a1 1d       	adc	r26, r1
+ ab2:	b1 1d       	adc	r27, r1
+ ab4:	80 93 80 00 	sts	0x0080, r24
+ ab8:	90 93 81 00 	sts	0x0081, r25
+ abc:	a0 93 82 00 	sts	0x0082, r26
+ ac0:	b0 93 83 00 	sts	0x0083, r27
+}
+ ac4:	bf 91       	pop	r27
+ ac6:	af 91       	pop	r26
+ ac8:	9f 91       	pop	r25
+ aca:	8f 91       	pop	r24
+ acc:	0f 90       	pop	r0
+ ace:	0f be       	out	0x3f, r0	; 63
+ ad0:	0f 90       	pop	r0
+ ad2:	1f 90       	pop	r1
+ ad4:	18 95       	reti
+
+00000ad6 <main>:
+
+int main(void) {
+    mode=OWM_SLEEP;
+ ad6:	10 92 9b 00 	sts	0x009B, r1
+    wmode=OWW_NO_WRITE;
+ ada:	82 e0       	ldi	r24, 0x02	; 2
+ adc:	80 93 90 00 	sts	0x0090, r24
+    OW_DDR&=~OW_PINN;
+ ae0:	ba 98       	cbi	0x17, 2	; 23
+
+    INIT_AVR
+ ae2:	80 e8       	ldi	r24, 0x80	; 128
+ ae4:	86 bd       	out	0x26, r24	; 38
+ ae6:	16 bc       	out	0x26, r1	; 38
+ ae8:	19 be       	out	0x39, r1	; 57
+ aea:	80 e4       	ldi	r24, 0x40	; 64
+ aec:	8b bf       	out	0x3b, r24	; 59
+ aee:	83 e0       	ldi	r24, 0x03	; 3
+ af0:	83 bf       	out	0x33, r24	; 51
+ af2:	81 b5       	in	r24, 0x21	; 33
+ af4:	87 60       	ori	r24, 0x07	; 7
+ af6:	81 bd       	out	0x21, r24	; 33
+ af8:	81 b5       	in	r24, 0x21	; 33
+ afa:	80 64       	ori	r24, 0x40	; 64
+ afc:	81 bd       	out	0x21, r24	; 33
+    PWRSAVE_AVR
+ afe:	37 98       	cbi	0x06, 7	; 6
+ b00:	80 b1       	in	r24, 0x00	; 0
+ b02:	8b 60       	ori	r24, 0x0B	; 11
+ b04:	80 b9       	out	0x00, r24	; 0
+
+    init_eeprom();
+ b06:	0c df       	rcall	.-488    	; 0x920 <init_eeprom>
+
+    INIT_COUNTER_PINS
+ b08:	8b b7       	in	r24, 0x3b	; 59
+ b0a:	80 61       	ori	r24, 0x10	; 16
+ b0c:	8b bf       	out	0x3b, r24	; 59
+ b0e:	8b b7       	in	r24, 0x3b	; 59
+ b10:	80 62       	ori	r24, 0x20	; 32
+ b12:	8b bf       	out	0x3b, r24	; 59
+ b14:	80 b5       	in	r24, 0x20	; 32
+ b16:	82 60       	ori	r24, 0x02	; 2
+ b18:	80 bd       	out	0x20, r24	; 32
+ b1a:	80 b5       	in	r24, 0x20	; 32
+ b1c:	81 60       	ori	r24, 0x01	; 1
+ b1e:	80 bd       	out	0x20, r24	; 32
+ b20:	b9 98       	cbi	0x17, 1	; 23
+ b22:	b8 98       	cbi	0x17, 0	; 23
+ b24:	86 b3       	in	r24, 0x16	; 22
+ b26:	80 93 91 00 	sts	0x0091, r24
+ b2a:	82 b3       	in	r24, 0x12	; 18
+ b2c:	88 63       	ori	r24, 0x38	; 56
+ b2e:	82 bb       	out	0x12, r24	; 18
+ b30:	8a b3       	in	r24, 0x1a	; 26
+ b32:	87 7c       	andi	r24, 0xC7	; 199
+ b34:	8a bb       	out	0x1a, r24	; 26
+ b36:	89 b3       	in	r24, 0x19	; 25
+ b38:	80 93 a7 00 	sts	0x00A7, r24
+ b3c:	80 91 62 00 	lds	r24, 0x0062
+ b40:	88 23       	and	r24, r24
+ b42:	21 f0       	breq	.+8      	; 0xb4c <main+0x76>
+ b44:	8b b3       	in	r24, 0x1b	; 27
+ b46:	88 63       	ori	r24, 0x38	; 56
+ b48:	8b bb       	out	0x1b, r24	; 27
+ b4a:	c1 9a       	sbi	0x18, 1	; 24
+    INIT_LED_PINS
+ b4c:	d2 9a       	sbi	0x1a, 2	; 26
+    INIT_OUT_PINS
+ b4e:	d0 9a       	sbi	0x1a, 0	; 26
+ b50:	d1 9a       	sbi	0x1a, 1	; 26
+ b52:	2b b3       	in	r18, 0x1b	; 27
+ b54:	80 91 7d 00 	lds	r24, 0x007D
+ b58:	98 2f       	mov	r25, r24
+ b5a:	91 70       	andi	r25, 0x01	; 1
+ b5c:	90 95       	com	r25
+ b5e:	92 23       	and	r25, r18
+ b60:	9b bb       	out	0x1b, r25	; 27
+ b62:	9b b3       	in	r25, 0x1b	; 27
+ b64:	82 70       	andi	r24, 0x02	; 2
+ b66:	88 0f       	add	r24, r24
+ b68:	80 95       	com	r24
+ b6a:	89 23       	and	r24, r25
+ b6c:	8b bb       	out	0x1b, r24	; 27
+
+    SET_OWINT_FALLING;
+ b6e:	82 e0       	ldi	r24, 0x02	; 2
+ b70:	85 bf       	out	0x35, r24	; 53
+ b72:	85 b7       	in	r24, 0x35	; 53
+ b74:	8e 7f       	andi	r24, 0xFE	; 254
+ b76:	85 bf       	out	0x35, r24	; 53
+    DIS_TIMER;
+ b78:	89 b7       	in	r24, 0x39	; 57
+ b7a:	8e 7f       	andi	r24, 0xFE	; 254
+ b7c:	89 bf       	out	0x39, r24	; 57
+    EN_OWINT;
+ b7e:	8b b7       	in	r24, 0x3b	; 59
+ b80:	80 64       	ori	r24, 0x40	; 64
+ b82:	8b bf       	out	0x3b, r24	; 59
+ b84:	90 e4       	ldi	r25, 0x40	; 64
+ b86:	9a bf       	out	0x3a, r25	; 58
+
+    sei();
+ b88:	78 94       	sei
+    //force sleep first
+    DIS_TIMER;
+ b8a:	89 b7       	in	r24, 0x39	; 57
+ b8c:	8e 7f       	andi	r24, 0xFE	; 254
+ b8e:	89 bf       	out	0x39, r24	; 57
+    EN_OWINT; SET_OWINT_LOWLEVEL;
+ b90:	8b b7       	in	r24, 0x3b	; 59
+ b92:	80 64       	ori	r24, 0x40	; 64
+ b94:	8b bf       	out	0x3b, r24	; 59
+ b96:	9a bf       	out	0x3a, r25	; 58
+ b98:	85 b7       	in	r24, 0x35	; 53
+ b9a:	8c 7f       	andi	r24, 0xFC	; 252
+ b9c:	85 bf       	out	0x35, r24	; 53
+    sleepmode=SLEEP_MODE_PWR_DOWN;
+ b9e:	80 e1       	ldi	r24, 0x10	; 16
+ ba0:	80 93 84 00 	sts	0x0084, r24
+
+    while(1){
+        if (ewrite_flag) {
+ ba4:	80 91 a8 00 	lds	r24, 0x00A8
+ ba8:	88 23       	and	r24, r24
+ baa:	71 f0       	breq	.+28     	; 0xbc8 <main+0xf2>
+          eeprom_update_dword((uint32_t *) (ewrite_flag+0), eewrite_buf.u32_1);
+ bac:	80 91 a8 00 	lds	r24, 0x00A8
+ bb0:	40 91 af 00 	lds	r20, 0x00AF
+ bb4:	50 91 b0 00 	lds	r21, 0x00B0
+ bb8:	60 91 b1 00 	lds	r22, 0x00B1
+ bbc:	70 91 b2 00 	lds	r23, 0x00B2
+ bc0:	90 e0       	ldi	r25, 0x00	; 0
+ bc2:	32 d0       	rcall	.+100    	; 0xc28 <__eeupd_dword_tn84>
+          ewrite_flag = 0;
+ bc4:	10 92 a8 00 	sts	0x00A8, r1
+        }
+        OWRXLED_PORT &= ~(1<<OWRXLED_PIN); /* led off */
+ bc8:	da 98       	cbi	0x1b, 2	; 27
+        sleep_enable();
+ bca:	85 b7       	in	r24, 0x35	; 53
+ bcc:	80 62       	ori	r24, 0x20	; 32
+ bce:	85 bf       	out	0x35, r24	; 53
+        set_sleep_mode(sleepmode);
+ bd0:	85 b7       	in	r24, 0x35	; 53
+ bd2:	90 91 84 00 	lds	r25, 0x0084
+ bd6:	87 7e       	andi	r24, 0xE7	; 231
+ bd8:	89 2b       	or	r24, r25
+ bda:	85 bf       	out	0x35, r24	; 53
+        sleep_cpu();
+ bdc:	88 95       	sleep
+    }
+ bde:	e2 cf       	rjmp	.-60     	; 0xba4 <main+0xce>
+
+00000be0 <__eerd_byte_tn84>:
+ be0:	e1 99       	sbic	0x1c, 1	; 28
+ be2:	fe cf       	rjmp	.-4      	; 0xbe0 <__eerd_byte_tn84>
+ be4:	9f bb       	out	0x1f, r25	; 31
+ be6:	8e bb       	out	0x1e, r24	; 30
+ be8:	e0 9a       	sbi	0x1c, 0	; 28
+ bea:	99 27       	eor	r25, r25
+ bec:	8d b3       	in	r24, 0x1d	; 29
+ bee:	08 95       	ret
+
+00000bf0 <__eerd_dword_tn84>:
+ bf0:	a6 e1       	ldi	r26, 0x16	; 22
+ bf2:	b0 e0       	ldi	r27, 0x00	; 0
+ bf4:	44 e0       	ldi	r20, 0x04	; 4
+ bf6:	50 e0       	ldi	r21, 0x00	; 0
+ bf8:	3b c0       	rjmp	.+118    	; 0xc70 <__eerd_blraw_tn84>
+
+00000bfa <__eerd_word_tn84>:
+ bfa:	a8 e1       	ldi	r26, 0x18	; 24
+ bfc:	b0 e0       	ldi	r27, 0x00	; 0
+ bfe:	42 e0       	ldi	r20, 0x02	; 2
+ c00:	50 e0       	ldi	r21, 0x00	; 0
+ c02:	36 c0       	rjmp	.+108    	; 0xc70 <__eerd_blraw_tn84>
+
+00000c04 <__eeupd_byte_tn84>:
+ c04:	26 2f       	mov	r18, r22
+
+00000c06 <__eeupd_r18_tn84>:
+ c06:	e1 99       	sbic	0x1c, 1	; 28
+ c08:	fe cf       	rjmp	.-4      	; 0xc06 <__eeupd_r18_tn84>
+ c0a:	9f bb       	out	0x1f, r25	; 31
+ c0c:	8e bb       	out	0x1e, r24	; 30
+ c0e:	e0 9a       	sbi	0x1c, 0	; 28
+ c10:	01 97       	sbiw	r24, 0x01	; 1
+ c12:	0d b2       	in	r0, 0x1d	; 29
+ c14:	02 16       	cp	r0, r18
+ c16:	39 f0       	breq	.+14     	; 0xc26 <__eeupd_r18_tn84+0x20>
+ c18:	1c ba       	out	0x1c, r1	; 28
+ c1a:	2d bb       	out	0x1d, r18	; 29
+ c1c:	0f b6       	in	r0, 0x3f	; 63
+ c1e:	f8 94       	cli
+ c20:	e2 9a       	sbi	0x1c, 2	; 28
+ c22:	e1 9a       	sbi	0x1c, 1	; 28
+ c24:	0f be       	out	0x3f, r0	; 63
+ c26:	08 95       	ret
+
+00000c28 <__eeupd_dword_tn84>:
+ c28:	03 96       	adiw	r24, 0x03	; 3
+ c2a:	27 2f       	mov	r18, r23
+ c2c:	ec df       	rcall	.-40     	; 0xc06 <__eeupd_r18_tn84>
+ c2e:	ea df       	rcall	.-44     	; 0xc04 <__eeupd_byte_tn84>
+ c30:	25 2f       	mov	r18, r21
+ c32:	e9 df       	rcall	.-46     	; 0xc06 <__eeupd_r18_tn84>
+ c34:	24 2f       	mov	r18, r20
+ c36:	e7 cf       	rjmp	.-50     	; 0xc06 <__eeupd_r18_tn84>
+
+00000c38 <__eeupd_word_tn84>:
+ c38:	01 96       	adiw	r24, 0x01	; 1
+ c3a:	27 2f       	mov	r18, r23
+ c3c:	e4 df       	rcall	.-56     	; 0xc06 <__eeupd_r18_tn84>
+ c3e:	e2 cf       	rjmp	.-60     	; 0xc04 <__eeupd_byte_tn84>
+
+00000c40 <__eewr_byte_tn84>:
+ c40:	26 2f       	mov	r18, r22
+
+00000c42 <__eewr_r18_tn84>:
+ c42:	e1 99       	sbic	0x1c, 1	; 28
+ c44:	fe cf       	rjmp	.-4      	; 0xc42 <__eewr_r18_tn84>
+ c46:	1c ba       	out	0x1c, r1	; 28
+ c48:	9f bb       	out	0x1f, r25	; 31
+ c4a:	8e bb       	out	0x1e, r24	; 30
+ c4c:	2d bb       	out	0x1d, r18	; 29
+ c4e:	0f b6       	in	r0, 0x3f	; 63
+ c50:	f8 94       	cli
+ c52:	e2 9a       	sbi	0x1c, 2	; 28
+ c54:	e1 9a       	sbi	0x1c, 1	; 28
+ c56:	0f be       	out	0x3f, r0	; 63
+ c58:	01 96       	adiw	r24, 0x01	; 1
+ c5a:	08 95       	ret
+
+00000c5c <__eewr_dword_tn84>:
+ c5c:	24 2f       	mov	r18, r20
+ c5e:	f1 df       	rcall	.-30     	; 0xc42 <__eewr_r18_tn84>
+ c60:	25 2f       	mov	r18, r21
+ c62:	ef df       	rcall	.-34     	; 0xc42 <__eewr_r18_tn84>
+ c64:	00 c0       	rjmp	.+0      	; 0xc66 <__eewr_word_tn84>
+
+00000c66 <__eewr_word_tn84>:
+ c66:	ec df       	rcall	.-40     	; 0xc40 <__eewr_byte_tn84>
+ c68:	27 2f       	mov	r18, r23
+ c6a:	eb cf       	rjmp	.-42     	; 0xc42 <__eewr_r18_tn84>
+
+00000c6c <__eerd_block_tn84>:
+ c6c:	dc 01       	movw	r26, r24
+ c6e:	cb 01       	movw	r24, r22
+
+00000c70 <__eerd_blraw_tn84>:
+ c70:	fc 01       	movw	r30, r24
+ c72:	e1 99       	sbic	0x1c, 1	; 28
+ c74:	fe cf       	rjmp	.-4      	; 0xc72 <__eerd_blraw_tn84+0x2>
+ c76:	06 c0       	rjmp	.+12     	; 0xc84 <__eerd_blraw_tn84+0x14>
+ c78:	ff bb       	out	0x1f, r31	; 31
+ c7a:	ee bb       	out	0x1e, r30	; 30
+ c7c:	e0 9a       	sbi	0x1c, 0	; 28
+ c7e:	31 96       	adiw	r30, 0x01	; 1
+ c80:	0d b2       	in	r0, 0x1d	; 29
+ c82:	0d 92       	st	X+, r0
+ c84:	41 50       	subi	r20, 0x01	; 1
+ c86:	50 40       	sbci	r21, 0x00	; 0
+ c88:	b8 f7       	brcc	.-18     	; 0xc78 <__eerd_blraw_tn84+0x8>
+ c8a:	08 95       	ret
+
+00000c8c <_exit>:
+ c8c:	f8 94       	cli
+
+00000c8e <__stop_program>:
+ c8e:	ff cf       	rjmp	.-2      	; 0xc8e <__stop_program>

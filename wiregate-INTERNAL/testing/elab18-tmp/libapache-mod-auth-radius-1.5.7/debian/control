@@ -1,0 +1,15 @@
+Source: libapache-mod-auth-radius
+Maintainer: Josip Rodin <joy-packages@debian.org>
+Uploaders: Fabio M. Di Nitto <fabbione@fabbione.net>
+Section: web
+Priority: optional
+Standards-Version: 3.6.1
+Build-Depends: debhelper (>= 5), apache2-dev
+
+Package: libapache2-mod-auth-radius
+Architecture: any
+Depends: apache2.2-common, ${shlibs:Depends}
+Suggests: radius-server, apache2
+Description: Apache 2.x module for RADIUS authentication
+ mod_auth_radius is an Apache 2.x module for authenticating users
+ against information stored in a RADIUS server.

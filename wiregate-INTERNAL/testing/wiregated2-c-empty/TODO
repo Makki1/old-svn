@@ -1,0 +1,3 @@
+- re-use threads where plugin is already compiled
+- limit slow plugins into "slow"-threads [MAX-2]
+

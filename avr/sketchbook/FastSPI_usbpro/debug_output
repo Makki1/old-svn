@@ -1,0 +1,28 @@
+0: void setup() FastSPI_usbpro.ino:88 Debug-Port enabled, setup
+Code: May  3 2013 20:41:43 Free: 6567
+10000 round empty loop in ms: 12
+10000 rounds of rgb out in ms: 73
+bc:81967
+us*10:12
+cy:96
+INIT: After leds: 6061
+INIT: After serial: 6061
+L:2002:State:0 Label:0 Ex:0 of:0 mfail:0
+L:4007:State:0 Label:0 Ex:0 of:0 mfail:0
+L:6013:State:0 Label:0 Ex:0 of:0 mfail:0
+
+
+with 25 instead of 50% CPU:
+
+0: void setup() FastSPI_usbpro.ino:88 Debug-Port enabled, setup
+Code: May  3 2013 20:50:17 Free: 6567
+10000 round empty loop in ms: 12
+10000 rounds of rgb out in ms: 73
+bc:40983
+us*10:24
+cy:192
+INIT: After leds: 6061
+INIT: After serial: 6061
+
+/home/markstaller/devel/arduino-1.0.4/hardware/tools/avrdude -C/home/markstaller/devel/arduino-1.0.4/hardware/tools/avrdude.conf -patmega2560 -cwiring -P/dev/ttyACM1 -b115200 -D -n -U eeprom:r:eeprom.filled1:i -y
+

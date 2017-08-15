@@ -1,0 +1,13 @@
+von Markus, 24.08.09 :
+Die Verknüpfung freebus-ets zeigt auf ein absolutes Verzeichnis (E:) und funktioniert damit nicht.
+
+starten der freebus-ets.exe bringt fehlermeldung wie in beigefügter log. 
+
+Jerome, 25.08.2009:
+Die Verknüpfung wird zur Zeit noch nicht automatisch erstellt, diese habe ich mir nur zur Vereinfachung direkt (absolut) erzeugt.
+mit der EXE muss ich mal auf einen anderem rechner probieren
+
+- verknüpfung erstmal entfernt, vielleicht kennt ja jemand ne möglichkeit einen relativen pfad dafür zu generieren : ausführbare liegt im \bin
+- Test der runtime auf extra PC ohne python install/VC2008 usw. -> ok
+
+- noch zu tun: im Ornder ..\data\ befindet sich eine "settings.txt" dort bitte den pfad für die datenbank noch eintragen (Pfad eurer runtime)--- dies wird noch geändert ;-)

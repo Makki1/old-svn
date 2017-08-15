@@ -1,0 +1,6 @@
+29.08.2009
+Versuch Integration JPype-0.5.4.win32-py2.6
+-> Patch _pykeywords.py import sets -> #import sets
+			KEYWORDS = sets.Set( ( -> KEYWORDS = set( (
+-> Patch _jclass.py 	import sets -> #import sets
+			toRemove = sets.Set() -> toRemove = set()

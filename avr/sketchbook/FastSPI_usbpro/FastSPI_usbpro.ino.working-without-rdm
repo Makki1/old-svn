@@ -1,0 +1,377 @@
+/* Pixelcontroller - Clone of FastSPI_Stageprofi 2013-04-28
+   Implements Enttec USB Pro for OLA
+   
+   UNFINISGHED! only a barely template
+   PIN 11/13 on Uno, 51,52 on Mega2560 for SPI/LEDs
+   
+   See enclosed README for concept, licenses, (C), Credits etc.
+   Based on many arduino-sources and arduino -rgb-mixer (C) Simon Newton
+
+   (C) 2013 Michael Markstaller / Elaborated Networks GmbH
+*/
+
+// FastSPI v20121014
+#include <FastSPI_LED.h>
+#define DEBUG 1
+//#undef DEBUG 
+#include "common.h"
+#include "RDMEnums.h"
+
+// wiring of LEDs/colors on chip
+struct CRGB { unsigned char g; unsigned char b; unsigned char r; };
+struct CRGB *leds;
+
+//Init always max. num_leds for smooth demo/grid is set by DMX
+#define MAX_LEDS 168
+
+// usbpro device setting
+const byte DEVICE_PARAMS[] = {0, 1, 0, 0, 40};
+const byte DEVICE_ID[] = {1, 0};
+char DEVICE_NAME[] = "Arduino Pixelcontroller";
+byte DEVICE_NAME_SIZE = sizeof(DEVICE_NAME);
+char MANUFACTURER_NAME[] = "Open Lightning";
+//char MANUFACTURER_NAME[] = "ElabNET";
+byte MANUFACTURER_NAME_SIZE = sizeof(MANUFACTURER_NAME);
+long DEVICE_SERIAL = { 0x0123 };
+int ESTA_ID = { 0x7a70 };
+//int ESTA_ID = { 0x095f };
+
+
+/* Globals 
+  Memory should be smthg like 1800 - 600 - 512 = 600 bytes free on Uno/Mega328
+*/
+byte gModeb[] = { 0, 0, 0, 0, 0, 20, 5, 4 }; //Defaults: PWM-pins R/G/B/W, Mode (5), numleds, gridX, gridY
+byte recv_state = U_PRE_SOM;
+byte message[600];
+int expected_size = 0;
+int data_offset = 0;
+byte label = 0;
+
+/* Temp vars / debug */
+unsigned long lastcheck = millis(); //only for debug
+unsigned long data_last = millis(); //data-watchdog
+int democounter = 0;
+int msgfails = 0;
+
+void setup()
+{
+  //wdt_enable(WDTO_2S);
+  DEBUG_INIT LL LL
+  DEBUG_PRINT("Debug-Port enabled")
+  LS("Code: ") LS(__DATE__) LS(" Free: ") LV(freeRam()) LL
+  
+  pinMode(3, OUTPUT);   // set the PWM-pins as output
+  pinMode(6, OUTPUT);   // set the PWM-pins as output
+  pinMode(9, OUTPUT);   // set the PWM-pins as output
+  pinMode(2, INPUT);    // save-button INT0?
+//  attachInterrupt(0, buttonPress, LOW); //PIN2 / INT0
+  
+  //FIXME: unused pins low, output-pins?
+  //TODO: EEprom save/restore?
+  //TODO: log. dimming curve and internal fading as Personality/Option-channel?
+  //TODO: Temp, Voltage, Power-Sensors
+  
+  FastSPI_LED.setLeds(MAX_LEDS);
+  // LPD6803, 5bit/color for Bliptronics, DycoLED, MagiarLED etc.
+  FastSPI_LED.setChipset(CFastSPI_LED::SPI_LPD6803);
+  //FastSPI_LED.setPin(PIN); //only needed for UCS1803 or TM1809 
+  
+  FastSPI_LED.init();
+  FastSPI_LED.start();
+  leds = (struct CRGB*)FastSPI_LED.getRGBData();
+  // clear all
+  FastSPI_LED.show();
+  
+  // initialize the serial communication:
+  Serial.begin(115200);
+  while (!Serial) {
+    ; // wait for serial port to connect. Needed for Leonardo only
+  }
+}
+
+void loop() {
+  //wdt_reset();
+  processSerial();
+  //TODO: PIN-out?
+  //TODO EEpromsave-button?
+  //TODO: Tempsensor, read Voltage/Power?
+  //FastSPI_LED.show(); // not required here..
+
+  //FIXME: switch different demos, spectrum-analyzer
+  //box, line
+  // running the demo breaks receiver! This is why the lower channels are for setup.
+  if (gModeb[4] == 2 && democounter < 1) {
+    runDemo();
+    democounter++;
+  } else if (gModeb[4] == 0) {
+    analogWrite(3, gModeb[0]);
+    analogWrite(6, gModeb[1]);
+    analogWrite(9, gModeb[2]);
+  }
+  //FIXME: unknown, just to test..
+  //Serial.flush();
+
+/*
+  if (recv_state != U_PRE_SOM && (millis() - data_last) > 2000) {
+    LSL("Serial watchdog-Timeout!!")
+    recv_state=U_PRE_SOM; label=0; expected_size=0; data_offset=0;
+  }
+*/
+
+#ifdef DEBUG
+  if (millis() - lastcheck > 2000) {
+    LS("L:") LV(millis()) LS(":State:")
+    LV(recv_state) LS(" Label:") LV(label) LS(" Ex:") LV(expected_size) LS( " of:") LV(data_offset) LS (" mfail:") LV(msgfails) LL
+    lastcheck = millis();
+  }
+#endif
+}
+
+void processUSBmessage() {
+  LL LSL("Received full USB message!")
+  LS(" Label, Size: ") LVH(label) LV(expected_size)
+#ifdef DEBUG2
+  for (int i=0;i<expected_size;i++) { LS(" D:") LV(i) LS(":") LVH(message[i]) } 
+  LL
+#endif
+  LL
+  int tmp;
+  switch (label) {
+    case PARAMETERS_LABEL:
+      LSL("Getparams")
+      //Get parameters, data0+1 = LSB/MSB of user-config-size
+      //FIXME: Header/Footer??
+      Serial.write(PARAMETERS_LABEL);
+      Serial.write(DEVICE_PARAMS,sizeof(DEVICE_PARAMS));
+      break;
+    case DMX_DATA_LABEL:
+      LSL("SetDMX")
+      for (int i=1;i < expected_size;i++) {
+        //LS("C:") LV((message[0])+i-1) LS(" to") LVH(message[i])
+        setChannel((message[0])+i-1,message[i]);
+      }
+
+      FastSPI_LED.show();
+      break;
+    case SERIAL_NUMBER_LABEL:
+      LSL("GetSerial")
+      //FIXME: get from eeprom/generated
+      Serial.write(0x7E);
+      Serial.write(SERIAL_NUMBER_LABEL);
+      Serial.write(sizeof(DEVICE_SERIAL));
+      Serial.write(sizeof(DEVICE_SERIAL) >> 8);
+      Serial.write(DEVICE_SERIAL & 0xFF);
+      Serial.write((DEVICE_SERIAL >> 8) & 0xFF);
+      Serial.write((DEVICE_SERIAL >> 16) & 0xFF);
+      Serial.write((DEVICE_SERIAL >> 24) & 0xFF);
+      Serial.write(0xE7);
+      break;
+    case NAME_LABEL:
+      LSL("GetName")
+      tmp = sizeof(DEVICE_ID) + sizeof(DEVICE_NAME);
+      Serial.write(0x7E);
+      Serial.write(NAME_LABEL);
+      Serial.write(tmp);
+      Serial.write(tmp >> 8);
+      Serial.write(DEVICE_ID, sizeof(DEVICE_ID));
+      Serial.write((byte*) DEVICE_NAME, sizeof(DEVICE_NAME));
+      Serial.write(0xE7);
+      break;
+    case MANUFACTURER_LABEL:
+      LSL("GetManu")
+      tmp = sizeof(ESTA_ID) + sizeof(MANUFACTURER_NAME);
+      Serial.write(0x7E);
+      Serial.write(MANUFACTURER_LABEL);
+      Serial.write(tmp);
+      Serial.write(tmp >> 8);
+      // ESTA ID is sent in little endian format
+      Serial.write(ESTA_ID);
+      Serial.write(ESTA_ID >> 8);
+      Serial.write((byte*) MANUFACTURER_NAME, sizeof(MANUFACTURER_NAME));
+      Serial.write(0xE7);
+      break;
+    case RDM_LABEL:
+      LSL("RDM")
+//      led_state = !led_state;
+//      digitalWrite(LED_PIN, led_state);
+//      rdm_handler.HandleRDMMessage(message, message_size);
+      break;
+    default:
+      LS("Unsupported message-label:") LV(label) LL
+      break;
+  }
+}
+
+void processSerial() {
+//FIXME: broken: doesn't work > 64byte data!!
+  while (Serial.available()) {
+    int data = Serial.read();
+    //LS("Sin:") LVH(data) LL
+    switch (recv_state) {
+      case U_PRE_SOM:
+        if (data == 0x7E) {
+          recv_state = U_GOT_SOM;
+        } else {
+          //LSL("SPRE:dunno: ") LVH(data)
+        }
+        break;
+      case U_GOT_SOM:
+        label = data;
+        recv_state = U_GOT_LABEL;
+        break;
+      case U_GOT_LABEL:
+        data_offset = 0;
+        expected_size = data;
+        recv_state = U_GOT_DATA_LSB;
+        break;
+      case U_GOT_DATA_LSB:
+        expected_size += (data << 8);
+        if (expected_size == 0) {
+          recv_state = U_WAITING_FOR_EOM;
+        } else {
+          recv_state = U_IN_DATA;
+        }
+        break;
+      case U_IN_DATA:
+        //broken with data > 64byte!
+        message[data_offset] = data;
+        data_offset++;
+        data_last = millis();
+//        LS(" Data#") LV(data_offset) LS(" : ") LV(data)
+        if (data_offset == expected_size) {
+          recv_state = U_WAITING_FOR_EOM;
+        }
+        break;
+      case U_WAITING_FOR_EOM:
+        if (data == 0xE7) {
+          // this was a valid packet, act on it
+          processUSBmessage();
+        } else {
+          LSL("Timeout waiting for EOM")
+          msgfails++;
+        }
+        recv_state = U_PRE_SOM;
+    }
+  }
+}
+
+void setChannel(int chan, byte val) {
+
+  byte color = chan % 3;
+  if (chan < 505 && gModeb[4] == 0) //only set single channels if in DMX-mode
+    switch (color) {
+        case 0: leds[int(chan/3)].r = val; break;
+        case 1: leds[int(chan/3)].g = val; break;
+        case 2: leds[int(chan/3)].b = val; break;
+    }
+    else if (chan < 512)
+        gModeb[chan-504] = val;
+}
+
+void buttonPress () {
+}
+
+void runDemo() {
+  //TODO: add more demos
+
+  // one at a time
+  for(int j = 0; j < 4; j++) { 
+    for(int i = 0 ; i < gModeb[5]; i++ ) {
+      memset(leds, 0, MAX_LEDS * 3);
+      switch(j) { 
+        case 0: leds[i].r = 255; break;
+        case 1: leds[i].g = 255; break;
+        case 2: leds[i].b = 255; break;
+        case 3: 
+          leds[i].r = 255; 
+          leds[i].g = 255; 
+          leds[i].b = 255; 
+          break;
+      }
+      FastSPI_LED.show();
+      if (Serial.available())
+        processSerial();
+      delay(20);
+    }
+  }
+
+  // growing/receeding bars
+  for(int j = 0; j < 3; j++) { 
+    memset(leds, 0, MAX_LEDS * 3);
+    for(int i = 0 ; i < gModeb[5]; i++ ) {
+      switch(j) { 
+        case 0: leds[i].r = 255; break;
+        case 1: leds[i].g = 255; break;
+        case 2: leds[i].b = 255; break;
+      }
+      FastSPI_LED.show();
+      if (Serial.available())
+        processSerial();
+      delay(10);
+    }
+    for(int i = gModeb[5]-1 ; i >= 0; i-- ) {
+      switch(j) { 
+        case 0: leds[i].r = 0; break;
+        case 1: leds[i].g = 0; break;
+        case 2: leds[i].b = 0; break;
+      }
+      FastSPI_LED.show();
+      if (Serial.available())
+        processSerial();
+      delay(10);
+    }
+  }
+  
+  // Fade in/fade out
+  for(int j = 0; j < 4; j++ ) { 
+    memset(leds, 0, MAX_LEDS * 3);
+    for(int k = 0; k < 256; k++) { 
+      for(int i = 0; i < gModeb[5]; i++ ) {
+        switch(j) {
+          case 0: leds[i].r = k; break;
+          case 1: leds[i].g = k; break;
+          case 2: leds[i].b = k; break;
+          case 3: 
+            leds[i].r = k; 
+            leds[i].g = k; 
+            leds[i].b = k; 
+            break;
+        }
+      }
+      FastSPI_LED.show();
+      delay(1); //3
+    }
+    for(int k = 255; k >= 0; k--) { 
+      for(int i = 0; i < gModeb[5]; i++ ) {
+        switch(j) { 
+          case 0: leds[i].r = k; break;
+          case 1: leds[i].g = k; break;
+          case 2: leds[i].b = k; break;
+          case 3: 
+            leds[i].r = k; 
+            leds[i].g = k; 
+            leds[i].b = k; 
+            break;
+        }
+      }
+      FastSPI_LED.show();
+      delay(1); //3
+    }
+    if (Serial.available())
+      processSerial();
+  }
+
+} // end demo
+
+/* some IMPORTANT hints: http://playground.arduino.cc/Main/CorruptArrayVariablesAndMemory
+
+avr-objdump -h /tmp/build9122930650034551321.tmp/FastSPI_usbpro.cpp.elf
+avr-size /tmp/build9122930650034551321.tmp/FastSPI_usbpro.cpp.elf
+*/
+
+int freeRam () {
+  extern int __heap_start, *__brkval; 
+  int v; 
+  return (int) &v - (__brkval == 0 ? (int) &__heap_start : (int) __brkval); 
+}
+

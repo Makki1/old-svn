@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "Freebus-ETS.py", line 21, in <module>
+  File "gtk\__init__.pyo", line 38, in <module>
+  File "gobject\__init__.pyo", line 30, in <module>
+  File "gobject\constants.pyo", line 22, in <module>
+  File "gobject\_gobject.pyo", line 12, in <module>
+  File "gobject\_gobject.pyo", line 10, in __load
+ImportError: DLL load failed: Das angegebene Modul wurde nicht gefunden.
+Traceback (most recent call last):
+  File "Freebus-ETS.py", line 21, in <module>
+  File "gtk\__init__.pyo", line 38, in <module>
+  File "gobject\__init__.pyo", line 30, in <module>
+  File "gobject\constants.pyo", line 22, in <module>
+  File "gobject\_gobject.pyo", line 12, in <module>
+  File "gobject\_gobject.pyo", line 10, in __load
+ImportError: DLL load failed: Das angegebene Modul wurde nicht gefunden.

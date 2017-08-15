@@ -1,0 +1,50 @@
+!SESSION 2009-05-09 16:58:36.500 -----------------------------------------------
+eclipse.buildId=M20070212-1330
+java.version=1.5.0_09
+java.vendor=Sun Microsystems Inc.
+BootLoader constants: OS=win32, ARCH=x86, WS=win32, NL=de_DE
+Command-line arguments:  -data E:\Freebus\trunk\software\freebus-ets -os win32 -ws win32 -arch x86
+
+!ENTRY org.eclipse.ui 2 0 2009-05-09 16:58:38.078
+!MESSAGE Warnings while parsing the view contributions from the 'org.eclipse.ui.viewActions' extension point
+!SUBENTRY 1 org.eclipse.ui 2 0 2009-05-09 16:58:38.078
+!MESSAGE Actions require a non-empty label or definitionId: plug-in='ru.nlmk.eclipseutilplugins', id='AUTOGEN:::eclipseutilplugins.viewResourceNavigator/eclipseutilplugins.ResourceAction1'
+!SUBENTRY 1 org.eclipse.ui 2 0 2009-05-09 16:58:38.078
+!MESSAGE Actions require a non-empty label or definitionId: plug-in='ru.nlmk.eclipseutilplugins', id='AUTOGEN:::eclipseutilplugins.viewResourceNavigator/eclipseutilplugins.ResourceAction2'
+!SUBENTRY 1 org.eclipse.ui 2 0 2009-05-09 16:58:38.078
+!MESSAGE Actions require a non-empty label or definitionId: plug-in='ru.nlmk.eclipseutilplugins', id='AUTOGEN:::eclipseutilplugins.viewResourceNavigator/eclipseutilplugins.ResourceAction3'
+!SUBENTRY 1 org.eclipse.ui 2 0 2009-05-09 16:58:38.078
+!MESSAGE Actions require a non-empty label or definitionId: plug-in='ru.nlmk.eclipseutilplugins', id='AUTOGEN:::eclipseutilplugins.viewResourceNavigator/eclipseutilplugins.ResourceAction4'
+!SUBENTRY 1 org.eclipse.ui 2 0 2009-05-09 16:58:38.078
+!MESSAGE Actions require a non-empty label or definitionId: plug-in='ru.nlmk.eclipseutilplugins', id='AUTOGEN:::eclipseutilplugins.viewPackageExplorer/eclipseutilplugins.PackageAction1'
+!SUBENTRY 1 org.eclipse.ui 2 0 2009-05-09 16:58:38.078
+!MESSAGE Actions require a non-empty label or definitionId: plug-in='ru.nlmk.eclipseutilplugins', id='AUTOGEN:::eclipseutilplugins.viewPackageExplorer/eclipseutilplugins.PackageAction2'
+!SUBENTRY 1 org.eclipse.ui 2 0 2009-05-09 16:58:38.078
+!MESSAGE Actions require a non-empty label or definitionId: plug-in='ru.nlmk.eclipseutilplugins', id='AUTOGEN:::eclipseutilplugins.viewPackageExplorer/eclipseutilplugins.PackageAction3'
+!SUBENTRY 1 org.eclipse.ui 2 0 2009-05-09 16:58:38.078
+!MESSAGE Actions require a non-empty label or definitionId: plug-in='ru.nlmk.eclipseutilplugins', id='AUTOGEN:::eclipseutilplugins.viewPackageExplorer/eclipseutilplugins.PackageAction4'
+!SESSION 2009-05-09 16:59:34.875 -----------------------------------------------
+eclipse.buildId=M20070212-1330
+java.version=1.5.0_09
+java.vendor=Sun Microsystems Inc.
+BootLoader constants: OS=win32, ARCH=x86, WS=win32, NL=de_DE
+Command-line arguments:  -data E:\Freebus\trunk\software\freebus-ets -os win32 -ws win32 -arch x86
+
+!ENTRY org.eclipse.ui 2 0 2009-05-09 16:59:36.484
+!MESSAGE Warnings while parsing the view contributions from the 'org.eclipse.ui.viewActions' extension point
+!SUBENTRY 1 org.eclipse.ui 2 0 2009-05-09 16:59:36.484
+!MESSAGE Actions require a non-empty label or definitionId: plug-in='ru.nlmk.eclipseutilplugins', id='AUTOGEN:::eclipseutilplugins.viewResourceNavigator/eclipseutilplugins.ResourceAction1'
+!SUBENTRY 1 org.eclipse.ui 2 0 2009-05-09 16:59:36.484
+!MESSAGE Actions require a non-empty label or definitionId: plug-in='ru.nlmk.eclipseutilplugins', id='AUTOGEN:::eclipseutilplugins.viewResourceNavigator/eclipseutilplugins.ResourceAction2'
+!SUBENTRY 1 org.eclipse.ui 2 0 2009-05-09 16:59:36.484
+!MESSAGE Actions require a non-empty label or definitionId: plug-in='ru.nlmk.eclipseutilplugins', id='AUTOGEN:::eclipseutilplugins.viewResourceNavigator/eclipseutilplugins.ResourceAction3'
+!SUBENTRY 1 org.eclipse.ui 2 0 2009-05-09 16:59:36.484
+!MESSAGE Actions require a non-empty label or definitionId: plug-in='ru.nlmk.eclipseutilplugins', id='AUTOGEN:::eclipseutilplugins.viewResourceNavigator/eclipseutilplugins.ResourceAction4'
+!SUBENTRY 1 org.eclipse.ui 2 0 2009-05-09 16:59:36.484
+!MESSAGE Actions require a non-empty label or definitionId: plug-in='ru.nlmk.eclipseutilplugins', id='AUTOGEN:::eclipseutilplugins.viewPackageExplorer/eclipseutilplugins.PackageAction1'
+!SUBENTRY 1 org.eclipse.ui 2 0 2009-05-09 16:59:36.484
+!MESSAGE Actions require a non-empty label or definitionId: plug-in='ru.nlmk.eclipseutilplugins', id='AUTOGEN:::eclipseutilplugins.viewPackageExplorer/eclipseutilplugins.PackageAction2'
+!SUBENTRY 1 org.eclipse.ui 2 0 2009-05-09 16:59:36.484
+!MESSAGE Actions require a non-empty label or definitionId: plug-in='ru.nlmk.eclipseutilplugins', id='AUTOGEN:::eclipseutilplugins.viewPackageExplorer/eclipseutilplugins.PackageAction3'
+!SUBENTRY 1 org.eclipse.ui 2 0 2009-05-09 16:59:36.484
+!MESSAGE Actions require a non-empty label or definitionId: plug-in='ru.nlmk.eclipseutilplugins', id='AUTOGEN:::eclipseutilplugins.viewPackageExplorer/eclipseutilplugins.PackageAction4'

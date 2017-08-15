@@ -1,0 +1,17 @@
+diff -Narud libapache-mod-auth-radius-1.5.7.orig/mod_auth_radius.c libapache-mod-auth-radius-1.5.7/mod_auth_radius.c
+--- libapache-mod-auth-radius-1.5.7.orig/mod_auth_radius.c	2003-03-24 19:16:15.000000000 +0000
++++ libapache-mod-auth-radius-1.5.7/mod_auth_radius.c	2005-01-19 11:54:34.000000000 +0000
+@@ -971,8 +971,11 @@
+   }
+   return attr;
+ }
+-#define radcpy(STRING, ATTR) {memcpy(STRING, ATTR->data, ATTR->length - 2); \
+-                              (STRING)[ATTR->length - 2] = 0;}
++#define radcpy(STRING, ATTR) do { \
++				  unsigned char len = ATTR->length; \
++				  if (len >= 2) len-=2; \
++				  memcpy(STRING, ATTR->data, len); \
++				  (STRING)[len] = 0;} while (0)
+ 
+ 
+ /* authentication module utility functions */

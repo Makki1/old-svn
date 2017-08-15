@@ -1,0 +1,290 @@
+V0.1
+----
+- Erster Entwurf eines Universaldimmers, der die Lastart erkennt und entsprechend das 
+  Phasenanschnittsverfahren auswÃ¤hlt.
+- Bisher ist nur der Leistungsteil geplant, die Ansteuerung sollte der eigentliche EIB-Controller mit Ã¼bernehmen.
+  Hier kenne ich die Software noch nicht, so dass ich nicht weiss, ob das funktioniert.
+  Es muss wohl Ã¼ber Interrupts und Timer laufen, wieviele davon frei sind ist mir noch unbekannt
+- Ansteuerung der FETS Ã¼ber IO4 und einen Optokoppler
+- Phasenlage der Spannung (U-Signal) Ã¼ber einen OperationsverstÃ¤rker und Optokoppler auf Port IO1 und SDA (wegen IRQ)
+  Muss noch geklÃ¤rt werden ob nÃ¶tig / mÃ¶glich.
+- Phasenlage des Stroms Ã¼ber R1 einen OperationsverstÃ¤rker und Optokoppler auf Port IO2
+- Feststellen der Lastart: z.B. nach Erkennung eines Spannungssignals wird die rel. Phasenlage zwischen U-Signal und I-Signal gemessen
+  und daraus die Lastart bestimmt. 
+- zur Spannungsversorgung der OperationsverstÃ¤rker ist bisher ein C-Netzteil geplant,
+  dies ist wegen dem C allerdings recht groÃŸ, vielleicht fÃ¤llt mir ja noch was besseres ein
+  Nachgeschaltet ist ein DC-CD-Wanderler, der 2x12V galvanisch getrennt daraus macht.
+  Damit liegen die +-12V immer relativ zu AGND, welches an R1 fixiert ist.
+  Vielleicht kann bei geeigneter Schaltung die galvanische Trennung und die +-12V entfallen,
+  das wÃ¼rde den Schaltungsaufwand und den Platzbedart erheblich minimieren.
+  Ideen fÃ¼r eine Anschaltung?
+- Schaltung ist bisher nur theoretisch Entworfen
+
+
+V0.2
+----
+- C5 entfern da unnÃ¶tig
+
+
+V0.3
+----
+- Zwischenversion
+
+
+V0.4
+----
+- Kondensatoren nach DC/DC entfernt
+- R13 und R14 hinzugefÃ¼gt
+- Schaltung auf Steckbrett aufgebaut und getestet (nur mit 5V geleichspannung, ohne Controller
+  --> U-Signal und I-Signal werden sauber erzeugt.
+      Damit sinddie NulldurchgÃ¤nge von Spannungund Strom genau detektierbar
+
+
+V0.5
+----
+- OperationsverstÃ¤rker fÃ¼r I-Signal invertiert
+- WiderstÃ¤nden nach Optokopplern eingefÃ¼gt (falls Port = Ausgang)
+- DC/DC Wandler nur mit einfachen 12V
+- Portzuordnung neu festgelegt
+
+
+V0.6
+----
+- C-Netzteil und DC/DC-Wandler durch Trafo ersetzt
+- Ueberlasterkennung hinzugefuegt
+- 2. Kanal hinzugefuegt
+
+
+V0.6.1
+------
+- C5,C6 hinzugefuegt
+
+V0.6.3
+------
+- R16,R16,R116,R117 geaendert
+- erstes Boardlayout erstellt (noch ohne Pullup)
+
+
+V0.7
+----
+- Pullupwiderstaende (R13,R18,R19,R113,R118,R119) entfernt
+  sind unnoetig wenn uC im Modus Quasi-Bidirektional
+
+
+V0.8
+----
+- Ueberlastsensor schaltet nun hardwaremaessig die FETs aus
+  --> Kurzschlußchutz
+
+V0.8.1
+------
+- Testpins hinzugefügt
+
+
+V0.9
+----
+- Überlastschutz geändert:
+    R20,R120 Hysterese eingebaut
+    R21,R121 Strombegrenzung wegen Einschaltstromspitzen
+    R16,R116 Strombegrenzung auf 350W eingestellt 3k9
+  Bei Ueberlast werden die FETs für 3s hardwaremaessig abgeschaltet und 
+  der Ueberlastfall an den Controller gemeldet
+
+Erfahrungen aus der aufgebauten Version 0.9:
+1)Lochdurchmesser bei selbstgefertigter Platine:
+  alle Bohrungen mit 0,8mm außer
+	+ 0,5mm für die VIAs
+	+ 1,0mm für SV1 Stiftleiste
+	+ 1,2mm für R1,R101 und alle Klemmen
+	+ 1,5mm für Q1..Q4 und Sicherung
+	+ 2,0mm für die Schraubenlöcher
+2)Kupferring für die Schraubenlöcher, damit diese einfacher zu bohren sind
+3)Klemmen KL1A, KL1B, KL2A, KL2B stehen über den Platinenrand und müssen um 2mm versetzt werden
+4)Routing optimieren: Abstände der Leiterbahnen
+5)Debugpins entfernen
+6)FETs Q2 und Q4 müssen etwas weiter zur Mitte versetzt werden (stoßen sonst oben an Sicherung an)
+
+
+V1.0         9.11.2009
+----         
+- Klemmen KL1A, KL1B, KL2A, KL2B versetzt
+- Kupferring für die Schraubenlöcher, damit diese einfacher zu bohren sind
+- FETs Q2 und Q4 etwas weiter zur Mitte versetzt 
+- Debugpins entfernt
+- Kontrolle: Lochdurchmesser
+	+ 1,5mm Q1..Q4
+	+ 2,8mm Schraubenlöcher
+	+ 0,7 VIAS
+	+ 1,2 Klemmen
+	+ 1,4 Sicherungen
+	+ 1,3 R1, R101   (geändert)
+	+ 1,0 SV1 (geändert)
+
+aus V1.0 gewonnene Erkenntnisse:
+- I-Signal ist unbrauchbar da nicht jeder Nulldurchgang detektiert werden kann,
+  nur wenn Dimmer auf voller Helligkeit ist
+
+
+V1.1         4.1.2010
+----         
+- Die Widerstände  R6,R12,R15, R106,R112,R115 auf 20k erhöht
+- Netzteil um -12V erweitert
+- Operationverstärker an -12 angeschlossen
+  --> U-Signal ist jetzt symmetrisch
+- Neue Erzeugung des I-Signals: liefert jetzt Pulse bei Stromnulldurchgang (100Hz)
+  Der Verstärkungsfaktor des OPV wurde mit 1500 festgelegt, damit sind die Impulsbreiten bei
+  15Watt => 2700us      50Watt => 680us     200Watt => 120us  (gemessen)
+  ist die Verstärkung größer, so werden bei großen Leistungen keine Pulse mehr erzeugt
+  ist die Verstärkung kleiner, so werden bei kleinen Leistungen die Pulse zu lang, so
+  dass der Stromnulldurchgang nicht mehr sauber erkannt werden kann.
+  Wünschenswert wäre eine nichtlineare Verstärkung, die kleine Signale mehr verstärkt als große
+  Theorie: Pulsbreite T = 6200 / R22 / P        T in s,  P in Watt,  R22 in Ohm
+- Layout angepasst, Leiterbahnen zwischen den Optokopplern entfernt
+- Bestückungsdruck optimiert
+  Achtung: für den Bestückungsdruck muessen die folgenden Layer verwendet werden:
+	  21 tplace
+	  25 tnames
+	  27 tvalues
+	  51 tdocu
+- Diese Version wurde am 14.1.2010 bei Q-Print in Auftrag gegeben
+  http://q-pcb.com
+
+aus V1.1 gewonnene Erkenntnisse:
+- Abmessungen: die Länge der Platine von 87,4mm íst zu groß, sie darf maximal 87,2 mm sein damit
+  sie noch ins Gehäuse passt.
+- die Löcher für die Befestigungsschrauben müssen um 0.5mm nach links (230V Teil) verschoben werden
+- der von Bauteilen freie Platzum die Löcher muss etwas größer werden
+- Durchmesser der Befestigungsschrauben muss 2.3mm sein (statt 2.8)
+- die Aussparungen für die Eckschrauben müssen etwas größer sein.
+- die Klemmen müssen jeweils 0.5mm weiter zur Mitte
+- C2, C102 sind im Schaltplan mit falscher Polarität eingezeichnet
+- Q2 muss um 0.5mm nach unten verschoben werden (von Si weg) [Q1,Q3,Q4 stimmen]
+- R1, R101 geringerer Pinabstand neu:   mm
+  Pin am Trafo bleibt, Pin an Si wandert weiter zur Mitte, Bestückungsdruck auf V-Variante ändern
+- R12, R112 müssen 15kOhm sein (statt 20kOhm)
+- evtl. Widerstandswerte konsolidieren (d.h. möglichst gleiche Werte verwenden)
+- bei der Beschaffung auf Bauform 204 achten, dann müssen nicht so viele horizontal montiert werden.
+
+
+V1.2         5.2.2010
+----         
+- C2, C102 im Schaltplan gedreht (war falsche Polarität)
+- R12, R112 jetzt 15kOhm (statt 20kOhm)
+- Die Länge der Platine auf 87,2mm verkleinert. -0.2mm auf EIB-Seite
+- die Aussparungen für die Eckschrauben um 0.2mm vergrößert.
+- die Klemmen jeweils 0.5mm weiter zur Mitte gesetzt
+- Durchmesser der Befestigungslöcher 2.3mm (statt 2.8)
+- die Löcher für die Befestigungsschrauben müssen um 0.5mm nach links (230V Teil) verschoben werden
+- der von Bauteilen freie Platzum die Löcher muss etwas größer werden
+- Q2 um 0.5mm nach unten verschoben (von Si weg) [Q1,Q3,Q4 stimmten]
+
+
+
+V1.3         9.3.2010
+----         
+- Hysterese im Überlastmodul passte nicht mehr: R20 / R120 auf 220kOhm geändert
+
+
+V1.4         14.3.2010
+----         
+- Ansteuerung der FETs invertiert !!!
+
+
+V1.5         9.4.2010
+----         
+- Leiterbahnen auf 45 Grad geaendert
+- Schutzdiode ergänzt
+
+
+V1.6         6.5.2010
+----         
+- I-Signal Kanal1 zusätzlich auf Pin11 P1.3 IRQ0 gelegt
+
+
+V1.7         30.12.2010
+----         
+- Spannungssensor statt zwischen N und L nun zwischen Ausgang und L
+- Stromsensor entfernt
+- negative Versorgungsspannung entfernt, OPV zwischen GND und +12V
+- R9, R109 auf 5k6 geändert
+- R2,R102,R4,R104 auf 100k geändert
+- R3,R103,R5,R105 durch Zenerdioden ersetzt
+
+Anmerkungen:
+-OPV ist noch etwas zu langsam, deshalb wird bei Anschnitt um 600us zu spät abgeschaltet
+
+
+
+V1.8         29.1.2011
+----         
+- Stromsensor wieder wie in V1.6 eingebaut
+- Klemmen geändert, eigene für Trafo, N entfernt, d.h. eine Klemme weniger
+
+
+V1.9         29.1.2011
+----         
+-Trafo durch neues Netzteil ersetzt (Transistorschaltung)
+
+
+V2.0       8.2.2011
+-----
+Achtung: Q4 und Q104 haben falsche Pinbelegung !!!  in V2.1 korrigiert
+               der MPSA44 hat in der Eagle-Bibliothek die falsche Pinbelegung !!!
+---------
+- C parallel zu FETS
+- L in Reihe
+- Varistor eingefügt
+- Strombegrenzung nun temperaturabhängig durch NTC
+- R9, R109, R12, R112, R5, R105 auf 20k geändert
+
+
+Platine am 9.3.2011 geätzt.
+
+Für die Selbstherstellung von Platinen sind folgende Bohrdurchmesser zu verwenden:
+	0.6 mm	Vias
+	0.9 mm	SV1, D8, D108, R1, R101, R23, R123, L1, L101
+	1,2 mm	Klemmen: KL1, KL101, KL2
+	1,3 mm 	Q1, Q2, Q101, Q102
+
+
+V2.1       13.3.2011
+-----
+- Q4 und Q104 hatten falsche Pinbelegung, hier korrigiert
+- R6,R12, R15, R106, R112, R115 von 20k auf 12k geändert
+- R5, R105 von 20k auf 22k geändert
+- D5, D105 ZF15 statt ZF18
+- IC1, IC101 entfällt ersatzlos
+- C101 im Layout etwas versetzt (ist zu nah an C104)
+- C2 und C102 direkt unter IC-Fassung versetzen
+
+
+V2.2   4.1.2012
+---------------
+ACHTUNG: Ab dieser Version liegt der Schaltplanund das Board in der Eagle Version 6.1 vor!
+Diese kann mit einer älteren Eagle-Version nicht geöffnet werden!
+
+- R6,R106 von 12k auf 5.6k geändert
+- R12, R112 auf 100k erhöht, damit haben sie keine Funktion (da I-Sensor nicht benötigt, stromsparen)
+                 das Routing bleibt aber erhalten für evtl. später zu implementiertende Funktionen
+				kann auch unbestückt bleiben
+- R20, R120 verkleinert auf 22k, damit ist die Hysterese größerund tut auch wenn die Spannung auf 9V einbricht
+- R16,R116 NTC durch Widerstand 3.9k ersetzt und neu plaziert. Die Temperatur ist doch so hoch, dass der NTC die 
+                      Überlastgrenze auf bis zu 40W gesent hat.
+
+todo:
+- R23, R123 wird sehr heiss, bis zu 70° C bei 2W Typ, besser 5 oder 7W verwenden oder Netzteil nochmals überarbeiten
+- KL101 sitzt nicht vor den Anschlußlöchern im Gehäuse ) in V2.3 behoben
+
+
+V2.3   15.1.2012
+----------------
+- KL 101 2.5mm nach unten versetzt
+
+V2.4   29.1.2012
+----------------
+- R23, R123 auf 5W geändert, Layout angepasst
+		die Widerstände werden nun auch im ungünstigsten Fall (Ausgeschaltet) max. 55° heiß.
+		Das Gehäuse erwärmt sch dabei nicht merklich.
+- R9, R109 von 20k auf 22k geändert um einheitliche Werte zu haben
+- BOM aktualisiert
+- Reichelt Warenkorb angelegt (ohne Sicherung und C3,C103)

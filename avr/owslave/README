@@ -1,0 +1,72 @@
+*** Note counter
+- Active high, internal pullup auf 5V on, 10ms kein Problem
+  - Phototransistor, Anode an GND, Kathode an Counter-input mit grüner Std.LED, 100nF->GND:
+    - zählt richtig!
+    - Pegel 4,72 -> 1,60V
+    - Kondensator macht keinen Unterschied
+    -> Sehr knapp, stark vom Winkel abhängig!
+  - Mit richtig Licht:
+    -> Pegel 80mV
+    - Ebenso mit roter High-Brightness-LED 20mA 80mV low ->Ok
+
+
+
+CMDs:
+sudo avrdude -c avrisp2 -p atmega48 -P usb -n -v
+sudo avrdude -c avrisp2 -p atmega48 -P usb -U eeprom:r:-:i
+
+#EESAVE aus:
+sudo avrdude -c avrisp2 -p atmega48 -P usb -U lfuse:w:0xe2:m -U hfuse:w:0xdf:m
+
+Family-types (see owfs-manpage!)
+- Counter (+EEPROM/SRAM?)
+- Smokedetector
+- PWM
+(SRF02?) , I2C-gate like BAE?
+LCD?
+ADC 0-5/10V/4-20mA
+Power (AC) ACS7xx ?? current accumulator
+iButton Multiplexer / Port-detector?
+
+*** Production (thoughts only!) ***
+- ID from eeprom (ISP or hidden owfs?)
+- ID from onboard DS18B20?
+
+*** Hardware Todo/Hints:
+- HW-debounce?
+- ADC -> UTeil 1.1V
+- Vdd kommt aus DQ?? Reset-Schaltung
+- Parasitic mit 0xB4-Trick?
+
+*** Notes/Hints ***
+
+http://comments.gmane.org/gmane.comp.file-systems.owfs.devel/9987
+Posting von eloy paris !
+
+http://m1n1.de/html/1wire.html
+http://forum.fhem.de/index.php?t=msg&goto=65990&rid=7#msg_65990
+
+//set your own ID http://www.tm3d.de/index.php/tools/14-crc8-berechnung
+
+Family E1 ?
+http://owfs.org/index.php?page=family-code-list
+
+http://www.fabiszewski.net/1-wire-slave/
+
+OpenHR20 mit PCINT-Slave
+http://www.hackerspace-bamberg.de/Cooperating_radiator_monitoring_114
+http://openhr20.svn.sourceforge.net/viewvc/openhr20/
+
+Levelshifter
+http://www.maximintegrated.com/datasheet/index.mvp/id/3253
+http://binerry.de/post/27067411903/i2c-level-shifter-i2c-bridge
+
+Elektrische Fragen:
+- Puffer via CR2032 od. CAP+EEPROM-save = 1.8 ms write (erase vorher?) 3,4ms erase+write PRO BYTE!
+- 3V3 oder 5V? Levelshifter..
+-
+
+Weitere Slaves:
+- SRF02
+- CapSense
+- Taster mit Latch

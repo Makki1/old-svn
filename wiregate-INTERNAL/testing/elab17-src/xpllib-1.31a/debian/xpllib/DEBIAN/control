@@ -1,0 +1,10 @@
+Package: xpllib
+Version: 1.31a-1
+Architecture: i386
+Maintainer: Michael Markstaller / Elaborated Networks GmbH for WireGate <devel@wiregate.de>
+Installed-Size: 356
+Section: libs
+Priority: extra
+Homepage: <insert the upstream URL, if relevant>
+Description: <insert up to 60 chars description>
+ <insert long description, indented with spaces>

@@ -1,0 +1,40 @@
+Universaldimmer.hex   Version 2.2
+---------------------------------
+
+genaue Änderungen siehe Versionshistory.txt
+
+Achtung: Ab version 1.6.0 ist die Ansteuerung der FETs invertiert, d.h.
+passt nur noch zu Hardware ab V1.4
+
+- Bisher folgende Funktionen implementiert:
+    o Ein/Aus
+    o Dimmen
+    o Helligkeitsobjekt
+    o Grundhelligkeit
+    o Rückmeldeobjekte (Ein und Wert)
+    o Rückmeldung Kurzschluß
+    o Rückmeldung Spannungs- Lastausfall
+    o Verhalten bei Busspannungsausfall (nur Stufen 0..11)
+    o Einschalthelligkeit
+    o anspringen/andimmen
+    o Dimmgeschwindigkeit
+    o Soft-Ein
+    o Soft-Aus
+- ABschnittsdimmer
+- ANschnittsdimmer funktionsfähig aber nicht getestet!!!
+       siehe Versionshistory
+
+Debugfunktionen:
+-Debugfunktion um die Auslösung des Watchdogs überwachen zu können:
+ Bei jedem Neustart wird ein Zähler im userram auf 0xFF hochgezählt
+ und ein Telegramm an die GA des 1. Lichtszenenobjektes gesendet um einen Restart über Watchdog
+ loggen zu können.
+ 
+ Nur für die Debugversion für den 936:
+- Folgende Info wird bei Programmstart über die serielle Schnittstelle ausgegeben (115200 8N1)
+   Programmstart V2.1  PA=0000  FF=0001
+      wobei 
+          V2.1  = Programmversion
+	  PA    =       physik. Adr.
+	  FF    = 0001  d.h Debugzähler von 0 auf 1 erhöht = 1. Programmstart nach ETS
+	            0203   3. Programmstart (evtl. watchdog)

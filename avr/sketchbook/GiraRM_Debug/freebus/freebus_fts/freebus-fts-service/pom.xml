@@ -1,0 +1,42 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+ <modelVersion>4.0.0</modelVersion>
+ <parent>
+  <artifactId>freebus-fts</artifactId>
+  <groupId>org.freebus.fts</groupId>
+  <version>0.2-SNAPSHOT</version>
+  <relativePath>..</relativePath>
+ </parent>
+ <artifactId>freebus-fts-service</artifactId>
+ <name>freebus-fts-service</name>
+ <description>Service/backend classes that have access to the KNX bus and the FTS project / products</description>
+ <dependencies>
+  <dependency>
+   <groupId>org.freebus.fts</groupId>
+   <artifactId>freebus-fts-knxcomm</artifactId>
+   <version>${project.version}</version>
+   <scope>compile</scope>
+  </dependency>
+  <dependency>
+   <groupId>org.freebus.fts</groupId>
+   <artifactId>freebus-fts-persistence</artifactId>
+   <version>${project.version}</version>
+   <type>jar</type>
+   <scope>compile</scope>
+  </dependency>
+  <dependency>
+   <groupId>com.h2database</groupId>
+   <artifactId>h2</artifactId>
+   <version>1.2.131</version>
+   <type>jar</type>
+   <scope>runtime</scope>
+  </dependency>
+  <dependency>
+   <groupId>org.mockito</groupId>
+   <artifactId>mockito-all</artifactId>
+   <version>1.8.5</version>
+   <type>jar</type>
+   <scope>test</scope>
+  </dependency>
+ </dependencies>
+</project>

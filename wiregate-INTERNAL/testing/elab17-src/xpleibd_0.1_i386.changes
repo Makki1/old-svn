@@ -1,0 +1,28 @@
+Format: 1.8
+Date: Fri, 16 Oct 2009 11:11:05 +0200
+Source: xpleibd
+Binary: xpleibd
+Architecture: source i386
+Version: 0.1
+Distribution: unstable
+Urgency: low
+Maintainer: Michael Markstaller / Elaborated Networks GmbH for WireGate <devel@wiregate.de>
+Changed-By: Michael Markstaller / Elaborated Networks GmbH for WireGate <devel@wiregate.de>
+Description: 
+ xpleibd    - Gateway to send telegrams between xPL and eibd
+Changes: 
+ xpleibd (0.1) unstable; urgency=low
+ .
+   * Initial Release.
+Checksums-Sha1: 
+ 8d449abf124227daac7d785920d3965e81c3cce0 578 xpleibd_0.1.dsc
+ b38858fc83328633cb2c442fe3421032bfb1416e 492349 xpleibd_0.1.tar.gz
+ cd9610759d7c1dc8a19851c879fbe719fdac86e9 17688 xpleibd_0.1_i386.deb
+Checksums-Sha256: 
+ 998727cce4c932adbb48c1dac569d01f81fd5f6e9e18add497eedc21175858e3 578 xpleibd_0.1.dsc
+ 38ea4c278f2371469d26de6578daef98b989977411872b3703e4e0c5cfa1a252 492349 xpleibd_0.1.tar.gz
+ 7c8c067f7d95582e34a48759c44414f3fd4efbb08eaa5a2a1d672533d82d9473 17688 xpleibd_0.1_i386.deb
+Files: 
+ 9e5f8ea1050ab5fb83cfc9cb74320012 578 unknown extra xpleibd_0.1.dsc
+ 4a77755c7e0900b6b5cb233d1bc35eac 492349 unknown extra xpleibd_0.1.tar.gz
+ c4b3c69c9dab3895bf8e9b1cd0899b42 17688 unknown extra xpleibd_0.1_i386.deb

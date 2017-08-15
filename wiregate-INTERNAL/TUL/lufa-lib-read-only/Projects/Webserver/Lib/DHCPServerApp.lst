@@ -1,0 +1,647 @@
+   1               		.file	"DHCPServerApp.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__CCP__  = 0x34
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+  15               	.Ltext0:
+  16               		.section	.text.DHCPServerApp_CheckIfIPLeased,"ax",@progbits
+  18               	DHCPServerApp_CheckIfIPLeased:
+  19               	.LFB220:
+  20               	.LSM0:
+  21               	.LVL0:
+  22               	/* prologue: function */
+  23               	/* frame size = 0 */
+  24               	.LSM1:
+  25 0000 DC01      		movw r26,r24
+  26 0002 1396      		adiw r26,3
+  27 0004 EC91      		ld r30,X
+  28               	.LSM2:
+  29 0006 EE23      		tst r30
+  30 0008 01F0      		breq .L2
+  31 000a 8091 0000 		lds r24,uip_hostaddr+3
+  32               	.LVL1:
+  33 000e E817      		cp r30,r24
+  34 0010 01F0      		breq .L2
+  35 0012 2E2F      		mov r18,r30
+  36 0014 2770      		andi r18,lo8(7)
+  37 0016 81E0      		ldi r24,lo8(1)
+  38 0018 90E0      		ldi r25,hi8(1)
+  39 001a 00C0      		rjmp 2f
+  40 001c 880F      	1:	lsl r24
+  41 001e 991F      		rol r25
+  42 0020 2A95      	2:	dec r18
+  43 0022 02F4      		brpl 1b
+  44 0024 E695      		lsr r30
+  45 0026 E695      		lsr r30
+  46 0028 E695      		lsr r30
+  47 002a F0E0      		ldi r31,lo8(0)
+  48 002c E050      		subi r30,lo8(-(LeasedIPs))
+  49 002e F040      		sbci r31,hi8(-(LeasedIPs))
+  50 0030 2081      		ld r18,Z
+  51 0032 2823      		and r18,r24
+  52 0034 01F0      		breq .L4
+  53               	.LVL2:
+  54               	.L2:
+  55 0036 21E0      		ldi r18,lo8(1)
+  56               	.L4:
+  57               	.LSM3:
+  58 0038 822F      		mov r24,r18
+  59               	.LVL3:
+  60               	/* epilogue start */
+  61 003a 0895      		ret
+  62               	.LFE220:
+  64               		.section	.text.DHCPServerApp_FillDHCPHeader,"ax",@progbits
+  66               	DHCPServerApp_FillDHCPHeader:
+  67               	.LFB219:
+  68               	.LSM4:
+  69               	.LVL4:
+  70 0000 EF92      		push r14
+  71               	.LVL5:
+  72 0002 FF92      		push r15
+  73 0004 0F93      		push r16
+  74 0006 1F93      		push r17
+  75 0008 CF93      		push r28
+  76 000a DF93      		push r29
+  77               	/* prologue: function */
+  78               	/* frame size = 0 */
+  79 000c EC01      		movw r28,r24
+  80 000e F901      		movw r30,r18
+  81               	.LSM5:
+  82 0010 80EF      		ldi r24,lo8(-16)
+  83               	.LVL6:
+  84 0012 DE01      		movw r26,r28
+  85 0014 1D92      		st X+,__zero_reg__
+  86 0016 8A95      	        dec r24
+  87 0018 01F4      		brne .-6
+  88               	.LSM6:
+  89 001a 6883      		st Y,r22
+  90               	.LSM7:
+  91 001c 81E0      		ldi r24,lo8(1)
+  92 001e 8983      		std Y+1,r24
+  93               	.LSM8:
+  94 0020 86E0      		ldi r24,lo8(6)
+  95 0022 8A83      		std Y+2,r24
+  96               	.LSM9:
+  97 0024 1B82      		std Y+3,__zero_reg__
+  98               	.LSM10:
+  99 0026 EC82      		std Y+4,r14
+ 100 0028 FD82      		std Y+5,r15
+ 101 002a 0E83      		std Y+6,r16
+ 102 002c 1F83      		std Y+7,r17
+ 103               	.LVL7:
+ 104               	.LSM11:
+ 105 002e 1986      		std Y+9,__zero_reg__
+ 106 0030 1886      		std Y+8,__zero_reg__
+ 107               	.LSM12:
+ 108 0032 1B86      		std Y+11,__zero_reg__
+ 109 0034 1A86      		std Y+10,__zero_reg__
+ 110               	.LSM13:
+ 111 0036 8091 0000 		lds r24,uip_hostaddr
+ 112 003a 9091 0000 		lds r25,(uip_hostaddr)+1
+ 113 003e A091 0000 		lds r26,(uip_hostaddr)+2
+ 114 0042 B091 0000 		lds r27,(uip_hostaddr)+3
+ 115 0046 8C8B      		std Y+20,r24
+ 116 0048 9D8B      		std Y+21,r25
+ 117 004a AE8B      		std Y+22,r26
+ 118 004c BF8B      		std Y+23,r27
+ 119               	.LSM14:
+ 120 004e 8081      		ld r24,Z
+ 121 0050 9181      		ldd r25,Z+1
+ 122 0052 A281      		ldd r26,Z+2
+ 123 0054 B381      		ldd r27,Z+3
+ 124 0056 888B      		std Y+16,r24
+ 125 0058 998B      		std Y+17,r25
+ 126 005a AA8B      		std Y+18,r26
+ 127 005c BB8B      		std Y+19,r27
+ 128               	.LSM15:
+ 129 005e DE01      		movw r26,r28
+ 130 0060 5C96      		adiw r26,28
+ 131 0062 FA01      		movw r30,r20
+ 132 0064 86E0      		ldi r24,lo8(6)
+ 133               	.LVL8:
+ 134               	.L7:
+ 135 0066 0190      		ld r0,Z+
+ 136 0068 0D92      		st X+,r0
+ 137 006a 8150      		subi r24,lo8(-(-1))
+ 138 006c 01F4      		brne .L7
+ 139               	.LSM16:
+ 140 006e C451      		subi r28,lo8(-(236))
+ 141 0070 DF4F      		sbci r29,hi8(-(236))
+ 142 0072 83E6      		ldi r24,lo8(1666417251)
+ 143 0074 92E8      		ldi r25,hi8(1666417251)
+ 144 0076 A3E5      		ldi r26,hlo8(1666417251)
+ 145 0078 B3E6      		ldi r27,hhi8(1666417251)
+ 146 007a 8993      		st Y+,r24
+ 147 007c 9993      		st Y+,r25
+ 148 007e A993      		st Y+,r26
+ 149 0080 B993      		st Y+,r27
+ 150               	.LSM17:
+ 151 0082 85E3      		ldi r24,lo8(53)
+ 152 0084 8993      		st Y+,r24
+ 153               	.LSM18:
+ 154 0086 81E0      		ldi r24,lo8(1)
+ 155 0088 8993      		st Y+,r24
+ 156               	.LSM19:
+ 157 008a 6993      		st Y+,r22
+ 158               	.LSM20:
+ 159 008c 8FEF      		ldi r24,lo8(-1)
+ 160 008e 8883      		st Y,r24
+ 161               	.LVL9:
+ 162               	.LSM21:
+ 163 0090 84EF      		ldi r24,lo8(244)
+ 164 0092 90E0      		ldi r25,hi8(244)
+ 165               	/* epilogue start */
+ 166 0094 DF91      		pop r29
+ 167 0096 CF91      		pop r28
+ 168 0098 1F91      		pop r17
+ 169 009a 0F91      		pop r16
+ 170 009c FF90      		pop r15
+ 171 009e EF90      		pop r14
+ 172               	.LVL10:
+ 173 00a0 0895      		ret
+ 174               	.LFE219:
+ 176               		.section	.text.DHCPServerApp_Callback,"ax",@progbits
+ 177               	.global	DHCPServerApp_Callback
+ 179               	DHCPServerApp_Callback:
+ 180               	.LFB218:
+ 181               	.LSM22:
+ 182 0000 6F92      		push r6
+ 183 0002 7F92      		push r7
+ 184 0004 8F92      		push r8
+ 185 0006 9F92      		push r9
+ 186 0008 AF92      		push r10
+ 187 000a BF92      		push r11
+ 188 000c CF92      		push r12
+ 189 000e DF92      		push r13
+ 190 0010 EF92      		push r14
+ 191 0012 FF92      		push r15
+ 192 0014 0F93      		push r16
+ 193 0016 1F93      		push r17
+ 194 0018 DF93      		push r29
+ 195 001a CF93      		push r28
+ 196 001c CDB7      		in r28,__SP_L__
+ 197 001e DEB7      		in r29,__SP_H__
+ 198 0020 6397      		sbiw r28,19
+ 199 0022 0FB6      		in __tmp_reg__,__SREG__
+ 200 0024 F894      		cli
+ 201 0026 DEBF      		out __SP_H__,r29
+ 202 0028 0FBE      		out __SREG__,__tmp_reg__
+ 203 002a CDBF      		out __SP_L__,r28
+ 204               	/* prologue: function */
+ 205               	/* frame size = 19 */
+ 206               	.LSM23:
+ 207 002c A090 0000 		lds r10,uip_appdata
+ 208 0030 B090 0000 		lds r11,(uip_appdata)+1
+ 209               	.LSM24:
+ 210 0034 8091 0000 		lds r24,uip_flags
+ 211 0038 81FF      		sbrs r24,1
+ 212 003a 00C0      		rjmp .L21
+ 213               	.LBB10:
+ 214               	.LSM25:
+ 215 003c 90EF      		ldi r25,lo8(240)
+ 216 003e 692E      		mov r6,r25
+ 217 0040 712C      		mov r7,__zero_reg__
+ 218 0042 6A0C      		add r6,r10
+ 219 0044 7B1C      		adc r7,r11
+ 220 0046 C301      		movw r24,r6
+ 221 0048 65E3      		ldi r22,lo8(53)
+ 222 004a AE01      		movw r20,r28
+ 223 004c 4F5F      		subi r20,lo8(-(1))
+ 224 004e 5F4F      		sbci r21,hi8(-(1))
+ 225 0050 0E94 0000 		call DHCPCommon_GetOption
+ 226 0054 8823      		tst r24
+ 227 0056 01F4      		brne .+2
+ 228 0058 00C0      		rjmp .L21
+ 229               	.LSM26:
+ 230 005a 8091 0000 		lds r24,uip_netmask
+ 231 005e 9091 0000 		lds r25,(uip_netmask)+1
+ 232 0062 A091 0000 		lds r26,(uip_netmask)+2
+ 233 0066 B091 0000 		lds r27,(uip_netmask)+3
+ 234 006a 8A83      		std Y+2,r24
+ 235 006c 9B83      		std Y+3,r25
+ 236 006e AC83      		std Y+4,r26
+ 237 0070 BD83      		std Y+5,r27
+ 238               	.LSM27:
+ 239 0072 8091 0000 		lds r24,uip_draddr
+ 240 0076 9091 0000 		lds r25,(uip_draddr)+1
+ 241 007a A091 0000 		lds r26,(uip_draddr)+2
+ 242 007e B091 0000 		lds r27,(uip_draddr)+3
+ 243 0082 8E83      		std Y+6,r24
+ 244 0084 9F83      		std Y+7,r25
+ 245 0086 A887      		std Y+8,r26
+ 246 0088 B987      		std Y+9,r27
+ 247               	.LSM28:
+ 248 008a DE01      		movw r26,r28
+ 249 008c 1E96      		adiw r26,14
+ 250 008e F501      		movw r30,r10
+ 251 0090 7C96      		adiw r30,28
+ 252 0092 86E0      		ldi r24,lo8(6)
+ 253               	.L12:
+ 254 0094 0190      		ld r0,Z+
+ 255 0096 0D92      		st X+,r0
+ 256 0098 8150      		subi r24,lo8(-(-1))
+ 257 009a 01F4      		brne .L12
+ 258               	.LSM29:
+ 259 009c F501      		movw r30,r10
+ 260 009e C480      		ldd r12,Z+4
+ 261 00a0 D580      		ldd r13,Z+5
+ 262 00a2 E680      		ldd r14,Z+6
+ 263 00a4 F780      		ldd r15,Z+7
+ 264               	.LVL11:
+ 265               	.LSM30:
+ 266 00a6 C301      		movw r24,r6
+ 267 00a8 62E3      		ldi r22,lo8(50)
+ 268 00aa AE01      		movw r20,r28
+ 269 00ac 465F      		subi r20,lo8(-(10))
+ 270 00ae 5F4F      		sbci r21,hi8(-(10))
+ 271 00b0 0E94 0000 		call DHCPCommon_GetOption
+ 272 00b4 8823      		tst r24
+ 273 00b6 01F4      		brne .L13
+ 274               	.LSM31:
+ 275 00b8 8091 0000 		lds r24,uip_all_zeroes_addr
+ 276 00bc 9091 0000 		lds r25,(uip_all_zeroes_addr)+1
+ 277 00c0 A091 0000 		lds r26,(uip_all_zeroes_addr)+2
+ 278 00c4 B091 0000 		lds r27,(uip_all_zeroes_addr)+3
+ 279 00c8 8A87      		std Y+10,r24
+ 280 00ca 9B87      		std Y+11,r25
+ 281 00cc AC87      		std Y+12,r26
+ 282 00ce BD87      		std Y+13,r27
+ 283               	.L13:
+ 284               	.LSM32:
+ 285 00d0 8981      		ldd r24,Y+1
+ 286               	.LVL12:
+ 287 00d2 8330      		cpi r24,lo8(3)
+ 288 00d4 01F4      		brne .+2
+ 289 00d6 00C0      		rjmp .L15
+ 290               	.LVL13:
+ 291 00d8 8730      		cpi r24,lo8(7)
+ 292 00da 01F4      		brne .+2
+ 293 00dc 00C0      		rjmp .L16
+ 294 00de 8130      		cpi r24,lo8(1)
+ 295 00e0 01F0      		breq .+2
+ 296 00e2 00C0      		rjmp .L21
+ 297               	.LSM33:
+ 298 00e4 8AE0      		ldi r24,lo8(10)
+ 299 00e6 882E      		mov r8,r24
+ 300 00e8 912C      		mov r9,__zero_reg__
+ 301               	.LVL14:
+ 302 00ea 8C0E      		add r8,r28
+ 303 00ec 9D1E      		adc r9,r29
+ 304 00ee C401      		movw r24,r8
+ 305 00f0 0E94 0000 		call DHCPServerApp_CheckIfIPLeased
+ 306 00f4 8823      		tst r24
+ 307 00f6 01F0      		breq .L17
+ 308               	.LBB11:
+ 309               	.LBB12:
+ 310               	.LSM34:
+ 311 00f8 8091 0000 		lds r24,uip_hostaddr
+ 312 00fc 9091 0000 		lds r25,(uip_hostaddr)+1
+ 313 0100 A091 0000 		lds r26,(uip_hostaddr)+2
+ 314 0104 B091 0000 		lds r27,(uip_hostaddr)+3
+ 315 0108 8A87      		std Y+10,r24
+ 316 010a 9B87      		std Y+11,r25
+ 317 010c AC87      		std Y+12,r26
+ 318 010e BD87      		std Y+13,r27
+ 319 0110 11E0      		ldi r17,lo8(1)
+ 320               	.LVL15:
+ 321               	.L18:
+ 322               	.LBB13:
+ 323               	.LSM35:
+ 324 0112 1D87      		std Y+13,r17
+ 325               	.LBE13:
+ 326               	.LBE12:
+ 327               	.LSM36:
+ 328 0114 C401      		movw r24,r8
+ 329 0116 0E94 0000 		call DHCPServerApp_CheckIfIPLeased
+ 330               	.LBB15:
+ 331               	.LBB14:
+ 332 011a 8823      		tst r24
+ 333 011c 01F0      		breq .L17
+ 334               	.LSM37:
+ 335 011e 1F5F      		subi r17,lo8(-(1))
+ 336 0120 1E3F      		cpi r17,lo8(-2)
+ 337 0122 01F4      		brne .L18
+ 338               	.L17:
+ 339               	.LBE14:
+ 340               	.LBE15:
+ 341               	.LBE11:
+ 342               	.LSM38:
+ 343 0124 C501      		movw r24,r10
+ 344 0126 62E0      		ldi r22,lo8(2)
+ 345 0128 AE01      		movw r20,r28
+ 346 012a 425F      		subi r20,lo8(-(14))
+ 347 012c 5F4F      		sbci r21,hi8(-(14))
+ 348 012e 9E01      		movw r18,r28
+ 349 0130 265F      		subi r18,lo8(-(10))
+ 350 0132 3F4F      		sbci r19,hi8(-(10))
+ 351 0134 8701      		movw r16,r14
+ 352 0136 7601      		movw r14,r12
+ 353 0138 0E94 0000 		call DHCPServerApp_FillDHCPHeader
+ 354 013c 6C01      		movw r12,r24
+ 355               	.LVL16:
+ 356               	.LSM39:
+ 357 013e C301      		movw r24,r6
+ 358 0140 61E0      		ldi r22,lo8(1)
+ 359 0142 44E0      		ldi r20,lo8(4)
+ 360 0144 9E01      		movw r18,r28
+ 361 0146 2E5F      		subi r18,lo8(-(2))
+ 362 0148 3F4F      		sbci r19,hi8(-(2))
+ 363 014a 0E94 0000 		call DHCPCommon_SetOption
+ 364 014e F82E      		mov r15,r24
+ 365               	.LSM40:
+ 366 0150 C301      		movw r24,r6
+ 367 0152 63E0      		ldi r22,lo8(3)
+ 368 0154 44E0      		ldi r20,lo8(4)
+ 369 0156 9E01      		movw r18,r28
+ 370 0158 2A5F      		subi r18,lo8(-(6))
+ 371 015a 3F4F      		sbci r19,hi8(-(6))
+ 372 015c 0E94 0000 		call DHCPCommon_SetOption
+ 373               	.LSM41:
+ 374 0160 082F      		mov r16,r24
+ 375               	.LVL17:
+ 376 0162 10E0      		ldi r17,lo8(0)
+ 377               	.LVL18:
+ 378 0164 0F0D      		add r16,r15
+ 379 0166 111D      		adc r17,__zero_reg__
+ 380               	.LVL19:
+ 381               	.LSM42:
+ 382 0168 8091 0000 		lds r24,BroadcastConnection
+ 383 016c 9091 0000 		lds r25,(BroadcastConnection)+1
+ 384 0170 9093 0000 		sts (uip_conn)+1,r25
+ 385 0174 8093 0000 		sts uip_conn,r24
+ 386 0178 83E0      		ldi r24,lo8(3)
+ 387 017a 0E94 0000 		call uip_process
+ 388               	.LSM43:
+ 389 017e E091 0000 		lds r30,uip_udp_conn
+ 390 0182 F091 0000 		lds r31,(uip_udp_conn)+1
+ 391 0186 8091 0000 		lds r24,uip_broadcast_addr
+ 392 018a 9091 0000 		lds r25,(uip_broadcast_addr)+1
+ 393 018e A091 0000 		lds r26,(uip_broadcast_addr)+2
+ 394 0192 B091 0000 		lds r27,(uip_broadcast_addr)+3
+ 395 0196 8083      		st Z,r24
+ 396 0198 9183      		std Z+1,r25
+ 397 019a A283      		std Z+2,r26
+ 398 019c B383      		std Z+3,r27
+ 399               	.LSM44:
+ 400 019e 0C0D      		add r16,r12
+ 401 01a0 1D1D      		adc r17,r13
+ 402 01a2 8091 0000 		lds r24,uip_appdata
+ 403 01a6 9091 0000 		lds r25,(uip_appdata)+1
+ 404 01aa B801      		movw r22,r16
+ 405 01ac 00C0      		rjmp .L24
+ 406               	.LVL20:
+ 407               	.L15:
+ 408               	.LSM45:
+ 409 01ae 8E01      		movw r16,r28
+ 410 01b0 065F      		subi r16,lo8(-(10))
+ 411 01b2 1F4F      		sbci r17,hi8(-(10))
+ 412 01b4 C801      		movw r24,r16
+ 413               	.LVL21:
+ 414 01b6 0E94 0000 		call DHCPServerApp_CheckIfIPLeased
+ 415 01ba AE01      		movw r20,r28
+ 416 01bc 425F      		subi r20,lo8(-(14))
+ 417 01be 5F4F      		sbci r21,hi8(-(14))
+ 418 01c0 8823      		tst r24
+ 419 01c2 01F4      		brne .L19
+ 420               	.LSM46:
+ 421 01c4 C501      		movw r24,r10
+ 422 01c6 65E0      		ldi r22,lo8(5)
+ 423 01c8 9801      		movw r18,r16
+ 424 01ca 8701      		movw r16,r14
+ 425 01cc 7601      		movw r14,r12
+ 426 01ce 0E94 0000 		call DHCPServerApp_FillDHCPHeader
+ 427 01d2 8C01      		movw r16,r24
+ 428               	.LSM47:
+ 429 01d4 C301      		movw r24,r6
+ 430 01d6 61E0      		ldi r22,lo8(1)
+ 431 01d8 44E0      		ldi r20,lo8(4)
+ 432 01da 9E01      		movw r18,r28
+ 433 01dc 2E5F      		subi r18,lo8(-(2))
+ 434 01de 3F4F      		sbci r19,hi8(-(2))
+ 435 01e0 0E94 0000 		call DHCPCommon_SetOption
+ 436 01e4 F82E      		mov r15,r24
+ 437               	.LSM48:
+ 438 01e6 C301      		movw r24,r6
+ 439 01e8 63E0      		ldi r22,lo8(3)
+ 440 01ea 44E0      		ldi r20,lo8(4)
+ 441 01ec 9E01      		movw r18,r28
+ 442 01ee 2A5F      		subi r18,lo8(-(6))
+ 443 01f0 3F4F      		sbci r19,hi8(-(6))
+ 444 01f2 0E94 0000 		call DHCPCommon_SetOption
+ 445               	.LSM49:
+ 446 01f6 C82E      		mov r12,r24
+ 447               	.LVL22:
+ 448 01f8 DD24      		clr r13
+ 449               	.LVL23:
+ 450 01fa CF0C      		add r12,r15
+ 451 01fc D11C      		adc r13,__zero_reg__
+ 452               	.LVL24:
+ 453               	.LSM50:
+ 454 01fe C00E      		add r12,r16
+ 455 0200 D11E      		adc r13,r17
+ 456               	.LBB16:
+ 457               	.LBB17:
+ 458               	.LSM51:
+ 459 0202 2D85      		ldd r18,Y+13
+ 460               	.LSM52:
+ 461 0204 E22F      		mov r30,r18
+ 462 0206 E695      		lsr r30
+ 463 0208 E695      		lsr r30
+ 464 020a E695      		lsr r30
+ 465 020c F0E0      		ldi r31,lo8(0)
+ 466 020e E050      		subi r30,lo8(-(LeasedIPs))
+ 467 0210 F040      		sbci r31,hi8(-(LeasedIPs))
+ 468 0212 2770      		andi r18,lo8(7)
+ 469 0214 81E0      		ldi r24,lo8(1)
+ 470 0216 90E0      		ldi r25,hi8(1)
+ 471 0218 00C0      		rjmp 2f
+ 472 021a 880F      	1:	lsl r24
+ 473 021c 991F      		rol r25
+ 474 021e 2A95      	2:	dec r18
+ 475 0220 02F4      		brpl 1b
+ 476 0222 2081      		ld r18,Z
+ 477 0224 282B      		or r18,r24
+ 478 0226 2083      		st Z,r18
+ 479 0228 00C0      		rjmp .L20
+ 480               	.LVL25:
+ 481               	.L19:
+ 482               	.LBE17:
+ 483               	.LBE16:
+ 484               	.LSM53:
+ 485 022a C501      		movw r24,r10
+ 486 022c 66E0      		ldi r22,lo8(6)
+ 487 022e 20E0      		ldi r18,lo8(uip_all_zeroes_addr)
+ 488 0230 30E0      		ldi r19,hi8(uip_all_zeroes_addr)
+ 489 0232 8701      		movw r16,r14
+ 490 0234 7601      		movw r14,r12
+ 491 0236 0E94 0000 		call DHCPServerApp_FillDHCPHeader
+ 492 023a 6C01      		movw r12,r24
+ 493               	.LVL26:
+ 494               	.L20:
+ 495               	.LSM54:
+ 496 023c 8091 0000 		lds r24,BroadcastConnection
+ 497 0240 9091 0000 		lds r25,(BroadcastConnection)+1
+ 498 0244 9093 0000 		sts (uip_conn)+1,r25
+ 499 0248 8093 0000 		sts uip_conn,r24
+ 500 024c 83E0      		ldi r24,lo8(3)
+ 501 024e 0E94 0000 		call uip_process
+ 502               	.LSM55:
+ 503 0252 E091 0000 		lds r30,uip_udp_conn
+ 504 0256 F091 0000 		lds r31,(uip_udp_conn)+1
+ 505 025a 8091 0000 		lds r24,uip_broadcast_addr
+ 506 025e 9091 0000 		lds r25,(uip_broadcast_addr)+1
+ 507 0262 A091 0000 		lds r26,(uip_broadcast_addr)+2
+ 508 0266 B091 0000 		lds r27,(uip_broadcast_addr)+3
+ 509 026a 8083      		st Z,r24
+ 510 026c 9183      		std Z+1,r25
+ 511 026e A283      		std Z+2,r26
+ 512 0270 B383      		std Z+3,r27
+ 513               	.LSM56:
+ 514 0272 8091 0000 		lds r24,uip_appdata
+ 515 0276 9091 0000 		lds r25,(uip_appdata)+1
+ 516 027a B601      		movw r22,r12
+ 517               	.LVL27:
+ 518               	.L24:
+ 519 027c 0E94 0000 		call uip_send
+ 520 0280 00C0      		rjmp .L21
+ 521               	.LVL28:
+ 522               	.L16:
+ 523               	.LBB18:
+ 524               	.LBB19:
+ 525               	.LSM57:
+ 526 0282 E091 0000 		lds r30,uip_udp_conn
+ 527 0286 F091 0000 		lds r31,(uip_udp_conn)+1
+ 528 028a 2381      		ldd r18,Z+3
+ 529               	.LSM58:
+ 530 028c E22F      		mov r30,r18
+ 531 028e E695      		lsr r30
+ 532 0290 E695      		lsr r30
+ 533 0292 E695      		lsr r30
+ 534 0294 F0E0      		ldi r31,lo8(0)
+ 535 0296 E050      		subi r30,lo8(-(LeasedIPs))
+ 536 0298 F040      		sbci r31,hi8(-(LeasedIPs))
+ 537 029a 2770      		andi r18,lo8(7)
+ 538 029c 81E0      		ldi r24,lo8(1)
+ 539 029e 90E0      		ldi r25,hi8(1)
+ 540               	.LVL29:
+ 541 02a0 00C0      		rjmp 2f
+ 542 02a2 880F      	1:	lsl r24
+ 543 02a4 991F      		rol r25
+ 544 02a6 2A95      	2:	dec r18
+ 545 02a8 02F4      		brpl 1b
+ 546 02aa 8095      		com r24
+ 547 02ac 2081      		ld r18,Z
+ 548 02ae 8223      		and r24,r18
+ 549 02b0 8083      		st Z,r24
+ 550               	.LVL30:
+ 551               	.L21:
+ 552               	/* epilogue start */
+ 553               	.LBE19:
+ 554               	.LBE18:
+ 555               	.LBE10:
+ 556               	.LSM59:
+ 557 02b2 6396      		adiw r28,19
+ 558 02b4 0FB6      		in __tmp_reg__,__SREG__
+ 559 02b6 F894      		cli
+ 560 02b8 DEBF      		out __SP_H__,r29
+ 561 02ba 0FBE      		out __SREG__,__tmp_reg__
+ 562 02bc CDBF      		out __SP_L__,r28
+ 563 02be CF91      		pop r28
+ 564 02c0 DF91      		pop r29
+ 565 02c2 1F91      		pop r17
+ 566 02c4 0F91      		pop r16
+ 567 02c6 FF90      		pop r15
+ 568 02c8 EF90      		pop r14
+ 569 02ca DF90      		pop r13
+ 570               	.LVL31:
+ 571 02cc CF90      		pop r12
+ 572               	.LVL32:
+ 573 02ce BF90      		pop r11
+ 574 02d0 AF90      		pop r10
+ 575 02d2 9F90      		pop r9
+ 576 02d4 8F90      		pop r8
+ 577 02d6 7F90      		pop r7
+ 578 02d8 6F90      		pop r6
+ 579 02da 0895      		ret
+ 580               	.LFE218:
+ 582               		.section	.text.DHCPServerApp_Init,"ax",@progbits
+ 583               	.global	DHCPServerApp_Init
+ 585               	DHCPServerApp_Init:
+ 586               	.LFB217:
+ 587               	.LSM60:
+ 588               	/* prologue: function */
+ 589               	/* frame size = 0 */
+ 590               	.LSM61:
+ 591 0000 80E0      		ldi r24,lo8(17152)
+ 592 0002 93E4      		ldi r25,hi8(17152)
+ 593 0004 0E94 0000 		call uip_listen
+ 594               	.LSM62:
+ 595 0008 80E0      		ldi r24,lo8(uip_broadcast_addr)
+ 596 000a 90E0      		ldi r25,hi8(uip_broadcast_addr)
+ 597 000c 60E0      		ldi r22,lo8(17408)
+ 598 000e 74E4      		ldi r23,hi8(17408)
+ 599 0010 0E94 0000 		call uip_udp_new
+ 600 0014 FC01      		movw r30,r24
+ 601               	.LVL33:
+ 602               	.LSM63:
+ 603 0016 0097      		sbiw r24,0
+ 604 0018 01F0      		breq .L26
+ 605               	.LVL34:
+ 606               	.LSM64:
+ 607 001a 80E0      		ldi r24,lo8(17152)
+ 608 001c 93E4      		ldi r25,hi8(17152)
+ 609               	.LVL35:
+ 610 001e 9583      		std Z+5,r25
+ 611 0020 8483      		std Z+4,r24
+ 612               	.LVL36:
+ 613               	.L26:
+ 614               	.LSM65:
+ 615 0022 8FE1      		ldi r24,lo8(31)
+ 616 0024 E0E0      		ldi r30,lo8(LeasedIPs)
+ 617 0026 F0E0      		ldi r31,hi8(LeasedIPs)
+ 618               	.LVL37:
+ 619 0028 DF01      		movw r26,r30
+ 620 002a 1D92      		st X+,__zero_reg__
+ 621 002c 8A95      	        dec r24
+ 622 002e 01F4      		brne .-6
+ 623               	/* epilogue start */
+ 624               	.LSM66:
+ 625 0030 0895      		ret
+ 626               	.LFE217:
+ 628               		.comm BroadcastConnection,2,1
+ 629               		.comm LeasedIPs,31,1
+ 678               	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 DHCPServerApp.c
+     /tmp/ccdXszY6.s:2      *ABS*:0000003f __SREG__
+     /tmp/ccdXszY6.s:3      *ABS*:0000003e __SP_H__
+     /tmp/ccdXszY6.s:4      *ABS*:0000003d __SP_L__
+     /tmp/ccdXszY6.s:5      *ABS*:00000034 __CCP__
+     /tmp/ccdXszY6.s:6      *ABS*:00000000 __tmp_reg__
+     /tmp/ccdXszY6.s:7      *ABS*:00000001 __zero_reg__
+     /tmp/ccdXszY6.s:18     .text.DHCPServerApp_CheckIfIPLeased:00000000 DHCPServerApp_CheckIfIPLeased
+                            *COM*:0000001f LeasedIPs
+     /tmp/ccdXszY6.s:66     .text.DHCPServerApp_FillDHCPHeader:00000000 DHCPServerApp_FillDHCPHeader
+     /tmp/ccdXszY6.s:179    .text.DHCPServerApp_Callback:00000000 DHCPServerApp_Callback
+                            *COM*:00000002 BroadcastConnection
+     /tmp/ccdXszY6.s:585    .text.DHCPServerApp_Init:00000000 DHCPServerApp_Init
+
+UNDEFINED SYMBOLS
+uip_hostaddr
+uip_appdata
+uip_flags
+DHCPCommon_GetOption
+uip_netmask
+uip_draddr
+uip_all_zeroes_addr
+DHCPCommon_SetOption
+uip_conn
+uip_process
+uip_udp_conn
+uip_broadcast_addr
+uip_send
+uip_listen
+uip_udp_new
+__do_clear_bss

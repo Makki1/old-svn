@@ -1,0 +1,11 @@
+V0.1.0.0 
+- 22.08.2009 mit pyGTK 2.10, glade 3.4 und python 2.6
+
+V0.2.0.0
+- 22.08.2009 mit pyGTK 2.12, glade 3.6 und python 2.6 basierend auf gtk+ bundel 2.16
+
+V0.2.1.2
+- 03.09.2009 
+auf einem "nackten" System muss die Java-Runtime Umgebung installiert sein; diese beinhaltet auch die "MSVCR71.dll". 
+Leider findet das System im angegebenem Ordner diese DLL nicht, einfach die MSVCR71.dll in WIndows/system kopieren. (wird bei den meisten Rechnern schon drin sein...)
+auch mit Umgebungsvariable "JAVA_HOME" hatte ich keinen Erfolg.... Versuche laufen

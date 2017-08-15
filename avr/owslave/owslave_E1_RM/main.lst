@@ -1,0 +1,4308 @@
+   1               		.file	"main.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.text
+   8               	.Ltext0:
+   9               	.global	__vector_1
+  11               	__vector_1:
+  12               	.LFB6:
+  13               		.file 1 "main.c"
+   1:main.c        **** /*
+   2:main.c        ****  * OWSlave
+   3:main.c        ****  *
+   4:main.c        ****  * This program is free software: you can redistribute it and/or modify
+   5:main.c        ****  * it under the terms of the GNU General Public License as published by
+   6:main.c        ****  * the Free Software Foundation, either version 3 of the License, or
+   7:main.c        ****  *  any later version.
+   8:main.c        ****  *
+   9:main.c        ****  * This program is distributed in the hope that it will be useful,
+  10:main.c        ****  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+  11:main.c        ****  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  12:main.c        ****  * GNU General Public License for more details.
+  13:main.c        ****  *
+  14:main.c        ****  * You should have received a copy of the GNU General Public License
+  15:main.c        ****  * along with this program.  If not, see <http: * www.gnu.org/licenses/>.
+  16:main.c        ****  *
+  17:main.c        ****  * based on owdevice - A small 1-Wire emulator for AVR Microcontroller
+  18:main.c        ****  *
+  19:main.c        ****  * Copyright (C) 2012  Tobias Mueller mail (at) tobynet.de
+  20:main.c        ****  *
+  21:main.c        ****  * VERSION 1.4 for ATmega48/328P
+  22:main.c        ****  *
+  23:main.c        ****  * Created: 15.05.2013 13:36:59
+  24:main.c        ****  *  Author: Michael Markstaller
+  25:main.c        ****  *
+  26:main.c        ****  * use included Makefile: just change target MCU and avrdude params
+  27:main.c        ****  *
+  28:main.c        ****  * Changelog:
+  29:main.c        ****  * v1.4
+  30:main.c        ****  *  - moved code to 1.4 of counter with user-eeprom, massive power-savings and WDT-isr instead of d
+  31:main.c        ****  * v1.3pre2
+  32:main.c        ****  *  - combined prototype for Counter / RM with full owfs-support as family E1
+  33:main.c        ****  * v1.3pre1:
+  34:main.c        ****  *  - Major cleanup code: define serial & debug-macros
+  35:main.c        ****  *  - adjust ISR to exact current defines in avr-libc, add uartlib (tiny24|44|84/25|45|85 missing y
+  36:main.c        ****  *  - add EEPROM-functions
+  37:main.c        ****  *  - add basic ow function-commands instead of page/memory access used in DS2423
+  38:main.c        ****  *  - Family E1 introduced
+  39:main.c        ****  *  - much testcode
+  40:main.c        ****  * v1.2: basic code
+  41:main.c        ****  */
+  42:main.c        **** 
+  43:main.c        **** 
+  44:main.c        **** #include <stdlib.h>
+  45:main.c        **** #include <avr/io.h>
+  46:main.c        **** #include <avr/interrupt.h>
+  47:main.c        **** #include <avr/eeprom.h>
+  48:main.c        **** #include <avr/sleep.h>
+  49:main.c        **** #include <string.h>
+  50:main.c        **** #include <avr/wdt.h>
+  51:main.c        **** #include "common.h"
+  52:main.c        **** #include "uart.h"
+  53:main.c        **** 
+  54:main.c        **** #define DEBUG 0
+  55:main.c        **** #include "debug.h"
+  56:main.c        **** #ifndef F_CPU
+  57:main.c        **** //# warning "F_CPU was not defined!! defining it now in debug.h but you should take care before!"
+  58:main.c        **** #define F_CPU 8000000UL //very important! define before delay.h as delay.h fucks up the serial-timi
+  59:main.c        **** #endif
+  60:main.c        **** #include <util/delay.h>
+  61:main.c        **** 
+  62:main.c        **** 
+  63:main.c        **** #if defined(__AVR_ATmega48__) || (__AVR_ATmega88__) || (__AVR_ATmega328P__)
+  64:main.c        **** // OW_PORT Pin 4  - PD2(INT0)
+  65:main.c        **** 
+  66:main.c        **** //OW Pin
+  67:main.c        **** #define OW_PORT PORTD //1 Wire Port
+  68:main.c        **** #define OW_PIN PIND //1 Wire Pin as number
+  69:main.c        **** #define OW_PORTN (1<<PIND2)  //Pin as bit in registers
+  70:main.c        **** #define OW_PINN (1<<PIND2)
+  71:main.c        **** #define OW_DDR DDRD  //pin direction register
+  72:main.c        **** #define SET_LOW OW_DDR|=OW_PINN;OW_PORT&=~OW_PORTN;  //set 1-Wire line to low
+  73:main.c        **** #define RESET_LOW {OW_DDR&=~OW_PINN;}  //set 1-Wire pin as input
+  74:main.c        **** //Pin interrupt
+  75:main.c        **** #define EN_OWINT {EIMSK|=(1<<INT0);EIFR=(1<<INTF0);}  //enable interrupt 0 and *clear* it - no OR!
+  76:main.c        **** #define DIS_OWINT  EIMSK&=~(1<<INT0); sleepmode=SLEEP_MODE_IDLE; //disable interrupt 0
+  77:main.c        **** #define SET_OWINT_RISING EICRA|=(1<<ISC01)|(1<<ISC00);  //set interrupt at rising edge
+  78:main.c        **** #define SET_OWINT_FALLING {EICRA|=(1<<ISC01);EICRA&=~(1<<ISC00);} //set interrupt at falling edge
+  79:main.c        **** #define SET_OWINT_BOTH EICRA=(1<<ISC00);EICRA&=~(1<<ISC01); //set interrupt at both edges
+  80:main.c        **** #define SET_OWINT_LOWLEVEL EICRA&=~((1<<ISC01)|(1<<ISC00)); //set interrupt at low level
+  81:main.c        **** #define CHK_INT_EN (EIMSK&(1<<INT0))==(1<<INT0) //test if interrupt enabled
+  82:main.c        **** #define PIN_INT ISR(INT0_vect)  // the interrupt service routine
+  83:main.c        **** //Timer Interrupt
+  84:main.c        **** #define EN_TIMER {TIMSK0 |= (1<<TOIE0); TIFR0|=(1<<TOV0);} //enable timer0 interrupt
+  85:main.c        **** #define DIS_TIMER TIMSK0  &= ~(1<<TOIE0); // disable timer interrupt
+  86:main.c        **** #define TCNT_REG TCNT0  //register of timer-counter
+  87:main.c        **** #define TIMER_INT ISR(TIMER0_OVF_vect) //the timer interrupt service routine
+  88:main.c        **** 
+  89:main.c        **** /* TODO/FIXME: define ports for status-leds, etc
+  90:main.c        ****  * AVOID:
+  91:main.c        ****  * PB2-5: SPI
+  92:main.c        ****  * PC4-5: TWI
+  93:main.c        ****  * PC0-3: ADC0-3
+  94:main.c        ****  * PD5-6: PWM0 (?TC in use!)
+  95:main.c        ****  * PB1-2: PWM1
+  96:main.c        ****  * PB3/PD3: PWM2
+  97:main.c        ****  * PD2-3: INT0-1
+  98:main.c        ****  * PD0-1: USART
+  99:main.c        ****  * Good:
+ 100:main.c        ****  * PD4
+ 101:main.c        ****  * PB6-7 (XTAL)
+ 102:main.c        ****  * PD7
+ 103:main.c        ****  * PB0
+ 104:main.c        ****  * PB1-5 (used by counter, collides PWM0,SPI)
+ 105:main.c        ****  */
+ 106:main.c        **** #define RMRXLED_PORT PORTD
+ 107:main.c        **** #define RMRXLED_DDR DDRD
+ 108:main.c        **** #define RMRXLED_PIN PIND4
+ 109:main.c        **** 
+ 110:main.c        **** #define OWRXLED_PORT PORTD
+ 111:main.c        **** #define OWRXLED_DDR DDRD
+ 112:main.c        **** #define OWRXLED_PIN PIND7
+ 113:main.c        **** 
+ 114:main.c        **** #define INIT_LED_PINS RMRXLED_DDR |= (1<<RMRXLED_PIN); \
+ 115:main.c        ****                      OWRXLED_DDR |= (1<<OWRXLED_PIN); /* pins as output */
+ 116:main.c        **** 
+ 117:main.c        **** //FIXME / TODO: double-check & compare timings!
+ 118:main.c        **** #define OWT_MIN_RESET 51 // tRSTL 512uS in DS, tRSTH = 584; 51 are 408uS
+ 119:main.c        **** #define OWT_RESET_PRESENCE 4 //tPDT 64uS in DS
+ 120:main.c        **** #define OWT_PRESENCE 20 // unclear, mabe between 512 and 584 uS; 20 are 160uS? real bus 9/170uS -> 
+ 121:main.c        **** #define OWT_READLINE 3 //for fast master, maybe 4 for long lines; flexible is 10 to 24 uS
+ 122:main.c        **** #define OWT_LOWTIME 3 //3=24uS for DS9490,
+ 123:main.c        **** 
+ 124:main.c        **** //Initializations of AVR
+ 125:main.c        **** #define INIT_AVR CLKPR=(1<<CLKPCE); /* FIXME! this is crap, next line disables it! */ \
+ 126:main.c        ****                   CLKPR=0; /* 8Mhz */ \
+ 127:main.c        ****                   /* CLKPR=(1<<CLKPCE)|(0<<CLKPS3)|(0<<CLKPS2)|(0<<CLKPS1)|(1<<CLKPS0);  FIXME/CHEC
+ 128:main.c        ****                   TIMSK0=0; \
+ 129:main.c        ****                   EIMSK=(1<<INT0);  /*set direct GICR INT0 enable*/ \
+ 130:main.c        ****                   TCCR0B=(1<<CS00)|(1<<CS01); /*8mhz /64 cause 8 bit Timer interrupt every 8us */ \
+ 131:main.c        ****                   WDTCSR |= ((1<<WDCE)|(1<<WDP2)|(1<<WDP1)|(1<<WDP0)); /* ((1<<WDP2)|(1<<WDP1)|(1<<
+ 132:main.c        ****                   WDTCSR |= (1<<WDIE); /* only enable int, no real watchdog */
+ 133:main.c        **** 
+ 134:main.c        **** #define PWRSAVE_AVR
+ 135:main.c        **** 
+ 136:main.c        **** //PRR = (1<<PRTWI)|(1<<PRTIM2)|(1<<PRSPI)|(1<<PRTIM1)|(1<<PRADC); /* power down TWI, TIMCNT2, leave
+ 137:main.c        **** //                    DIDR0 = (1<<ADC5D)|(1<<ADC4D)|(1<<ADC3D)|(1<<ADC2D)|(1<<ADC1D)|(1<<ADC0D); /*
+ 138:main.c        **** 
+ 139:main.c        **** #endif // __AVR_ATmega48__
+ 140:main.c        **** 
+ 141:main.c        **** 
+ 142:main.c        **** //States / Modes (defines from original owslave.c - new are all called OWC_ !)
+ 143:main.c        **** #define OWM_SLEEP 0  //Waiting for next reset pulse
+ 144:main.c        **** #define OWM_RESET 1  //Reset pulse received
+ 145:main.c        **** #define OWM_PRESENCE 2  //sending presence pulse
+ 146:main.c        **** #define OWM_READ_COMMAND 3 //read 8 bit of command
+ 147:main.c        **** #define OWM_SEARCH_ROM 4  //SEARCH_ROM algorithms
+ 148:main.c        **** #define OWM_MATCH_ROM 5  //test number
+ 149:main.c        **** #define OWM_CHK_RESET 8  //waiting of rising edge from reset pulse
+ 150:main.c        **** #define OWM_GET_ADRESS 6
+ 151:main.c        **** #define OWM_READ_MEMORY_COUNTER 7
+ 152:main.c        **** #define OWM_WRITE_SCRATCHPAD 9
+ 153:main.c        **** #define OWM_READ_SCRATCHPAD 10
+ 154:main.c        **** 
+ 155:main.c        **** #define OWM_WRITE_PAGE_TO_MASTER 11
+ 156:main.c        **** #define OWM_WRITE_FUNC 12
+ 157:main.c        **** 
+ 158:main.c        **** #define OWC_READ_SCRATCHPAD 0xBE
+ 159:main.c        **** #define OWC_WRITE_SCRATCHPAD 0x4E
+ 160:main.c        **** #define OWC_WRITE_FUNC 0x4F
+ 161:main.c        **** /* READ_SCRATCHPAD 0xBE + 0xYY is adaptec from DS2438! BE + Address
+ 162:main.c        ****  *
+ 163:main.c        ****  */
+ 164:main.c        **** 
+ 165:main.c        **** //Write a bit after next falling edge from master
+ 166:main.c        **** //its for sending a zero as soon as possible
+ 167:main.c        **** #define OWW_NO_WRITE 2
+ 168:main.c        **** #define OWW_WRITE_1 1
+ 169:main.c        **** #define OWW_WRITE_0 0
+ 170:main.c        **** 
+ 171:main.c        **** LV_SETUP  //quirk to define itoa-outbuf..
+ 172:main.c        **** 
+ 173:main.c        **** volatile uint32_t uptime = 0; /* holds uptime in 1/2 seconds - overflows after 6.8 years */
+ 174:main.c        **** 
+ 175:main.c        **** typedef union {
+ 176:main.c        ****     volatile uint8_t bytes[11];
+ 177:main.c        ****     struct {
+ 178:main.c        ****       uint8_t   page1;
+ 179:main.c        ****       uint8_t   u8_11;
+ 180:main.c        ****       uint8_t   u8_12;
+ 181:main.c        ****       uint16_t  u16_13;
+ 182:main.c        ****       uint32_t  u32_14;
+ 183:main.c        ****       uint8_t   crc1;
+ 184:main.c        ****     };
+ 185:main.c        ****     struct {
+ 186:main.c        ****       uint8_t   page2;
+ 187:main.c        ****       uint16_t  u16_21;
+ 188:main.c        ****       uint16_t  u16_22;
+ 189:main.c        ****       uint16_t  u16_23;
+ 190:main.c        ****       uint8_t   u16_24;
+ 191:main.c        ****       uint8_t   crc2;
+ 192:main.c        ****     };
+ 193:main.c        ****     struct {
+ 194:main.c        ****       uint8_t   page3;
+ 195:main.c        ****       uint32_t  u32_31;
+ 196:main.c        ****       uint32_t  u32_32;
+ 197:main.c        ****       uint8_t   crc3;
+ 198:main.c        ****     };
+ 199:main.c        **** } scratchpad_t;
+ 200:main.c        **** scratchpad_t scratchpad;
+ 201:main.c        **** 
+ 202:main.c        **** typedef union {
+ 203:main.c        ****   uint8_t bytes[8];
+ 204:main.c        ****   struct {
+ 205:main.c        ****     uint8_t b1;
+ 206:main.c        ****     uint8_t b2;
+ 207:main.c        ****     uint8_t b3;
+ 208:main.c        ****     uint8_t b4;
+ 209:main.c        ****     uint8_t b5;
+ 210:main.c        ****     uint8_t b6;
+ 211:main.c        ****     uint8_t b7;
+ 212:main.c        ****     uint8_t b8;
+ 213:main.c        ****   };
+ 214:main.c        ****   struct {
+ 215:main.c        ****     uint32_t u32_1;
+ 216:main.c        ****     uint32_t u32_2;
+ 217:main.c        ****   };
+ 218:main.c        ****   struct {
+ 219:main.c        ****     uint16_t u16_1;
+ 220:main.c        ****     uint16_t u16_2;
+ 221:main.c        ****     uint16_t u16_3;
+ 222:main.c        ****     uint16_t u16_4;
+ 223:main.c        ****   };
+ 224:main.c        **** } rmdata_t;
+ 225:main.c        **** rmdata_t rmdata[5];
+ 226:main.c        **** 
+ 227:main.c        **** /* recv-states */
+ 228:main.c        **** enum {
+ 229:main.c        ****       S_NULL = 0,
+ 230:main.c        ****       S_STX = 2,
+ 231:main.c        ****       S_ETX = 3,
+ 232:main.c        ****       S_ACK = 6,
+ 233:main.c        ****       S_NACK = 15,
+ 234:main.c        ****       S_DATA = 20,
+ 235:main.c        **** };
+ 236:main.c        **** uint8_t recv_state = S_NULL;
+ 237:main.c        **** uint8_t nackmsg=0;
+ 238:main.c        **** 
+ 239:main.c        **** volatile uint16_t scrc; //CRC calculation
+ 240:main.c        **** volatile uint8_t page; /* address of memory-page to read/write */
+ 241:main.c        **** 
+ 242:main.c        **** volatile uint8_t lastcps;
+ 243:main.c        **** volatile uint8_t istat;
+ 244:main.c        **** volatile uint8_t sleepmode;
+ 245:main.c        **** 
+ 246:main.c        **** volatile uint8_t cbuf; //Input buffer for a command
+ 247:main.c        **** uint8_t owid[8] = {0xE1, 0xE1, 0x00, 0x00, 0x00, 0x03, 0x28, 0x28 };
+ 248:main.c        **** 
+ 249:main.c        **** volatile uint8_t bitp;  //pointer to current Byte
+ 250:main.c        **** volatile uint8_t bytep; //pointer to current Bit
+ 251:main.c        **** 
+ 252:main.c        **** volatile uint8_t mode; //state
+ 253:main.c        **** volatile uint8_t wmode; //if 0 next bit that send the device is  0
+ 254:main.c        **** volatile uint8_t actbit; //current
+ 255:main.c        **** volatile uint8_t srcount; //counter for search rom
+ 256:main.c        **** 
+ 257:main.c        **** /* temp vars to avoid eeprom-reading - in case of low-mem: FIXME */
+ 258:main.c        **** uint16_t version = 0x0104;
+ 259:main.c        **** uint8_t stype = 2;
+ 260:main.c        **** uint16_t rcnt = 1;
+ 261:main.c        **** uint8_t eflag; //internal error/status-flag
+ 262:main.c        **** uint8_t serflag;
+ 263:main.c        **** volatile uint8_t crcerrcnt=0;
+ 264:main.c        **** 
+ 265:main.c        **** volatile uint8_t ewrite_flag;//ewrite_flag is already volatile and used as semaphore..
+ 266:main.c        **** typedef union {
+ 267:main.c        ****     uint8_t bytes[8];
+ 268:main.c        ****     struct {
+ 269:main.c        ****       uint32_t u32_1;
+ 270:main.c        ****       uint32_t u32_2;
+ 271:main.c        ****     };
+ 272:main.c        **** } eewrite_t;
+ 273:main.c        **** eewrite_t eewrite_buf;
+ 274:main.c        **** 
+ 275:main.c        **** 
+ 276:main.c        **** PIN_INT {
+  14               		.loc 1 276 0
+  15 0000 1F92      		push r1
+  16               	.LCFI0:
+  17 0002 0F92      		push r0
+  18               	.LCFI1:
+  19 0004 0FB6      		in r0,__SREG__
+  20 0006 0F92      		push r0
+  21 0008 1124      		clr __zero_reg__
+  22 000a 2F93      		push r18
+  23               	.LCFI2:
+  24 000c 8F93      		push r24
+  25               	.LCFI3:
+  26 000e 9F93      		push r25
+  27               	.LCFI4:
+  28               	/* prologue: Signal */
+  29               	/* frame size = 0 */
+  30               	/* stack size = 6 */
+  31               	.L__stack_usage = 6
+ 277:main.c        ****     uint8_t lwmode=wmode;  //let this variables in registers
+  32               		.loc 1 277 0
+  33 0010 9091 0000 		lds r25,wmode
+  34               	.LVL0:
+ 278:main.c        ****     uint8_t lmode=mode;
+  35               		.loc 1 278 0
+  36 0014 8091 0000 		lds r24,mode
+  37               	.LVL1:
+ 279:main.c        ****     if (lwmode==OWW_WRITE_0) { //if necessary set 0-Bit
+  38               		.loc 1 279 0
+  39 0018 9111      		cpse r25,__zero_reg__
+  40 001a 00C0      		rjmp .L2
+ 280:main.c        ****         SET_LOW;
+  41               		.loc 1 280 0
+  42 001c 529A      		sbi 0xa,2
+  43 001e 5A98      		cbi 0xb,2
+  44               	.LVL2:
+ 281:main.c        ****         lwmode=OWW_NO_WRITE;
+  45               		.loc 1 281 0
+  46 0020 92E0      		ldi r25,lo8(2)
+  47               	.LVL3:
+  48               	.L2:
+ 282:main.c        ****     }
+ 283:main.c        ****     DIS_OWINT; //disable interrupt, only in OWM_SLEEP mode it is active
+  49               		.loc 1 283 0
+  50 0022 E898      		cbi 0x1d,0
+  51 0024 1092 0000 		sts sleepmode,__zero_reg__
+ 284:main.c        ****     sleepmode=SLEEP_MODE_IDLE; //powerdown is set in TIMER_INT on OWM_SLEEP only!
+  52               		.loc 1 284 0
+  53 0028 1092 0000 		sts sleepmode,__zero_reg__
+ 285:main.c        ****     switch (lmode) {
+  54               		.loc 1 285 0
+  55 002c 8730      		cpi r24,lo8(7)
+  56 002e 00F4      		brsh .L9
+  57 0030 8530      		cpi r24,lo8(5)
+  58 0032 00F4      		brsh .L8
+  59 0034 8330      		cpi r24,lo8(3)
+  60 0036 01F0      		breq .L8
+  61 0038 00F4      		brsh .L6
+  62 003a 8823      		tst r24
+  63 003c 01F0      		breq .L4
+  64 003e 00C0      		rjmp .L3
+  65               	.L9:
+  66 0040 8C30      		cpi r24,lo8(12)
+  67 0042 00F4      		brsh .L10
+  68 0044 8A30      		cpi r24,lo8(10)
+  69 0046 00F4      		brsh .L8
+  70 0048 8830      		cpi r24,lo8(8)
+  71 004a 01F0      		breq .L7
+  72 004c 8930      		cpi r24,lo8(9)
+  73 004e 01F4      		brne .L3
+  74 0050 00C0      		rjmp .L8
+  75               	.L10:
+  76 0052 8C30      		cpi r24,lo8(12)
+  77 0054 01F4      		brne .L3
+  78 0056 00C0      		rjmp .L8
+  79               	.L4:
+ 286:main.c        ****         case OWM_SLEEP:
+ 287:main.c        ****             TCNT_REG=~(OWT_MIN_RESET);
+  80               		.loc 1 287 0
+  81 0058 2CEC      		ldi r18,lo8(-52)
+  82 005a 26BD      		out 0x26,r18
+ 288:main.c        ****             //RESET_LOW;  //??? Set pin as input again ???
+ 289:main.c        ****             EN_OWINT; SET_OWINT_RISING; //other edges ?
+  83               		.loc 1 289 0
+  84 005c E89A      		sbi 0x1d,0
+  85 005e 21E0      		ldi r18,lo8(1)
+  86 0060 2CBB      		out 0x1c,r18
+  87 0062 2091 6900 		lds r18,105
+  88 0066 2360      		ori r18,lo8(3)
+  89 0068 2093 6900 		sts 105,r18
+ 290:main.c        ****             OWRXLED_PORT &= ~(1<<OWRXLED_PIN); /* led off */
+  90               		.loc 1 290 0
+  91 006c 5F98      		cbi 0xb,7
+ 291:main.c        ****             break;
+  92               		.loc 1 291 0
+  93 006e 00C0      		rjmp .L3
+  94               	.L6:
+ 292:main.c        ****         //start of reading a byte with falling edge from master, reading closed in timer isr
+ 293:main.c        ****         case OWM_MATCH_ROM:  //falling edge wait for receive
+ 294:main.c        ****         case OWM_WRITE_SCRATCHPAD:
+ 295:main.c        ****         case OWM_GET_ADRESS:
+ 296:main.c        ****         case OWM_READ_COMMAND:
+ 297:main.c        ****         case OWM_WRITE_FUNC:
+ 298:main.c        ****             TCNT_REG=~(OWT_READLINE); //wait a time for reading
+ 299:main.c        ****             break;
+ 300:main.c        ****         case OWM_SEARCH_ROM:   //Search algorithm waiting for receive or send
+ 301:main.c        ****             if (srcount<2) { //this means bit or complement is writing,
+  95               		.loc 1 301 0
+  96 0070 2091 0000 		lds r18,srcount
+  97               	.L8:
+ 302:main.c        ****                 TCNT_REG=~(OWT_LOWTIME);
+ 303:main.c        ****             } else
+ 304:main.c        ****                 TCNT_REG=~(OWT_READLINE);  //init for read answer of master
+ 305:main.c        ****             break;
+ 306:main.c        ****         case OWM_READ_SCRATCHPAD:
+ 307:main.c        ****         case OWM_WRITE_PAGE_TO_MASTER:
+ 308:main.c        ****             TCNT_REG=~(OWT_LOWTIME);
+  98               		.loc 1 308 0
+  99 0074 2CEF      		ldi r18,lo8(-4)
+ 100 0076 26BD      		out 0x26,r18
+ 309:main.c        ****             break;
+ 101               		.loc 1 309 0
+ 102 0078 00C0      		rjmp .L3
+ 103               	.L7:
+ 310:main.c        ****         case OWM_CHK_RESET:  //rising edge of reset pulse
+ 311:main.c        ****             SET_OWINT_FALLING;
+ 104               		.loc 1 311 0
+ 105 007a 8091 6900 		lds r24,105
+ 106               	.LVL4:
+ 107 007e 8260      		ori r24,lo8(2)
+ 108 0080 8093 6900 		sts 105,r24
+ 109 0084 8091 6900 		lds r24,105
+ 110 0088 8E7F      		andi r24,lo8(-2)
+ 111 008a 8093 6900 		sts 105,r24
+ 312:main.c        ****             TCNT_REG=~(OWT_RESET_PRESENCE);  //waiting for sending presence pulse
+ 112               		.loc 1 312 0
+ 113 008e 8BEF      		ldi r24,lo8(-5)
+ 114 0090 86BD      		out 0x26,r24
+ 115               	.LVL5:
+ 313:main.c        ****             lmode=OWM_RESET;
+ 116               		.loc 1 313 0
+ 117 0092 81E0      		ldi r24,lo8(1)
+ 118               	.LVL6:
+ 119               	.L3:
+ 314:main.c        ****             break;
+ 315:main.c        ****     }
+ 316:main.c        ****     EN_TIMER;
+ 120               		.loc 1 316 0
+ 121 0094 2091 6E00 		lds r18,110
+ 122 0098 2160      		ori r18,lo8(1)
+ 123 009a 2093 6E00 		sts 110,r18
+ 124 009e A89A      		sbi 0x15,0
+ 317:main.c        ****     mode=lmode;
+ 125               		.loc 1 317 0
+ 126 00a0 8093 0000 		sts mode,r24
+ 318:main.c        ****     wmode=lwmode;
+ 127               		.loc 1 318 0
+ 128 00a4 9093 0000 		sts wmode,r25
+ 129               	/* epilogue start */
+ 319:main.c        **** }
+ 130               		.loc 1 319 0
+ 131 00a8 9F91      		pop r25
+ 132               	.LVL7:
+ 133 00aa 8F91      		pop r24
+ 134               	.LVL8:
+ 135 00ac 2F91      		pop r18
+ 136 00ae 0F90      		pop r0
+ 137 00b0 0FBE      		out __SREG__,r0
+ 138 00b2 0F90      		pop r0
+ 139 00b4 1F90      		pop r1
+ 140 00b6 1895      		reti
+ 141               	.LFE6:
+ 143               		.section	.rodata
+ 144               	.LC1:
+ 145 0000 02        		.byte	2
+ 146 0001 30        		.byte	48
+ 147 0002 33        		.byte	51
+ 148 0003 30        		.byte	48
+ 149 0004 32        		.byte	50
+ 150 0005 30        		.byte	48
+ 151 0006 30        		.byte	48
+ 152 0007 32        		.byte	50
+ 153 0008 35        		.byte	53
+ 154 0009 03        		.byte	3
+ 155               		.text
+ 156               	.global	__vector_16
+ 158               	__vector_16:
+ 159               	.LFB7:
+ 320:main.c        **** 
+ 321:main.c        **** 
+ 322:main.c        **** TIMER_INT {
+ 160               		.loc 1 322 0
+ 161 00b8 1F92      		push r1
+ 162               	.LCFI5:
+ 163 00ba 0F92      		push r0
+ 164               	.LCFI6:
+ 165 00bc 0FB6      		in r0,__SREG__
+ 166 00be 0F92      		push r0
+ 167 00c0 1124      		clr __zero_reg__
+ 168 00c2 AF92      		push r10
+ 169               	.LCFI7:
+ 170 00c4 BF92      		push r11
+ 171               	.LCFI8:
+ 172 00c6 CF92      		push r12
+ 173               	.LCFI9:
+ 174 00c8 DF92      		push r13
+ 175               	.LCFI10:
+ 176 00ca EF92      		push r14
+ 177               	.LCFI11:
+ 178 00cc FF92      		push r15
+ 179               	.LCFI12:
+ 180 00ce 0F93      		push r16
+ 181               	.LCFI13:
+ 182 00d0 1F93      		push r17
+ 183               	.LCFI14:
+ 184 00d2 2F93      		push r18
+ 185               	.LCFI15:
+ 186 00d4 3F93      		push r19
+ 187               	.LCFI16:
+ 188 00d6 4F93      		push r20
+ 189               	.LCFI17:
+ 190 00d8 5F93      		push r21
+ 191               	.LCFI18:
+ 192 00da 6F93      		push r22
+ 193               	.LCFI19:
+ 194 00dc 7F93      		push r23
+ 195               	.LCFI20:
+ 196 00de 8F93      		push r24
+ 197               	.LCFI21:
+ 198 00e0 9F93      		push r25
+ 199               	.LCFI22:
+ 200 00e2 AF93      		push r26
+ 201               	.LCFI23:
+ 202 00e4 BF93      		push r27
+ 203               	.LCFI24:
+ 204 00e6 EF93      		push r30
+ 205               	.LCFI25:
+ 206 00e8 FF93      		push r31
+ 207               	.LCFI26:
+ 208 00ea CF93      		push r28
+ 209               	.LCFI27:
+ 210 00ec DF93      		push r29
+ 211               	.LCFI28:
+ 212 00ee CDB7      		in r28,__SP_L__
+ 213 00f0 DEB7      		in r29,__SP_H__
+ 214               	.LCFI29:
+ 215 00f2 2C97      		sbiw r28,12
+ 216               	.LCFI30:
+ 217 00f4 DEBF      		out __SP_H__,r29
+ 218 00f6 CDBF      		out __SP_L__,r28
+ 219               	/* prologue: Signal */
+ 220               	/* frame size = 12 */
+ 221               	/* stack size = 37 */
+ 222               	.L__stack_usage = 37
+ 323:main.c        ****     uint8_t lwmode=wmode; //let this variables in registers
+ 223               		.loc 1 323 0
+ 224 00f8 2091 0000 		lds r18,wmode
+ 225               	.LVL9:
+ 324:main.c        ****     uint8_t lmode=mode;
+ 226               		.loc 1 324 0
+ 227 00fc 6091 0000 		lds r22,mode
+ 228               	.LVL10:
+ 325:main.c        ****     uint8_t lbytep=bytep;
+ 229               		.loc 1 325 0
+ 230 0100 0091 0000 		lds r16,bytep
+ 231               	.LVL11:
+ 326:main.c        ****     uint8_t lbitp=bitp;
+ 232               		.loc 1 326 0
+ 233 0104 7091 0000 		lds r23,bitp
+ 234               	.LVL12:
+ 327:main.c        ****     uint8_t lsrcount=srcount;
+ 235               		.loc 1 327 0
+ 236 0108 1091 0000 		lds r17,srcount
+ 237               	.LVL13:
+ 328:main.c        ****     uint8_t lactbit=actbit;
+ 238               		.loc 1 328 0
+ 239 010c 3091 0000 		lds r19,actbit
+ 240               	.LVL14:
+ 329:main.c        ****     uint16_t lscrc=scrc;
+ 241               		.loc 1 329 0
+ 242 0110 E090 0000 		lds r14,scrc
+ 243 0114 F090 0000 		lds r15,scrc+1
+ 244               	.LVL15:
+ 330:main.c        ****     //Ask input line sate
+ 331:main.c        ****     uint8_t p=((OW_PIN&OW_PINN)==OW_PINN);
+ 245               		.loc 1 331 0
+ 246 0118 89B1      		in r24,0x9
+ 247 011a 82FB      		bst r24,2
+ 248 011c 8827      		clr r24
+ 249 011e 80F9      		bld r24,0
+ 250               	.LVL16:
+ 332:main.c        **** 
+ 333:main.c        ****     OWRXLED_PORT ^= (1<<OWRXLED_PIN); /* toolge RX-led */
+ 251               		.loc 1 333 0
+ 252 0120 9BB1      		in r25,0xb
+ 253 0122 9058      		subi r25,lo8(-(-128))
+ 254 0124 9BB9      		out 0xb,r25
+ 334:main.c        **** 
+ 335:main.c        ****     //Interrupt still active ?
+ 336:main.c        ****     if (CHK_INT_EN) {
+ 255               		.loc 1 336 0
+ 256 0126 E89B      		sbis 0x1d,0
+ 257 0128 00C0      		rjmp .L22
+ 337:main.c        ****         //maybe reset pulse
+ 338:main.c        ****         if (p==0) {
+ 258               		.loc 1 338 0
+ 259 012a 8111      		cpse r24,__zero_reg__
+ 260 012c 00C0      		rjmp .L23
+ 261               	.LVL17:
+ 339:main.c        ****             lmode=OWM_CHK_RESET;  //wait for rising edge
+ 340:main.c        ****             SET_OWINT_RISING;
+ 262               		.loc 1 340 0
+ 263 012e 8091 6900 		lds r24,105
+ 264               	.LVL18:
+ 265 0132 8360      		ori r24,lo8(3)
+ 266 0134 8093 6900 		sts 105,r24
+ 339:main.c        ****             lmode=OWM_CHK_RESET;  //wait for rising edge
+ 267               		.loc 1 339 0
+ 268 0138 68E0      		ldi r22,lo8(8)
+ 269               	.LVL19:
+ 270               	.L23:
+ 341:main.c        ****         }
+ 342:main.c        ****         DIS_TIMER;
+ 271               		.loc 1 342 0
+ 272 013a 8091 6E00 		lds r24,110
+ 273 013e 8E7F      		andi r24,lo8(-2)
+ 274 0140 8093 6E00 		sts 110,r24
+ 275 0144 00C0      		rjmp .L24
+ 276               	.LVL20:
+ 277               	.L22:
+ 343:main.c        ****     } else
+ 344:main.c        ****     switch (lmode) {
+ 278               		.loc 1 344 0
+ 279 0146 6430      		cpi r22,lo8(4)
+ 280 0148 01F4      		brne .+2
+ 281 014a 00C0      		rjmp .L28
+ 282 014c 00F4      		brsh .L33
+ 283 014e 6230      		cpi r22,lo8(2)
+ 284 0150 01F0      		breq .L26
+ 285 0152 00F4      		brsh .L27
+ 286 0154 6130      		cpi r22,lo8(1)
+ 287 0156 01F0      		breq .+2
+ 288 0158 00C0      		rjmp .L24
+ 289 015a 00C0      		rjmp .L25
+ 290               	.L33:
+ 291 015c 6630      		cpi r22,lo8(6)
+ 292 015e 01F4      		brne .+2
+ 293 0160 00C0      		rjmp .L30
+ 294 0162 00F4      		brsh .+2
+ 295 0164 00C0      		rjmp .L29
+ 296 0166 6B30      		cpi r22,lo8(11)
+ 297 0168 01F4      		brne .+2
+ 298 016a 00C0      		rjmp .L31
+ 299 016c 6C30      		cpi r22,lo8(12)
+ 300 016e 01F0      		breq .+2
+ 301 0170 00C0      		rjmp .L24
+ 302 0172 00C0      		rjmp .L32
+ 303               	.L25:
+ 304               	.LVL21:
+ 345:main.c        ****         case OWM_RESET:  //Reset pulse and time after is finished, now go in presence state
+ 346:main.c        ****             lmode=OWM_PRESENCE;
+ 347:main.c        ****             SET_LOW;
+ 305               		.loc 1 347 0
+ 306 0174 529A      		sbi 0xa,2
+ 307 0176 5A98      		cbi 0xb,2
+ 348:main.c        ****             TCNT_REG=~(OWT_PRESENCE);
+ 308               		.loc 1 348 0
+ 309 0178 8BEE      		ldi r24,lo8(-21)
+ 310               	.LVL22:
+ 311 017a 86BD      		out 0x26,r24
+ 349:main.c        ****             DIS_OWINT;  //No Pin interrupt necessary only wait for presence is done
+ 312               		.loc 1 349 0
+ 313 017c E898      		cbi 0x1d,0
+ 314 017e 1092 0000 		sts sleepmode,__zero_reg__
+ 346:main.c        ****             lmode=OWM_PRESENCE;
+ 315               		.loc 1 346 0
+ 316 0182 62E0      		ldi r22,lo8(2)
+ 350:main.c        ****             break;
+ 317               		.loc 1 350 0
+ 318 0184 00C0      		rjmp .L90
+ 319               	.LVL23:
+ 320               	.L26:
+ 351:main.c        ****         case OWM_PRESENCE:
+ 352:main.c        ****             RESET_LOW;  //Presence is done now wait for a command
+ 321               		.loc 1 352 0
+ 322 0186 5298      		cbi 0xa,2
+ 323               	.LVL24:
+ 324 0188 00C0      		rjmp .L142
+ 325               	.LVL25:
+ 326               	.L27:
+ 353:main.c        ****             lmode=OWM_READ_COMMAND;
+ 354:main.c        ****             cbuf=0;lbitp=1;  //Command buffer have to set zero, only set bits will write in
+ 355:main.c        ****             break;
+ 356:main.c        ****         case OWM_READ_COMMAND:
+ 357:main.c        ****             if (p) {  //Set bit if line high
+ 327               		.loc 1 357 0
+ 328 018a 8823      		tst r24
+ 329 018c 01F0      		breq .L35
+ 358:main.c        ****                 cbuf|=lbitp;
+ 330               		.loc 1 358 0
+ 331 018e 8091 0000 		lds r24,cbuf
+ 332               	.LVL26:
+ 333 0192 872B      		or r24,r23
+ 334 0194 8093 0000 		sts cbuf,r24
+ 335               	.L35:
+ 359:main.c        ****             }
+ 360:main.c        ****             lbitp=(lbitp<<1);
+ 336               		.loc 1 360 0
+ 337 0198 770F      		lsl r23
+ 338               	.LVL27:
+ 361:main.c        ****             if (!lbitp) { //8-Bits read - weird syntax?
+ 339               		.loc 1 361 0
+ 340 019a 01F0      		breq .+2
+ 341 019c 00C0      		rjmp .L88
+ 342               	.LVL28:
+ 362:main.c        ****                 lbitp=1;
+ 363:main.c        ****                 switch (cbuf) {
+ 343               		.loc 1 363 0
+ 344 019e 8091 0000 		lds r24,cbuf
+ 345 01a2 8535      		cpi r24,lo8(85)
+ 346 01a4 01F4      		brne .+2
+ 347 01a6 00C0      		rjmp .L93
+ 348 01a8 00F4      		brsh .L40
+ 349 01aa 8F34      		cpi r24,lo8(79)
+ 350 01ac 01F0      		breq .+2
+ 351 01ae 00C0      		rjmp .L99
+ 352 01b0 00C0      		rjmp .L37
+ 353               	.L40:
+ 354 01b2 8E3B      		cpi r24,lo8(-66)
+ 355 01b4 01F0      		breq .L38
+ 356 01b6 803F      		cpi r24,lo8(-16)
+ 357 01b8 01F0      		breq .+2
+ 358 01ba 00C0      		rjmp .L99
+ 359               	.LVL29:
+ 364:main.c        ****                     case 0x55://Match ROM
+ 365:main.c        ****                         lbytep=0;
+ 366:main.c        ****                         lmode=OWM_MATCH_ROM;
+ 367:main.c        ****                         break;
+ 368:main.c        ****                     case 0xF0:  //initialize search rom
+ 369:main.c        ****                         lmode=OWM_SEARCH_ROM;
+ 370:main.c        ****                         lsrcount=0;
+ 371:main.c        ****                         lbytep=0;
+ 372:main.c        ****                         lactbit=(owid[lbytep]&lbitp)==lbitp; //set actual bit
+ 360               		.loc 1 372 0
+ 361 01bc 2091 0000 		lds r18,owid
+ 362               	.LVL30:
+ 363 01c0 2170      		andi r18,lo8(1)
+ 364               	.LVL31:
+ 365 01c2 322F      		mov r19,r18
+ 370:main.c        ****                         lsrcount=0;
+ 366               		.loc 1 370 0
+ 367 01c4 10E0      		ldi r17,0
+ 362:main.c        ****                 lbitp=1;
+ 368               		.loc 1 362 0
+ 369 01c6 71E0      		ldi r23,lo8(1)
+ 371:main.c        ****                         lbytep=0;
+ 370               		.loc 1 371 0
+ 371 01c8 00E0      		ldi r16,0
+ 369:main.c        ****                         lmode=OWM_SEARCH_ROM;
+ 372               		.loc 1 369 0
+ 373 01ca 64E0      		ldi r22,lo8(4)
+ 373:main.c        ****                         lwmode=lactbit;  //prepare for writing when next falling edge
+ 374:main.c        ****                         break;
+ 374               		.loc 1 374 0
+ 375 01cc 00C0      		rjmp .L89
+ 376               	.LVL32:
+ 377               	.L38:
+ 375:main.c        ****                     //FIXME: case 0xEC:  //alarm search rom - TODO
+ 376:main.c        ****                     case 0xBE: //read scratchpad
+ 377:main.c        ****                         lmode=OWM_GET_ADRESS; //first the master sends an address
+ 378:main.c        ****                         lbytep=0;
+ 379:main.c        ****                         page=0;
+ 378               		.loc 1 379 0
+ 379 01ce 1092 0000 		sts page,__zero_reg__
+ 362:main.c        ****                 lbitp=1;
+ 380               		.loc 1 362 0
+ 381 01d2 71E0      		ldi r23,lo8(1)
+ 378:main.c        ****                         lbytep=0;
+ 382               		.loc 1 378 0
+ 383 01d4 00E0      		ldi r16,0
+ 377:main.c        ****                         lmode=OWM_GET_ADRESS; //first the master sends an address
+ 384               		.loc 1 377 0
+ 385 01d6 66E0      		ldi r22,lo8(6)
+ 380:main.c        ****                         //EN_OWINT; SET_OWINT_LOWLEVEL; sleepmode=SLEEP_MODE_PWR_DOWN; //Testing if
+ 381:main.c        ****                         break;
+ 386               		.loc 1 381 0
+ 387 01d8 00C0      		rjmp .L89
+ 388               	.LVL33:
+ 389               	.L37:
+ 382:main.c        ****                     case OWC_WRITE_FUNC:
+ 383:main.c        ****                         lmode=OWM_WRITE_FUNC; //first the master sends an address(page/func), then 
+ 384:main.c        ****                         lbytep=0;
+ 385:main.c        ****                         lscrc=0;
+ 386:main.c        ****                         scratchpad.page1=0;
+ 390               		.loc 1 386 0
+ 391 01da 1092 0000 		sts scratchpad,__zero_reg__
+ 385:main.c        ****                         lscrc=0;
+ 392               		.loc 1 385 0
+ 393 01de E12C      		mov r14,__zero_reg__
+ 394 01e0 F12C      		mov r15,__zero_reg__
+ 362:main.c        ****                 lbitp=1;
+ 395               		.loc 1 362 0
+ 396 01e2 71E0      		ldi r23,lo8(1)
+ 384:main.c        ****                         lbytep=0;
+ 397               		.loc 1 384 0
+ 398 01e4 00E0      		ldi r16,0
+ 383:main.c        ****                         lmode=OWM_WRITE_FUNC; //first the master sends an address(page/func), then 
+ 399               		.loc 1 383 0
+ 400 01e6 6CE0      		ldi r22,lo8(12)
+ 387:main.c        ****                         break;
+ 401               		.loc 1 387 0
+ 402 01e8 00C0      		rjmp .L89
+ 403               	.LVL34:
+ 404               	.L28:
+ 388:main.c        ****                     default:
+ 389:main.c        ****                         LSL("\r\nDC:")
+ 390:main.c        ****                         //LVH(cbuf)
+ 391:main.c        ****                         lmode=OWM_SLEEP;  //all other commands do nothing
+ 392:main.c        ****                 }
+ 393:main.c        ****             }
+ 394:main.c        ****             break;
+ 395:main.c        ****         case OWM_SEARCH_ROM:
+ 396:main.c        ****             RESET_LOW;  //Set low also if nothing send (branch takes time and memory)
+ 405               		.loc 1 396 0
+ 406 01ea 5298      		cbi 0xa,2
+ 397:main.c        ****             lsrcount++;  //next search rom mode
+ 407               		.loc 1 397 0
+ 408 01ec 1F5F      		subi r17,lo8(-(1))
+ 409               	.LVL35:
+ 398:main.c        ****             switch (lsrcount) {
+ 410               		.loc 1 398 0
+ 411 01ee 1130      		cpi r17,lo8(1)
+ 412 01f0 01F0      		breq .L41
+ 413 01f2 1330      		cpi r17,lo8(3)
+ 414 01f4 01F0      		breq .+2
+ 415 01f6 00C0      		rjmp .L89
+ 416 01f8 00C0      		rjmp .L42
+ 417               	.L41:
+ 399:main.c        ****                 case 1:lwmode=!lactbit;  //preparation sending complement
+ 418               		.loc 1 399 0
+ 419 01fa 21E0      		ldi r18,lo8(1)
+ 420               	.LVL36:
+ 421 01fc 3323      		tst r19
+ 422 01fe 01F4      		brne .+2
+ 423 0200 00C0      		rjmp .L89
+ 424 0202 20E0      		ldi r18,0
+ 425               	.LVL37:
+ 400:main.c        ****                     break;
+ 426               		.loc 1 400 0
+ 427 0204 00C0      		rjmp .L89
+ 428               	.LVL38:
+ 429               	.L42:
+ 401:main.c        ****                 case 3:
+ 402:main.c        ****                     if (p!=(lactbit==1)) {  //check master bit
+ 430               		.loc 1 402 0
+ 431 0206 91E0      		ldi r25,lo8(1)
+ 432 0208 3130      		cpi r19,lo8(1)
+ 433 020a 01F0      		breq .L44
+ 434 020c 90E0      		ldi r25,0
+ 435               	.L44:
+ 436 020e 8913      		cpse r24,r25
+ 437 0210 00C0      		rjmp .L91
+ 403:main.c        ****                         lmode=OWM_SLEEP;  //not the same go sleep
+ 404:main.c        ****                     } else {
+ 405:main.c        ****                         lbitp=(lbitp<<1);  //prepare next bit
+ 438               		.loc 1 405 0
+ 439 0212 770F      		lsl r23
+ 440               	.LVL39:
+ 406:main.c        ****                         if (lbitp==0) {
+ 441               		.loc 1 406 0
+ 442 0214 01F4      		brne .L45
+ 443               	.LVL40:
+ 407:main.c        ****                             lbitp=1;
+ 408:main.c        ****                             lbytep++;
+ 444               		.loc 1 408 0
+ 445 0216 0F5F      		subi r16,lo8(-(1))
+ 446               	.LVL41:
+ 407:main.c        ****                             lbitp=1;
+ 447               		.loc 1 407 0
+ 448 0218 71E0      		ldi r23,lo8(1)
+ 409:main.c        ****                             if (lbytep>=8) {
+ 449               		.loc 1 409 0
+ 450 021a 0830      		cpi r16,lo8(8)
+ 451 021c 00F0      		brlo .+2
+ 452 021e 00C0      		rjmp .L91
+ 453               	.LVL42:
+ 454               	.L45:
+ 410:main.c        ****                                 lmode=OWM_SLEEP;  //all bits processed
+ 411:main.c        ****                                 break;
+ 412:main.c        ****                             }
+ 413:main.c        ****                         }
+ 414:main.c        ****                         lsrcount=0;
+ 415:main.c        ****                         lactbit=(owid[lbytep]&lbitp)==lbitp;
+ 455               		.loc 1 415 0
+ 456 0220 E02F      		mov r30,r16
+ 457 0222 F0E0      		ldi r31,0
+ 458 0224 E050      		subi r30,lo8(-(owid))
+ 459 0226 F040      		sbci r31,hi8(-(owid))
+ 460 0228 8081      		ld r24,Z
+ 461               	.LVL43:
+ 462 022a 8723      		and r24,r23
+ 463 022c 31E0      		ldi r19,lo8(1)
+ 464               	.LVL44:
+ 465 022e 8713      		cpse r24,r23
+ 466 0230 30E0      		ldi r19,0
+ 467               	.L46:
+ 468               	.LVL45:
+ 416:main.c        ****                         lwmode=lactbit;
+ 469               		.loc 1 416 0
+ 470 0232 232F      		mov r18,r19
+ 414:main.c        ****                         lsrcount=0;
+ 471               		.loc 1 414 0
+ 472 0234 10E0      		ldi r17,0
+ 473 0236 00C0      		rjmp .L89
+ 474               	.LVL46:
+ 475               	.L29:
+ 417:main.c        ****                     }
+ 418:main.c        ****                     break;
+ 419:main.c        ****             }
+ 420:main.c        ****             break;
+ 421:main.c        ****         case OWM_MATCH_ROM:
+ 422:main.c        ****             if (p==((owid[lbytep]&lbitp)==lbitp)) {  //Compare with ID Buffer
+ 476               		.loc 1 422 0
+ 477 0238 E02F      		mov r30,r16
+ 478 023a F0E0      		ldi r31,0
+ 479 023c E050      		subi r30,lo8(-(owid))
+ 480 023e F040      		sbci r31,hi8(-(owid))
+ 481 0240 9081      		ld r25,Z
+ 482 0242 9723      		and r25,r23
+ 483 0244 41E0      		ldi r20,lo8(1)
+ 484 0246 9713      		cpse r25,r23
+ 485 0248 40E0      		ldi r20,0
+ 486               	.L47:
+ 487 024a 8413      		cpse r24,r20
+ 488 024c 00C0      		rjmp .L91
+ 423:main.c        ****                 lbitp=(lbitp<<1);
+ 489               		.loc 1 423 0
+ 490 024e 770F      		lsl r23
+ 491               	.LVL47:
+ 424:main.c        ****                 if (!lbitp) {
+ 492               		.loc 1 424 0
+ 493 0250 01F0      		breq .+2
+ 494 0252 00C0      		rjmp .L88
+ 425:main.c        ****                     lbytep++;
+ 495               		.loc 1 425 0
+ 496 0254 0F5F      		subi r16,lo8(-(1))
+ 497               	.LVL48:
+ 426:main.c        ****                     lbitp=1;
+ 427:main.c        ****                     if (lbytep>=8) {
+ 498               		.loc 1 427 0
+ 499 0256 0830      		cpi r16,lo8(8)
+ 500 0258 00F4      		brsh .+2
+ 501 025a 00C0      		rjmp .L95
+ 502               	.LVL49:
+ 503               	.L142:
+ 428:main.c        ****                         lmode=OWM_READ_COMMAND;  //same? get next command
+ 429:main.c        ****                         cbuf=0;
+ 504               		.loc 1 429 0
+ 505 025c 1092 0000 		sts cbuf,__zero_reg__
+ 426:main.c        ****                     lbitp=1;
+ 506               		.loc 1 426 0
+ 507 0260 71E0      		ldi r23,lo8(1)
+ 428:main.c        ****                         lmode=OWM_READ_COMMAND;  //same? get next command
+ 508               		.loc 1 428 0
+ 509 0262 63E0      		ldi r22,lo8(3)
+ 430:main.c        ****                         break;
+ 510               		.loc 1 430 0
+ 511 0264 00C0      		rjmp .L89
+ 512               	.LVL50:
+ 513               	.L30:
+ 431:main.c        ****                     }
+ 432:main.c        ****                 }
+ 433:main.c        ****             } else {
+ 434:main.c        ****                 lmode=OWM_SLEEP;
+ 435:main.c        ****             }
+ 436:main.c        ****             break;
+ 437:main.c        ****         case OWM_GET_ADRESS:
+ 438:main.c        ****             if (p) { //Get the Address for reading
+ 514               		.loc 1 438 0
+ 515 0266 8823      		tst r24
+ 516 0268 01F0      		breq .L48
+ 439:main.c        ****                 page|=lbitp;
+ 517               		.loc 1 439 0
+ 518 026a 8091 0000 		lds r24,page
+ 519               	.LVL51:
+ 520 026e 872B      		or r24,r23
+ 521 0270 8093 0000 		sts page,r24
+ 522               	.L48:
+ 440:main.c        ****             }
+ 441:main.c        ****             lbitp=(lbitp<<1);
+ 523               		.loc 1 441 0
+ 524 0274 770F      		lsl r23
+ 525               	.LVL52:
+ 442:main.c        ****             if (!lbitp) {
+ 526               		.loc 1 442 0
+ 527 0276 01F0      		breq .+2
+ 528 0278 00C0      		rjmp .L89
+ 443:main.c        ****                 lbytep++;
+ 529               		.loc 1 443 0
+ 530 027a 0F5F      		subi r16,lo8(-(1))
+ 531               	.LVL53:
+ 444:main.c        ****                 lbitp=1;
+ 445:main.c        ****                 if (lbytep==1) {
+ 532               		.loc 1 445 0
+ 533 027c 0130      		cpi r16,lo8(1)
+ 534 027e 01F0      		breq .+2
+ 535 0280 00C0      		rjmp .L49
+ 536               	.LVL54:
+ 537               	.LBB11:
+ 446:main.c        ****                     lmode=OWM_WRITE_PAGE_TO_MASTER;
+ 447:main.c        ****                     lbytep=0;lscrc=0; //from first position
+ 448:main.c        ****                     memset( &scratchpad.bytes, 0, 10 );
+ 538               		.loc 1 448 0
+ 539 0282 8AE0      		ldi r24,lo8(10)
+ 540 0284 E0E0      		ldi r30,lo8(scratchpad)
+ 541 0286 F0E0      		ldi r31,hi8(scratchpad)
+ 542 0288 DF01      		movw r26,r30
+ 543               		0:
+ 544 028a 1D92      		st X+,__zero_reg__
+ 545 028c 8A95      		dec r24
+ 546 028e 01F4      		brne 0b
+ 547               	.LVL55:
+ 449:main.c        ****                     uint8_t i=0;
+ 450:main.c        ****                     switch (page) {
+ 548               		.loc 1 450 0
+ 549 0290 8091 0000 		lds r24,page
+ 550 0294 8530      		cpi r24,lo8(5)
+ 551 0296 01F4      		brne .+2
+ 552 0298 00C0      		rjmp .L56
+ 553 029a 00F4      		brsh .L62
+ 554 029c 8230      		cpi r24,lo8(2)
+ 555 029e 01F4      		brne .+2
+ 556 02a0 00C0      		rjmp .L54
+ 557 02a2 00F4      		brsh .L63
+ 558 02a4 8823      		tst r24
+ 559 02a6 01F0      		breq .L51
+ 560 02a8 8130      		cpi r24,lo8(1)
+ 561 02aa 01F0      		breq .+2
+ 562 02ac 00C0      		rjmp .L50
+ 563 02ae 00C0      		rjmp .L52
+ 564               	.L63:
+ 565 02b0 8330      		cpi r24,lo8(3)
+ 566 02b2 01F4      		brne .+2
+ 567 02b4 00C0      		rjmp .L54
+ 568 02b6 8430      		cpi r24,lo8(4)
+ 569 02b8 01F0      		breq .+2
+ 570 02ba 00C0      		rjmp .L50
+ 571 02bc 00C0      		rjmp .L55
+ 572               	.L62:
+ 573 02be 8830      		cpi r24,lo8(8)
+ 574 02c0 01F4      		brne .+2
+ 575 02c2 00C0      		rjmp .L59
+ 576 02c4 00F4      		brsh .L64
+ 577 02c6 8630      		cpi r24,lo8(6)
+ 578 02c8 01F4      		brne .+2
+ 579 02ca 00C0      		rjmp .L57
+ 580 02cc 8730      		cpi r24,lo8(7)
+ 581 02ce 01F0      		breq .+2
+ 582 02d0 00C0      		rjmp .L50
+ 583 02d2 00C0      		rjmp .L58
+ 584               	.L64:
+ 585 02d4 8930      		cpi r24,lo8(9)
+ 586 02d6 01F4      		brne .+2
+ 587 02d8 00C0      		rjmp .L60
+ 588 02da 8A30      		cpi r24,lo8(10)
+ 589 02dc 01F0      		breq .+2
+ 590 02de 00C0      		rjmp .L50
+ 591 02e0 00C0      		rjmp .L61
+ 592               	.L51:
+ 451:main.c        ****                       case 0:
+ 452:main.c        ****                         scratchpad.page1 = page;
+ 593               		.loc 1 452 0
+ 594 02e2 8091 0000 		lds r24,page
+ 595 02e6 8093 0000 		sts scratchpad,r24
+ 453:main.c        ****                         scratchpad.u8_11 = stype;
+ 596               		.loc 1 453 0
+ 597 02ea 8091 0000 		lds r24,stype
+ 598 02ee 8093 0000 		sts scratchpad+1,r24
+ 454:main.c        ****                         scratchpad.u8_12 = eflag;
+ 599               		.loc 1 454 0
+ 600 02f2 8091 0000 		lds r24,eflag
+ 601 02f6 8093 0000 		sts scratchpad+2,r24
+ 455:main.c        ****                         scratchpad.u16_13 = version;
+ 602               		.loc 1 455 0
+ 603 02fa 8091 0000 		lds r24,version
+ 604 02fe 9091 0000 		lds r25,version+1
+ 605 0302 9093 0000 		sts scratchpad+3+1,r25
+ 606 0306 8093 0000 		sts scratchpad+3,r24
+ 456:main.c        ****                         scratchpad.u32_14 = uptime;
+ 607               		.loc 1 456 0
+ 608 030a 8091 0000 		lds r24,uptime
+ 609 030e 9091 0000 		lds r25,uptime+1
+ 610 0312 A091 0000 		lds r26,uptime+2
+ 611 0316 B091 0000 		lds r27,uptime+3
+ 612 031a 8093 0000 		sts scratchpad+5,r24
+ 613 031e 9093 0000 		sts scratchpad+5+1,r25
+ 614 0322 A093 0000 		sts scratchpad+5+2,r26
+ 615 0326 B093 0000 		sts scratchpad+5+3,r27
+ 457:main.c        ****                         break;
+ 616               		.loc 1 457 0
+ 617 032a 00C0      		rjmp .L65
+ 618               	.L52:
+ 458:main.c        ****                       case 1:
+ 459:main.c        ****                         scratchpad.page1 = page;
+ 619               		.loc 1 459 0
+ 620 032c 8091 0000 		lds r24,page
+ 621 0330 8093 0000 		sts scratchpad,r24
+ 460:main.c        ****                         scratchpad.u16_21 = rcnt;
+ 622               		.loc 1 460 0
+ 623 0334 8091 0000 		lds r24,rcnt
+ 624 0338 9091 0000 		lds r25,rcnt+1
+ 625 033c 9093 0000 		sts scratchpad+1+1,r25
+ 626 0340 8093 0000 		sts scratchpad+1,r24
+ 461:main.c        ****                         //scratchpad.u16_22 = ADC1
+ 462:main.c        ****                         //scratchpad.u16_23 = ADC2
+ 463:main.c        ****                         scratchpad.u16_24 = crcerrcnt; //temp/debug
+ 627               		.loc 1 463 0
+ 628 0344 8091 0000 		lds r24,crcerrcnt
+ 629 0348 8093 0000 		sts scratchpad+7,r24
+ 464:main.c        ****                         //scratchpad.u16_24 = freeRam;
+ 465:main.c        ****                         break;
+ 630               		.loc 1 465 0
+ 631 034c 00C0      		rjmp .L65
+ 632               	.L54:
+ 466:main.c        ****                       case 2:
+ 467:main.c        ****                         scratchpad.page1 = page;
+ 468:main.c        ****                         //scratchpad.u32_31 = Counter1;
+ 469:main.c        ****                         //scratchpad.u32_32 = Counter2;
+ 470:main.c        ****                         break;
+ 471:main.c        ****                       case 3:
+ 472:main.c        ****                         scratchpad.page1 = page;
+ 633               		.loc 1 472 0
+ 634 034e 8091 0000 		lds r24,page
+ 635 0352 8093 0000 		sts scratchpad,r24
+ 473:main.c        ****                         //scratchpad.u32_31 = Counter3;
+ 474:main.c        ****                         //scratchpad.u32_32 = Counter4;
+ 475:main.c        ****                         break;
+ 636               		.loc 1 475 0
+ 637 0356 00C0      		rjmp .L65
+ 638               	.L55:
+ 476:main.c        ****                       case 4:
+ 477:main.c        ****                         scratchpad.page1 = page;
+ 639               		.loc 1 477 0
+ 640 0358 8091 0000 		lds r24,page
+ 641 035c 8093 0000 		sts scratchpad,r24
+ 642 0360 E0E0      		ldi r30,lo8(rmdata)
+ 643 0362 F0E0      		ldi r31,hi8(rmdata)
+ 644 0364 81E0      		ldi r24,lo8(1)
+ 645 0366 90E0      		ldi r25,0
+ 646               	.LVL56:
+ 647               	.L66:
+ 478:main.c        ****                         for (i=0;i<8;i++)
+ 479:main.c        ****                           scratchpad.bytes[1+i] =rmdata[0].bytes[i];
+ 648               		.loc 1 479 0 discriminator 2
+ 649 0368 2191      		ld r18,Z+
+ 650 036a DC01      		movw r26,r24
+ 651 036c A050      		subi r26,lo8(-(scratchpad))
+ 652 036e B040      		sbci r27,hi8(-(scratchpad))
+ 653 0370 2C93      		st X,r18
+ 654 0372 0196      		adiw r24,1
+ 478:main.c        ****                         for (i=0;i<8;i++)
+ 655               		.loc 1 478 0 discriminator 2
+ 656 0374 8930      		cpi r24,9
+ 657 0376 9105      		cpc r25,__zero_reg__
+ 658 0378 01F4      		brne .L66
+ 659 037a 00C0      		rjmp .L65
+ 660               	.LVL57:
+ 661               	.L56:
+ 480:main.c        ****                         break;
+ 481:main.c        ****                       case 5:
+ 482:main.c        ****                         scratchpad.page1 = page;
+ 662               		.loc 1 482 0
+ 663 037c 8091 0000 		lds r24,page
+ 664 0380 8093 0000 		sts scratchpad,r24
+ 665 0384 E0E0      		ldi r30,lo8(rmdata+8)
+ 666 0386 F0E0      		ldi r31,hi8(rmdata+8)
+ 667 0388 81E0      		ldi r24,lo8(1)
+ 668 038a 90E0      		ldi r25,0
+ 669               	.LVL58:
+ 670               	.L67:
+ 483:main.c        ****                         for (i=0;i<8;i++)
+ 484:main.c        ****                           scratchpad.bytes[1+i] =rmdata[1].bytes[i];
+ 671               		.loc 1 484 0 discriminator 2
+ 672 038c 2191      		ld r18,Z+
+ 673 038e DC01      		movw r26,r24
+ 674 0390 A050      		subi r26,lo8(-(scratchpad))
+ 675 0392 B040      		sbci r27,hi8(-(scratchpad))
+ 676 0394 2C93      		st X,r18
+ 677 0396 0196      		adiw r24,1
+ 483:main.c        ****                         for (i=0;i<8;i++)
+ 678               		.loc 1 483 0 discriminator 2
+ 679 0398 8930      		cpi r24,9
+ 680 039a 9105      		cpc r25,__zero_reg__
+ 681 039c 01F4      		brne .L67
+ 682 039e 00C0      		rjmp .L65
+ 683               	.LVL59:
+ 684               	.L57:
+ 485:main.c        ****                         break;
+ 486:main.c        ****                       case 6:
+ 487:main.c        ****                         scratchpad.page1 = page;
+ 685               		.loc 1 487 0
+ 686 03a0 8091 0000 		lds r24,page
+ 687 03a4 8093 0000 		sts scratchpad,r24
+ 688 03a8 E0E0      		ldi r30,lo8(rmdata+16)
+ 689 03aa F0E0      		ldi r31,hi8(rmdata+16)
+ 690 03ac 81E0      		ldi r24,lo8(1)
+ 691 03ae 90E0      		ldi r25,0
+ 692               	.LVL60:
+ 693               	.L69:
+ 488:main.c        ****                         for (i=0;i<8;i++)
+ 489:main.c        ****                           scratchpad.bytes[1+i] =rmdata[2].bytes[i];
+ 694               		.loc 1 489 0 discriminator 2
+ 695 03b0 2191      		ld r18,Z+
+ 696 03b2 DC01      		movw r26,r24
+ 697 03b4 A050      		subi r26,lo8(-(scratchpad))
+ 698 03b6 B040      		sbci r27,hi8(-(scratchpad))
+ 699 03b8 2C93      		st X,r18
+ 700 03ba 0196      		adiw r24,1
+ 488:main.c        ****                         for (i=0;i<8;i++)
+ 701               		.loc 1 488 0 discriminator 2
+ 702 03bc 8930      		cpi r24,9
+ 703 03be 9105      		cpc r25,__zero_reg__
+ 704 03c0 01F4      		brne .L69
+ 705 03c2 00C0      		rjmp .L65
+ 706               	.LVL61:
+ 707               	.L58:
+ 490:main.c        ****                         break;
+ 491:main.c        ****                       case 7:
+ 492:main.c        ****                         scratchpad.page1 = page;
+ 708               		.loc 1 492 0
+ 709 03c4 8091 0000 		lds r24,page
+ 710 03c8 8093 0000 		sts scratchpad,r24
+ 711 03cc E0E0      		ldi r30,lo8(rmdata+24)
+ 712 03ce F0E0      		ldi r31,hi8(rmdata+24)
+ 713 03d0 81E0      		ldi r24,lo8(1)
+ 714 03d2 90E0      		ldi r25,0
+ 715               	.LVL62:
+ 716               	.L70:
+ 493:main.c        ****                         for (i=0;i<8;i++)
+ 494:main.c        ****                           scratchpad.bytes[1+i] =rmdata[3].bytes[i];
+ 717               		.loc 1 494 0 discriminator 2
+ 718 03d4 2191      		ld r18,Z+
+ 719 03d6 DC01      		movw r26,r24
+ 720 03d8 A050      		subi r26,lo8(-(scratchpad))
+ 721 03da B040      		sbci r27,hi8(-(scratchpad))
+ 722 03dc 2C93      		st X,r18
+ 723 03de 0196      		adiw r24,1
+ 493:main.c        ****                         for (i=0;i<8;i++)
+ 724               		.loc 1 493 0 discriminator 2
+ 725 03e0 8930      		cpi r24,9
+ 726 03e2 9105      		cpc r25,__zero_reg__
+ 727 03e4 01F4      		brne .L70
+ 728 03e6 00C0      		rjmp .L65
+ 729               	.LVL63:
+ 730               	.L59:
+ 495:main.c        ****                         break;
+ 496:main.c        ****                       case 8:
+ 497:main.c        ****                         scratchpad.page1 = page;
+ 731               		.loc 1 497 0
+ 732 03e8 8091 0000 		lds r24,page
+ 733 03ec 8093 0000 		sts scratchpad,r24
+ 734 03f0 E0E0      		ldi r30,lo8(rmdata+32)
+ 735 03f2 F0E0      		ldi r31,hi8(rmdata+32)
+ 736 03f4 81E0      		ldi r24,lo8(1)
+ 737 03f6 90E0      		ldi r25,0
+ 738               	.LVL64:
+ 739               	.L71:
+ 498:main.c        ****                         for (i=0;i<8;i++)
+ 499:main.c        ****                           scratchpad.bytes[1+i] =rmdata[4].bytes[i];
+ 740               		.loc 1 499 0 discriminator 2
+ 741 03f8 2191      		ld r18,Z+
+ 742 03fa DC01      		movw r26,r24
+ 743 03fc A050      		subi r26,lo8(-(scratchpad))
+ 744 03fe B040      		sbci r27,hi8(-(scratchpad))
+ 745 0400 2C93      		st X,r18
+ 746 0402 0196      		adiw r24,1
+ 498:main.c        ****                         for (i=0;i<8;i++)
+ 747               		.loc 1 498 0 discriminator 2
+ 748 0404 8930      		cpi r24,9
+ 749 0406 9105      		cpc r25,__zero_reg__
+ 750 0408 01F4      		brne .L71
+ 751 040a 00C0      		rjmp .L65
+ 752               	.LVL65:
+ 753               	.L60:
+ 500:main.c        ****                         //memcpy(*scratchpad+1,&rmdata[4],8);
+ 501:main.c        ****                         break;
+ 502:main.c        ****                       case 9:
+ 503:main.c        ****                         scratchpad.page1 = page;
+ 754               		.loc 1 503 0
+ 755 040c 8091 0000 		lds r24,page
+ 756 0410 8093 0000 		sts scratchpad,r24
+ 504:main.c        ****                         scratchpad.u32_31 = eeprom_read_dword((const uint32_t *) (EE_LABEL_OFFSET+0
+ 757               		.loc 1 504 0
+ 758 0414 82E3      		ldi r24,lo8(50)
+ 759 0416 90E0      		ldi r25,0
+ 760 0418 0E94 0000 		call __eerd_dword_m328p
+ 761               	.LVL66:
+ 762 041c 6093 0000 		sts scratchpad+1,r22
+ 763 0420 7093 0000 		sts scratchpad+1+1,r23
+ 764 0424 8093 0000 		sts scratchpad+1+2,r24
+ 765 0428 9093 0000 		sts scratchpad+1+3,r25
+ 505:main.c        ****                         scratchpad.u32_32 = eeprom_read_dword((const uint32_t *) (EE_LABEL_OFFSET+4
+ 766               		.loc 1 505 0
+ 767 042c 86E3      		ldi r24,lo8(54)
+ 768 042e 90E0      		ldi r25,0
+ 769 0430 00C0      		rjmp .L140
+ 770               	.LVL67:
+ 771               	.L61:
+ 506:main.c        ****                         break;
+ 507:main.c        ****                       case 10:
+ 508:main.c        ****                         scratchpad.page1 = page;
+ 772               		.loc 1 508 0
+ 773 0432 8091 0000 		lds r24,page
+ 774 0436 8093 0000 		sts scratchpad,r24
+ 509:main.c        ****                         scratchpad.u32_31 = eeprom_read_dword((const uint32_t *) (EE_LABEL_OFFSET+8
+ 775               		.loc 1 509 0
+ 776 043a 8AE3      		ldi r24,lo8(58)
+ 777 043c 90E0      		ldi r25,0
+ 778 043e 0E94 0000 		call __eerd_dword_m328p
+ 779               	.LVL68:
+ 780 0442 6093 0000 		sts scratchpad+1,r22
+ 781 0446 7093 0000 		sts scratchpad+1+1,r23
+ 782 044a 8093 0000 		sts scratchpad+1+2,r24
+ 783 044e 9093 0000 		sts scratchpad+1+3,r25
+ 510:main.c        ****                         scratchpad.u32_32 = eeprom_read_dword((const uint32_t *) (EE_LABEL_OFFSET+1
+ 784               		.loc 1 510 0
+ 785 0452 8EE3      		ldi r24,lo8(62)
+ 786 0454 90E0      		ldi r25,0
+ 787               	.L140:
+ 788 0456 0E94 0000 		call __eerd_dword_m328p
+ 789               	.LVL69:
+ 790 045a 6093 0000 		sts scratchpad+5,r22
+ 791 045e 7093 0000 		sts scratchpad+5+1,r23
+ 792 0462 8093 0000 		sts scratchpad+5+2,r24
+ 793 0466 9093 0000 		sts scratchpad+5+3,r25
+ 511:main.c        ****                         break;
+ 794               		.loc 1 511 0
+ 795 046a 00C0      		rjmp .L65
+ 796               	.LVL70:
+ 797               	.L50:
+ 512:main.c        ****                       default:
+ 513:main.c        ****                         scratchpad.page1 = page;
+ 798               		.loc 1 513 0
+ 799 046c 8091 0000 		lds r24,page
+ 800 0470 8093 0000 		sts scratchpad,r24
+ 514:main.c        ****                         scratchpad.u8_11 = 0xff;
+ 801               		.loc 1 514 0
+ 802 0474 8FEF      		ldi r24,lo8(-1)
+ 803 0476 8093 0000 		sts scratchpad+1,r24
+ 515:main.c        ****                         scratchpad.u8_12 = page; //this is actually an error! page unknown
+ 804               		.loc 1 515 0
+ 805 047a 8091 0000 		lds r24,page
+ 806 047e 8093 0000 		sts scratchpad+2,r24
+ 807               	.LVL71:
+ 808               	.L65:
+ 516:main.c        ****                         break;
+ 517:main.c        ****                     }
+ 518:main.c        ****                     lactbit=(lbitp&scratchpad.bytes[0])==lbitp;
+ 809               		.loc 1 518 0
+ 810 0482 2091 0000 		lds r18,scratchpad
+ 811 0486 2170      		andi r18,lo8(1)
+ 812               	.LVL72:
+ 813 0488 322F      		mov r19,r18
+ 447:main.c        ****                     lbytep=0;lscrc=0; //from first position
+ 814               		.loc 1 447 0
+ 815 048a E12C      		mov r14,__zero_reg__
+ 816 048c F12C      		mov r15,__zero_reg__
+ 444:main.c        ****                 lbitp=1;
+ 817               		.loc 1 444 0
+ 818 048e 71E0      		ldi r23,lo8(1)
+ 447:main.c        ****                     lbytep=0;lscrc=0; //from first position
+ 819               		.loc 1 447 0
+ 820 0490 00E0      		ldi r16,0
+ 446:main.c        ****                     lmode=OWM_WRITE_PAGE_TO_MASTER;
+ 821               		.loc 1 446 0
+ 822 0492 6BE0      		ldi r22,lo8(11)
+ 519:main.c        ****                     lwmode=lactbit; //prepare for send firs bit
+ 520:main.c        ****                     break;
+ 823               		.loc 1 520 0
+ 824 0494 00C0      		rjmp .L89
+ 825               	.LVL73:
+ 826               	.L49:
+ 827               	.LBE11:
+ 521:main.c        ****                 } else page=0; // never happens, should be page[lbytepos]
+ 828               		.loc 1 521 0
+ 829 0496 1092 0000 		sts page,__zero_reg__
+ 830 049a 00C0      		rjmp .L98
+ 831               	.LVL74:
+ 832               	.L32:
+ 522:main.c        ****             }
+ 523:main.c        ****             break;
+ 524:main.c        ****         case OWM_WRITE_FUNC:
+ 525:main.c        ****             if (p) {
+ 833               		.loc 1 525 0
+ 834 049c 8823      		tst r24
+ 835 049e 01F0      		breq .L72
+ 526:main.c        ****                 scratchpad.bytes[lbytep]|=lbitp;
+ 836               		.loc 1 526 0
+ 837 04a0 E02F      		mov r30,r16
+ 838 04a2 F0E0      		ldi r31,0
+ 839 04a4 E050      		subi r30,lo8(-(scratchpad))
+ 840 04a6 F040      		sbci r31,hi8(-(scratchpad))
+ 841 04a8 9081      		ld r25,Z
+ 842 04aa 972B      		or r25,r23
+ 843 04ac 9083      		st Z,r25
+ 844               	.L72:
+ 527:main.c        ****             }
+ 528:main.c        ****             /* Page(function) is part of CRC! */
+ 529:main.c        ****             if ((lscrc&1)!=p) lscrc=(lscrc>>1)^0x8c; else lscrc >>=1;
+ 845               		.loc 1 529 0
+ 846 04ae A701      		movw r20,r14
+ 847 04b0 4170      		andi r20,1
+ 848 04b2 5527      		clr r21
+ 849 04b4 90E0      		ldi r25,0
+ 850 04b6 F694      		lsr r15
+ 851 04b8 E794      		ror r14
+ 852               	.LVL75:
+ 853 04ba 4817      		cp r20,r24
+ 854 04bc 5907      		cpc r21,r25
+ 855 04be 01F0      		breq .L74
+ 856               		.loc 1 529 0 is_stmt 0 discriminator 1
+ 857 04c0 BCE8      		ldi r27,140
+ 858 04c2 EB26      		eor r14,r27
+ 859               	.LVL76:
+ 860               	.L74:
+ 530:main.c        ****             lbitp=(lbitp<<1);
+ 861               		.loc 1 530 0 is_stmt 1
+ 862 04c4 770F      		lsl r23
+ 863               	.LVL77:
+ 531:main.c        ****             if (!lbitp) {
+ 864               		.loc 1 531 0
+ 865 04c6 01F0      		breq .+2
+ 866 04c8 00C0      		rjmp .L89
+ 532:main.c        ****                 lbytep++;
+ 867               		.loc 1 532 0
+ 868 04ca 0F5F      		subi r16,lo8(-(1))
+ 869               	.LVL78:
+ 533:main.c        ****                 lbitp=1;
+ 534:main.c        ****                 if (lbytep==10) {
+ 870               		.loc 1 534 0
+ 871 04cc 0A30      		cpi r16,lo8(10)
+ 872 04ce 01F0      		breq .+2
+ 873 04d0 00C0      		rjmp .L75
+ 535:main.c        ****                     /* now process received Write-function(s) if crc matches */
+ 536:main.c        ****                     if (scratchpad.bytes[9] != scratchpad.bytes[10])
+ 874               		.loc 1 536 0
+ 875 04d2 9091 0000 		lds r25,scratchpad+9
+ 876 04d6 8091 0000 		lds r24,scratchpad+10
+ 877               	.LVL79:
+ 878 04da 9817      		cp r25,r24
+ 879 04dc 01F0      		breq .L76
+ 537:main.c        ****                       crcerrcnt++;
+ 880               		.loc 1 537 0
+ 881 04de 8091 0000 		lds r24,crcerrcnt
+ 882 04e2 8F5F      		subi r24,lo8(-(1))
+ 883 04e4 8093 0000 		sts crcerrcnt,r24
+ 884 04e8 00C0      		rjmp .L99
+ 885               	.L76:
+ 538:main.c        ****                     else {
+ 539:main.c        ****                       switch (scratchpad.bytes[0]) { /* "page" or function-id */
+ 886               		.loc 1 539 0
+ 887 04ea 8091 0000 		lds r24,scratchpad
+ 888 04ee 8C34      		cpi r24,lo8(76)
+ 889 04f0 01F4      		brne .+2
+ 890 04f2 00C0      		rjmp .L78
+ 891 04f4 00F4      		brsh .L79
+ 892 04f6 8A30      		cpi r24,lo8(10)
+ 893 04f8 01F0      		breq .L77
+ 894 04fa 8834      		cpi r24,lo8(72)
+ 895 04fc 01F0      		breq .+2
+ 896 04fe 00C0      		rjmp .L99
+ 897 0500 00C0      		rjmp .L78
+ 898               	.L79:
+ 899 0502 8035      		cpi r24,lo8(80)
+ 900 0504 01F0      		breq .L78
+ 901 0506 8435      		cpi r24,lo8(84)
+ 902 0508 01F0      		breq .+2
+ 903 050a 00C0      		rjmp .L99
+ 904 050c 00C0      		rjmp .L78
+ 905               	.L77:
+ 906               	.LBB12:
+ 540:main.c        ****                         case 10: /* set / reset smokealarm */
+ 541:main.c        ****                           {
+ 542:main.c        ****                             /*ALALRM:
+ 543:main.c        ****                             uint8_t req2[] = {0x02, 0x30, 0x33, 0x30, 0x32, 0x31, 0x30, 0x32, 0x36,
+ 544:main.c        ****                             TESTALARM
+ 545:main.c        ****                             uint8_t req2[] = {0x02, 0x30, 0x33, 0x30, 0x32, 0x38, 0x30, 0x32, 0x44,
+ 546:main.c        ****                             */
+ 547:main.c        ****                             uint8_t req2[] = {0x02, 0x30, 0x33, 0x30, 0x32, 0x30, 0x30, 0x32, 0x35,
+ 907               		.loc 1 547 0
+ 908 050e 8AE0      		ldi r24,lo8(10)
+ 909 0510 E0E0      		ldi r30,lo8(.LC1)
+ 910 0512 F0E0      		ldi r31,hi8(.LC1)
+ 911 0514 DE01      		movw r26,r28
+ 912 0516 1196      		adiw r26,1
+ 913               		0:
+ 914 0518 0190      		ld r0,Z+
+ 915 051a 0D92      		st X+,r0
+ 916 051c 8A95      		dec r24
+ 917 051e 01F4      		brne 0b
+ 548:main.c        ****                             if (scratchpad.bytes[1] == 0) {
+ 918               		.loc 1 548 0
+ 919 0520 8091 0000 		lds r24,scratchpad+1
+ 920 0524 8823      		tst r24
+ 921 0526 01F0      		breq .L80
+ 549:main.c        ****                               /* default is silence alarm */
+ 550:main.c        ****                             } else if (scratchpad.bytes[1] == 1) {
+ 922               		.loc 1 550 0
+ 923 0528 8091 0000 		lds r24,scratchpad+1
+ 924 052c 8130      		cpi r24,lo8(1)
+ 925 052e 01F4      		brne .L81
+ 551:main.c        ****                               req2[5]=0x31;req2[8]=0x36;
+ 926               		.loc 1 551 0
+ 927 0530 81E3      		ldi r24,lo8(49)
+ 928 0532 8E83      		std Y+6,r24
+ 929 0534 86E3      		ldi r24,lo8(54)
+ 930 0536 00C0      		rjmp .L141
+ 931               	.L81:
+ 552:main.c        ****                             } else if (scratchpad.bytes[1] == 2) {
+ 932               		.loc 1 552 0
+ 933 0538 8091 0000 		lds r24,scratchpad+1
+ 934 053c 8230      		cpi r24,lo8(2)
+ 935 053e 01F4      		brne .L80
+ 553:main.c        ****                               req2[5]=0x38;req2[8]=0x44;
+ 936               		.loc 1 553 0
+ 937 0540 88E3      		ldi r24,lo8(56)
+ 938 0542 8E83      		std Y+6,r24
+ 939 0544 84E4      		ldi r24,lo8(68)
+ 940               	.L141:
+ 941 0546 8987      		std Y+9,r24
+ 942               	.L80:
+ 943 0548 CC24      		clr r12
+ 944 054a C394      		inc r12
+ 945 054c D12C      		mov r13,__zero_reg__
+ 946 054e CC0E      		add r12,r28
+ 947 0550 DD1E      		adc r13,r29
+ 322:main.c        **** TIMER_INT {
+ 948               		.loc 1 322 0 discriminator 1
+ 949 0552 5E01      		movw r10,r28
+ 950 0554 EBE0      		ldi r30,11
+ 951 0556 AE0E      		add r10,r30
+ 952 0558 B11C      		adc r11,__zero_reg__
+ 953 055a 00C0      		rjmp .L82
+ 954               	.LVL80:
+ 955               	.L83:
+ 956               	.LBB13:
+ 554:main.c        ****                             }
+ 555:main.c        ****                             for (int i=0;i<sizeof(req2);i++)
+ 556:main.c        ****                                 uart_putc(req2[i]);
+ 957               		.loc 1 556 0 discriminator 2
+ 958 055c D601      		movw r26,r12
+ 959 055e 8D91      		ld r24,X+
+ 960 0560 6D01      		movw r12,r26
+ 961 0562 2B87      		std Y+11,r18
+ 962 0564 3C87      		std Y+12,r19
+ 963 0566 0E94 0000 		call uart_putc
+ 964               	.LVL81:
+ 965 056a 3C85      		ldd r19,Y+12
+ 966 056c 2B85      		ldd r18,Y+11
+ 967               	.L82:
+ 555:main.c        ****                             for (int i=0;i<sizeof(req2);i++)
+ 968               		.loc 1 555 0 discriminator 1
+ 969 056e CA14      		cp r12,r10
+ 970 0570 DB04      		cpc r13,r11
+ 971 0572 01F4      		brne .L83
+ 972 0574 00C0      		rjmp .L99
+ 973               	.LVL82:
+ 974               	.L78:
+ 975               	.LBE13:
+ 976               	.LBE12:
+ 557:main.c        ****                           }
+ 558:main.c        ****                           break;
+ 559:main.c        ****                         case 72:
+ 560:main.c        ****                         case 76:
+ 561:main.c        ****                         case 80:
+ 562:main.c        ****                         case 84:
+ 563:main.c        ****                           if (ewrite_flag > 0) //last write still pending!
+ 977               		.loc 1 563 0
+ 978 0576 8091 0000 		lds r24,ewrite_flag
+ 979 057a 8111      		cpse r24,__zero_reg__
+ 980 057c 00C0      		rjmp .L99
+ 564:main.c        ****                             break;
+ 565:main.c        ****                           eewrite_buf.u32_1 = scratchpad.u32_31;
+ 981               		.loc 1 565 0
+ 982 057e 8091 0000 		lds r24,scratchpad+1
+ 983 0582 9091 0000 		lds r25,scratchpad+1+1
+ 984 0586 A091 0000 		lds r26,scratchpad+1+2
+ 985 058a B091 0000 		lds r27,scratchpad+1+3
+ 986 058e 8093 0000 		sts eewrite_buf,r24
+ 987 0592 9093 0000 		sts eewrite_buf+1,r25
+ 988 0596 A093 0000 		sts eewrite_buf+2,r26
+ 989 059a B093 0000 		sts eewrite_buf+3,r27
+ 566:main.c        ****                           ewrite_flag = (scratchpad.page1) - 72 + EE_LABEL_OFFSET;
+ 990               		.loc 1 566 0
+ 991 059e 8091 0000 		lds r24,scratchpad
+ 992 05a2 8651      		subi r24,lo8(-(-22))
+ 993 05a4 8093 0000 		sts ewrite_flag,r24
+ 994 05a8 00C0      		rjmp .L99
+ 995               	.LVL83:
+ 996               	.L75:
+ 567:main.c        ****                           break;
+ 568:main.c        ****                         default:
+ 569:main.c        ****                           if (scratchpad.page1 > 71 && scratchpad.page1 < 72+EE_LABEL_MAXLEN)
+ 570:main.c        ****                             ; //alternatively: just write it?
+ 571:main.c        ****                           break;
+ 572:main.c        ****                       }
+ 573:main.c        ****                     }
+ 574:main.c        ****                     lmode=OWM_SLEEP;
+ 575:main.c        ****                     break;
+ 576:main.c        ****                 } else scratchpad.bytes[lbytep]=0;
+ 997               		.loc 1 576 0
+ 998 05aa E02F      		mov r30,r16
+ 999 05ac F0E0      		ldi r31,0
+ 1000 05ae E050      		subi r30,lo8(-(scratchpad))
+ 1001 05b0 F040      		sbci r31,hi8(-(scratchpad))
+ 1002 05b2 1082      		st Z,__zero_reg__
+ 577:main.c        ****                 if (lbytep==9) {
+ 1003               		.loc 1 577 0
+ 1004 05b4 0930      		cpi r16,lo8(9)
+ 1005 05b6 01F0      		breq .+2
+ 1006 05b8 00C0      		rjmp .L98
+ 578:main.c        ****                     //copy calculated CRC to last scratchpad-byte as we receive it with next byte!
+ 579:main.c        ****                     scratchpad.bytes[10] = lscrc;
+ 1007               		.loc 1 579 0
+ 1008 05ba E092 0000 		sts scratchpad+10,r14
+ 1009 05be 00C0      		rjmp .L98
+ 1010               	.LVL84:
+ 1011               	.L31:
+ 580:main.c        ****                 }
+ 581:main.c        ****             }
+ 582:main.c        ****             break;
+ 583:main.c        ****         case OWM_WRITE_PAGE_TO_MASTER:
+ 584:main.c        ****             RESET_LOW;
+ 1012               		.loc 1 584 0
+ 1013 05c0 5298      		cbi 0xa,2
+ 585:main.c        ****             if ((lscrc&1)!=lactbit) lscrc=(lscrc>>1)^0x8c; else lscrc >>=1;
+ 1014               		.loc 1 585 0
+ 1015 05c2 A701      		movw r20,r14
+ 1016 05c4 4170      		andi r20,1
+ 1017 05c6 5527      		clr r21
+ 1018 05c8 832F      		mov r24,r19
+ 1019               	.LVL85:
+ 1020 05ca 90E0      		ldi r25,0
+ 1021 05cc F694      		lsr r15
+ 1022 05ce E794      		ror r14
+ 1023               	.LVL86:
+ 1024 05d0 4817      		cp r20,r24
+ 1025 05d2 5907      		cpc r21,r25
+ 1026 05d4 01F0      		breq .L85
+ 1027               		.loc 1 585 0 is_stmt 0 discriminator 1
+ 1028 05d6 BCE8      		ldi r27,140
+ 1029 05d8 EB26      		eor r14,r27
+ 1030               	.LVL87:
+ 1031               	.L85:
+ 586:main.c        ****             lbitp=(lbitp<<1);
+ 1032               		.loc 1 586 0 is_stmt 1
+ 1033 05da 770F      		lsl r23
+ 1034               	.LVL88:
+ 587:main.c        ****             if (!lbitp) {
+ 1035               		.loc 1 587 0
+ 1036 05dc 01F4      		brne .L86
+ 588:main.c        ****                 lbytep++;
+ 1037               		.loc 1 588 0
+ 1038 05de 0F5F      		subi r16,lo8(-(1))
+ 1039               	.LVL89:
+ 589:main.c        ****                 lbitp=1;
+ 590:main.c        ****                 if (lbytep>=10) {
+ 1040               		.loc 1 590 0
+ 1041 05e0 0A30      		cpi r16,lo8(10)
+ 1042 05e2 00F0      		brlo .+2
+ 1043 05e4 00C0      		rjmp .L99
+ 591:main.c        ****                     lmode=OWM_SLEEP;
+ 592:main.c        ****                     break;
+ 593:main.c        ****                 } else if (lbytep==9) scratchpad.bytes[9]=lscrc;
+ 1044               		.loc 1 593 0
+ 1045 05e6 0930      		cpi r16,lo8(9)
+ 1046 05e8 01F4      		brne .L100
+ 1047               		.loc 1 593 0 is_stmt 0 discriminator 1
+ 1048 05ea E092 0000 		sts scratchpad+9,r14
+ 1049               	.L100:
+ 589:main.c        ****                 lbitp=1;
+ 1050               		.loc 1 589 0 is_stmt 1
+ 1051 05ee 71E0      		ldi r23,lo8(1)
+ 1052               	.LVL90:
+ 1053               	.L86:
+ 594:main.c        ****             }
+ 595:main.c        ****             lactbit=(lbitp&scratchpad.bytes[lbytep])==lbitp;
+ 1054               		.loc 1 595 0
+ 1055 05f0 E02F      		mov r30,r16
+ 1056 05f2 F0E0      		ldi r31,0
+ 1057 05f4 E050      		subi r30,lo8(-(scratchpad))
+ 1058 05f6 F040      		sbci r31,hi8(-(scratchpad))
+ 1059 05f8 8081      		ld r24,Z
+ 1060 05fa 8723      		and r24,r23
+ 1061 05fc 31E0      		ldi r19,lo8(1)
+ 1062               	.LVL91:
+ 1063 05fe 8713      		cpse r24,r23
+ 1064 0600 30E0      		ldi r19,0
+ 1065               	.L87:
+ 1066               	.LVL92:
+ 596:main.c        ****             lwmode=lactbit;
+ 1067               		.loc 1 596 0
+ 1068 0602 232F      		mov r18,r19
+ 597:main.c        ****             break;
+ 1069               		.loc 1 597 0
+ 1070 0604 00C0      		rjmp .L89
+ 1071               	.LVL93:
+ 1072               	.L24:
+ 598:main.c        ****         }
+ 599:main.c        ****         if (lmode==OWM_SLEEP) {
+ 1073               		.loc 1 599 0
+ 1074 0606 6111      		cpse r22,__zero_reg__
+ 1075 0608 00C0      		rjmp .L88
+ 1076               	.LVL94:
+ 1077               	.L91:
+ 600:main.c        ****           //RESET_LOW;  //??? Set pin as input again ???
+ 601:main.c        ****           DIS_TIMER;
+ 1078               		.loc 1 601 0
+ 1079 060a 8091 6E00 		lds r24,110
+ 1080 060e 8E7F      		andi r24,lo8(-2)
+ 1081 0610 8093 6E00 		sts 110,r24
+ 602:main.c        ****           EN_OWINT; SET_OWINT_LOWLEVEL;
+ 1082               		.loc 1 602 0
+ 1083 0614 E89A      		sbi 0x1d,0
+ 1084 0616 81E0      		ldi r24,lo8(1)
+ 1085 0618 8CBB      		out 0x1c,r24
+ 1086 061a 8091 6900 		lds r24,105
+ 1087 061e 8C7F      		andi r24,lo8(-4)
+ 1088 0620 8093 6900 		sts 105,r24
+ 603:main.c        ****           sleepmode=SLEEP_MODE_PWR_DOWN; //sleep deep
+ 1089               		.loc 1 603 0
+ 1090 0624 84E0      		ldi r24,lo8(4)
+ 1091 0626 8093 0000 		sts sleepmode,r24
+ 604:main.c        ****           OWRXLED_PORT &= ~(1<<OWRXLED_PIN); /* led off */
+ 1092               		.loc 1 604 0
+ 1093 062a 5F98      		cbi 0xb,7
+ 1094 062c 60E0      		ldi r22,0
+ 1095 062e 00C0      		rjmp .L89
+ 1096               	.LVL95:
+ 1097               	.L88:
+ 605:main.c        ****         } else {
+ 606:main.c        ****           //sleepmode=SLEEP_MODE_IDLE; //no sleep
+ 607:main.c        ****         }
+ 608:main.c        **** 
+ 609:main.c        ****         if (lmode!=OWM_PRESENCE)  {
+ 1098               		.loc 1 609 0
+ 1099 0630 6230      		cpi r22,lo8(2)
+ 1100 0632 01F0      		breq .L90
+ 1101               	.LVL96:
+ 1102               	.L89:
+ 610:main.c        ****             TCNT_REG=~(OWT_MIN_RESET-OWT_READLINE);  //OWT_READLINE around OWT_LOWTIME
+ 1103               		.loc 1 610 0
+ 1104 0634 8FEC      		ldi r24,lo8(-49)
+ 1105 0636 86BD      		out 0x26,r24
+ 611:main.c        ****             EN_OWINT;
+ 1106               		.loc 1 611 0
+ 1107 0638 E89A      		sbi 0x1d,0
+ 1108 063a 81E0      		ldi r24,lo8(1)
+ 1109 063c 8CBB      		out 0x1c,r24
+ 1110               	.L90:
+ 612:main.c        ****         }
+ 613:main.c        ****         mode=lmode;
+ 1111               		.loc 1 613 0
+ 1112 063e 6093 0000 		sts mode,r22
+ 614:main.c        ****         wmode=lwmode;
+ 1113               		.loc 1 614 0
+ 1114 0642 2093 0000 		sts wmode,r18
+ 615:main.c        ****         bytep=lbytep;
+ 1115               		.loc 1 615 0
+ 1116 0646 0093 0000 		sts bytep,r16
+ 616:main.c        ****         bitp=lbitp;
+ 1117               		.loc 1 616 0
+ 1118 064a 7093 0000 		sts bitp,r23
+ 617:main.c        ****         srcount=lsrcount;
+ 1119               		.loc 1 617 0
+ 1120 064e 1093 0000 		sts srcount,r17
+ 618:main.c        ****         actbit=lactbit;
+ 1121               		.loc 1 618 0
+ 1122 0652 3093 0000 		sts actbit,r19
+ 619:main.c        ****         scrc=lscrc;
+ 1123               		.loc 1 619 0
+ 1124 0656 F092 0000 		sts scrc+1,r15
+ 1125 065a E092 0000 		sts scrc,r14
+ 1126 065e 00C0      		rjmp .L139
+ 1127               	.LVL97:
+ 1128               	.L93:
+ 362:main.c        ****                 lbitp=1;
+ 1129               		.loc 1 362 0
+ 1130 0660 71E0      		ldi r23,lo8(1)
+ 365:main.c        ****                         lbytep=0;
+ 1131               		.loc 1 365 0
+ 1132 0662 00E0      		ldi r16,0
+ 1133               	.LVL98:
+ 366:main.c        ****                         lmode=OWM_MATCH_ROM;
+ 1134               		.loc 1 366 0
+ 1135 0664 65E0      		ldi r22,lo8(5)
+ 1136               	.LVL99:
+ 1137 0666 00C0      		rjmp .L89
+ 1138               	.LVL100:
+ 1139               	.L95:
+ 426:main.c        ****                     lbitp=1;
+ 1140               		.loc 1 426 0
+ 1141 0668 71E0      		ldi r23,lo8(1)
+ 1142 066a 00C0      		rjmp .L88
+ 1143               	.LVL101:
+ 1144               	.L98:
+ 533:main.c        ****                 lbitp=1;
+ 1145               		.loc 1 533 0
+ 1146 066c 71E0      		ldi r23,lo8(1)
+ 1147 066e 00C0      		rjmp .L89
+ 1148               	.LVL102:
+ 1149               	.L99:
+ 589:main.c        ****                 lbitp=1;
+ 1150               		.loc 1 589 0
+ 1151 0670 71E0      		ldi r23,lo8(1)
+ 1152               	.LVL103:
+ 1153 0672 00C0      		rjmp .L91
+ 1154               	.LVL104:
+ 1155               	.L139:
+ 1156               	/* epilogue start */
+ 620:main.c        **** }
+ 1157               		.loc 1 620 0
+ 1158 0674 2C96      		adiw r28,12
+ 1159 0676 0FB6      		in __tmp_reg__,__SREG__
+ 1160 0678 F894      		cli
+ 1161 067a DEBF      		out __SP_H__,r29
+ 1162 067c 0FBE      		out __SREG__,__tmp_reg__
+ 1163 067e CDBF      		out __SP_L__,r28
+ 1164 0680 DF91      		pop r29
+ 1165 0682 CF91      		pop r28
+ 1166 0684 FF91      		pop r31
+ 1167 0686 EF91      		pop r30
+ 1168 0688 BF91      		pop r27
+ 1169 068a AF91      		pop r26
+ 1170 068c 9F91      		pop r25
+ 1171 068e 8F91      		pop r24
+ 1172 0690 7F91      		pop r23
+ 1173 0692 6F91      		pop r22
+ 1174 0694 5F91      		pop r21
+ 1175 0696 4F91      		pop r20
+ 1176 0698 3F91      		pop r19
+ 1177               	.LVL105:
+ 1178 069a 2F91      		pop r18
+ 1179 069c 1F91      		pop r17
+ 1180 069e 0F91      		pop r16
+ 1181 06a0 FF90      		pop r15
+ 1182 06a2 EF90      		pop r14
+ 1183 06a4 DF90      		pop r13
+ 1184 06a6 CF90      		pop r12
+ 1185 06a8 BF90      		pop r11
+ 1186 06aa AF90      		pop r10
+ 1187 06ac 0F90      		pop r0
+ 1188 06ae 0FBE      		out __SREG__,r0
+ 1189 06b0 0F90      		pop r0
+ 1190 06b2 1F90      		pop r1
+ 1191 06b4 1895      		reti
+ 1192               	.LFE7:
+ 1194               	.global	init_eeprom
+ 1196               	init_eeprom:
+ 1197               	.LFB8:
+ 621:main.c        **** 
+ 622:main.c        **** //PC_INT_ISR  //for counting  defined for specific device
+ 623:main.c        **** 
+ 624:main.c        **** void init_eeprom(void) {
+ 1198               		.loc 1 624 0
+ 1199 06b6 0F93      		push r16
+ 1200               	.LCFI31:
+ 1201 06b8 1F93      		push r17
+ 1202               	.LCFI32:
+ 1203 06ba CF93      		push r28
+ 1204               	.LCFI33:
+ 1205 06bc DF93      		push r29
+ 1206               	.LCFI34:
+ 1207               	/* prologue: function */
+ 1208               	/* frame size = 0 */
+ 1209               	/* stack size = 4 */
+ 1210               	.L__stack_usage = 4
+ 625:main.c        ****     /* check magic, read slave address and counter values, resetcount, init-name, */
+ 626:main.c        ****     if (eeprom_read_word((const uint16_t *) (EE_MAGIC_OFFSET+0)) == EE_MAGIC_NUMBER) {
+ 1211               		.loc 1 626 0
+ 1212 06be 80E0      		ldi r24,0
+ 1213 06c0 90E0      		ldi r25,0
+ 1214 06c2 0E94 0000 		call __eerd_word_m328p
+ 1215               	.LVL106:
+ 1216 06c6 823E      		cpi r24,-30
+ 1217 06c8 914E      		sbci r25,-31
+ 1218 06ca 01F4      		brne .L144
+ 1219 06cc 00E0      		ldi r16,lo8(owid)
+ 1220 06ce 10E0      		ldi r17,hi8(owid)
+ 1221 06d0 C2E0      		ldi r28,lo8(2)
+ 1222 06d2 D0E0      		ldi r29,0
+ 1223               	.L145:
+ 1224               	.LBB14:
+ 627:main.c        ****       //EEPROM valid -> read counters & settings
+ 628:main.c        ****       for (uint16_t i=EE_OWID_OFFSET;i<EE_OWID_OFFSET+8;i++)
+ 629:main.c        ****         owid[i-EE_OWID_OFFSET] = eeprom_read_byte((uint8_t *) i);
+ 1225               		.loc 1 629 0 discriminator 2
+ 1226 06d4 CE01      		movw r24,r28
+ 1227 06d6 0E94 0000 		call __eerd_byte_m328p
+ 1228               	.LVL107:
+ 1229 06da F801      		movw r30,r16
+ 1230 06dc 8193      		st Z+,r24
+ 1231 06de 8F01      		movw r16,r30
+ 628:main.c        ****       for (uint16_t i=EE_OWID_OFFSET;i<EE_OWID_OFFSET+8;i++)
+ 1232               		.loc 1 628 0 discriminator 2
+ 1233 06e0 2196      		adiw r28,1
+ 1234               	.LVL108:
+ 1235 06e2 CA30      		cpi r28,10
+ 1236 06e4 D105      		cpc r29,__zero_reg__
+ 1237 06e6 01F4      		brne .L145
+ 1238               	.LBE14:
+ 630:main.c        ****       rcnt = eeprom_read_word((const uint16_t *) (EE_RCNT_OFFSET+0)) + 1;
+ 1239               		.loc 1 630 0
+ 1240 06e8 8AE0      		ldi r24,lo8(10)
+ 1241 06ea 90E0      		ldi r25,0
+ 1242 06ec 0E94 0000 		call __eerd_word_m328p
+ 1243               	.LVL109:
+ 1244 06f0 BC01      		movw r22,r24
+ 1245 06f2 6F5F      		subi r22,-1
+ 1246 06f4 7F4F      		sbci r23,-1
+ 1247 06f6 7093 0000 		sts rcnt+1,r23
+ 1248 06fa 6093 0000 		sts rcnt,r22
+ 631:main.c        ****       eeprom_update_word((uint16_t *) (EE_RCNT_OFFSET+0), rcnt);
+ 1249               		.loc 1 631 0
+ 1250 06fe 8AE0      		ldi r24,lo8(10)
+ 1251 0700 90E0      		ldi r25,0
+ 1252 0702 0E94 0000 		call __eeupd_word_m328p
+ 1253               	.LVL110:
+ 632:main.c        **** /*
+ 633:main.c        ****       Counter1 = eeprom_read_dword((const uint32_t *) (EE_COUNTER_OFFSET+0));
+ 634:main.c        ****       Counter2 = eeprom_read_dword((const uint32_t *) (EE_COUNTER_OFFSET+4));
+ 635:main.c        ****       Counter3 = eeprom_read_dword((const uint32_t *) (EE_COUNTER_OFFSET+8));
+ 636:main.c        ****       Counter4 = eeprom_read_dword((const uint32_t *) (EE_COUNTER_OFFSET+12));
+ 637:main.c        **** */
+ 638:main.c        ****       version = eeprom_read_word((const uint16_t *) (EE_VERSION_OFFSET+0));
+ 1254               		.loc 1 638 0
+ 1255 0706 8DE2      		ldi r24,lo8(45)
+ 1256 0708 90E0      		ldi r25,0
+ 1257 070a 0E94 0000 		call __eerd_word_m328p
+ 1258               	.LVL111:
+ 1259 070e 9093 0000 		sts version+1,r25
+ 1260 0712 8093 0000 		sts version,r24
+ 639:main.c        ****       stype = eeprom_read_byte((uint8_t *) (EE_TYPE_OFFSET+0));
+ 1261               		.loc 1 639 0
+ 1262 0716 8CE2      		ldi r24,lo8(44)
+ 1263 0718 90E0      		ldi r25,0
+ 1264 071a 0E94 0000 		call __eerd_byte_m328p
+ 1265               	.LVL112:
+ 1266 071e 8093 0000 		sts stype,r24
+ 1267 0722 00C0      		rjmp .L150
+ 1268               	.LVL113:
+ 1269               	.L144:
+ 640:main.c        ****     } else {
+ 641:main.c        ****       //Init values
+ 642:main.c        ****       /* should cli(); here no sei(); yet enabled in main.. */
+ 643:main.c        ****       eeprom_write_word((uint16_t *) (EE_MAGIC_OFFSET+0), EE_MAGIC_NUMBER);
+ 1270               		.loc 1 643 0
+ 1271 0724 62EE      		ldi r22,lo8(-30)
+ 1272 0726 71EE      		ldi r23,lo8(-31)
+ 1273 0728 80E0      		ldi r24,0
+ 1274 072a 90E0      		ldi r25,0
+ 1275 072c 0E94 0000 		call __eewr_word_m328p
+ 1276               	.LVL114:
+ 1277 0730 00E0      		ldi r16,lo8(owid)
+ 1278 0732 10E0      		ldi r17,hi8(owid)
+ 644:main.c        ****       for (uint16_t i=EE_OWID_OFFSET;i<EE_OWID_OFFSET+8;i++)
+ 1279               		.loc 1 644 0
+ 1280 0734 C2E0      		ldi r28,lo8(2)
+ 1281 0736 D0E0      		ldi r29,0
+ 1282               	.LVL115:
+ 1283               	.L147:
+ 1284               	.LBB15:
+ 645:main.c        ****         eeprom_write_byte((uint8_t *) i,owid[i-EE_OWID_OFFSET]);
+ 1285               		.loc 1 645 0 discriminator 2
+ 1286 0738 F801      		movw r30,r16
+ 1287 073a 6191      		ld r22,Z+
+ 1288 073c 8F01      		movw r16,r30
+ 1289 073e CE01      		movw r24,r28
+ 1290 0740 0E94 0000 		call __eewr_byte_m328p
+ 1291               	.LVL116:
+ 644:main.c        ****       for (uint16_t i=EE_OWID_OFFSET;i<EE_OWID_OFFSET+8;i++)
+ 1292               		.loc 1 644 0 discriminator 2
+ 1293 0744 2196      		adiw r28,1
+ 1294               	.LVL117:
+ 1295 0746 CA30      		cpi r28,10
+ 1296 0748 D105      		cpc r29,__zero_reg__
+ 1297 074a 01F4      		brne .L147
+ 1298               	.LBE15:
+ 646:main.c        ****       eeprom_write_word((uint16_t *) (EE_RCNT_OFFSET+0), rcnt);
+ 1299               		.loc 1 646 0
+ 1300 074c 6091 0000 		lds r22,rcnt
+ 1301 0750 7091 0000 		lds r23,rcnt+1
+ 1302 0754 8AE0      		ldi r24,lo8(10)
+ 1303 0756 90E0      		ldi r25,0
+ 1304 0758 0E94 0000 		call __eewr_word_m328p
+ 1305               	.LVL118:
+ 647:main.c        **** /*
+ 648:main.c        ****       eeprom_write_dword((uint32_t *) (EE_COUNTER_OFFSET+0),0);
+ 649:main.c        ****       eeprom_write_dword((uint32_t *) (EE_COUNTER_OFFSET+4),0);
+ 650:main.c        ****       eeprom_write_dword((uint32_t *) (EE_COUNTER_OFFSET+8),0);
+ 651:main.c        ****       eeprom_write_dword((uint32_t *) (EE_COUNTER_OFFSET+12),0);
+ 652:main.c        **** */
+ 653:main.c        ****       eeprom_write_byte((uint8_t *) (EE_TYPE_OFFSET+0), stype);
+ 1306               		.loc 1 653 0
+ 1307 075c 6091 0000 		lds r22,stype
+ 1308 0760 8CE2      		ldi r24,lo8(44)
+ 1309 0762 90E0      		ldi r25,0
+ 1310 0764 0E94 0000 		call __eewr_byte_m328p
+ 1311               	.LVL119:
+ 654:main.c        ****       eeprom_write_word((uint16_t *) (EE_VERSION_OFFSET+0), version);
+ 1312               		.loc 1 654 0
+ 1313 0768 6091 0000 		lds r22,version
+ 1314 076c 7091 0000 		lds r23,version+1
+ 1315 0770 8DE2      		ldi r24,lo8(45)
+ 1316 0772 90E0      		ldi r25,0
+ 1317               	/* epilogue start */
+ 655:main.c        ****     }
+ 656:main.c        **** }
+ 1318               		.loc 1 656 0
+ 1319 0774 DF91      		pop r29
+ 1320 0776 CF91      		pop r28
+ 1321               	.LVL120:
+ 1322 0778 1F91      		pop r17
+ 1323 077a 0F91      		pop r16
+ 654:main.c        ****       eeprom_write_word((uint16_t *) (EE_VERSION_OFFSET+0), version);
+ 1324               		.loc 1 654 0
+ 1325 077c 0C94 0000 		jmp __eewr_word_m328p
+ 1326               	.LVL121:
+ 1327               	.L150:
+ 1328               	/* epilogue start */
+ 1329               		.loc 1 656 0
+ 1330 0780 DF91      		pop r29
+ 1331 0782 CF91      		pop r28
+ 1332               	.LVL122:
+ 1333 0784 1F91      		pop r17
+ 1334 0786 0F91      		pop r16
+ 1335 0788 0895      		ret
+ 1336               	.LFE8:
+ 1338               	.global	hex2dec
+ 1340               	hex2dec:
+ 1341               	.LFB9:
+ 657:main.c        **** 
+ 658:main.c        **** char hex2dec(char buf) {
+ 1342               		.loc 1 658 0
+ 1343               	.LVL123:
+ 1344               	/* prologue: function */
+ 1345               	/* frame size = 0 */
+ 1346               	/* stack size = 0 */
+ 1347               	.L__stack_usage = 0
+ 1348 078a 982F      		mov r25,r24
+ 659:main.c        ****   if (buf > 47 && buf < 58)
+ 1349               		.loc 1 659 0
+ 1350 078c 8053      		subi r24,lo8(-(-48))
+ 1351               	.LVL124:
+ 1352 078e 8A30      		cpi r24,lo8(10)
+ 1353 0790 00F0      		brlo .L152
+ 660:main.c        ****     buf -= 48;
+ 661:main.c        ****   else if (buf > 64 && buf < 71)
+ 1354               		.loc 1 661 0
+ 1355 0792 8151      		subi r24,lo8(-(-17))
+ 1356 0794 8630      		cpi r24,lo8(6)
+ 1357 0796 00F4      		brsh .L153
+ 1358 0798 00C0      		rjmp .L156
+ 1359               	.L153:
+ 1360               	.LVL125:
+ 1361               	.LBB18:
+ 1362               	.LBB19:
+ 662:main.c        ****     buf -= 55;
+ 663:main.c        ****   else if (buf > 96 && buf < 103)
+ 1363               		.loc 1 663 0
+ 1364 079a 892F      		mov r24,r25
+ 1365 079c 8156      		subi r24,lo8(-(-97))
+ 1366 079e 8630      		cpi r24,lo8(6)
+ 1367 07a0 00F4      		brsh .L155
+ 1368               	.LVL126:
+ 1369               	.L156:
+ 664:main.c        ****     buf -= 87;
+ 1370               		.loc 1 664 0
+ 1371 07a2 865F      		subi r24,lo8(-(10))
+ 1372               	.LVL127:
+ 1373 07a4 0895      		ret
+ 1374               	.LVL128:
+ 1375               	.L155:
+ 665:main.c        ****   else buf = 0;
+ 1376               		.loc 1 665 0
+ 1377 07a6 80E0      		ldi r24,0
+ 1378               	.LVL129:
+ 1379               	.L152:
+ 1380               	.LBE19:
+ 1381               	.LBE18:
+ 666:main.c        ****   return buf;
+ 667:main.c        **** }
+ 1382               		.loc 1 667 0
+ 1383 07a8 0895      		ret
+ 1384               	.LFE9:
+ 1386               	.global	processSerial
+ 1388               	processSerial:
+ 1389               	.LFB10:
+ 668:main.c        **** 
+ 669:main.c        **** void processSerial(void) {
+ 1390               		.loc 1 669 0
+ 1391 07aa 7F92      		push r7
+ 1392               	.LCFI35:
+ 1393 07ac 8F92      		push r8
+ 1394               	.LCFI36:
+ 1395 07ae 9F92      		push r9
+ 1396               	.LCFI37:
+ 1397 07b0 AF92      		push r10
+ 1398               	.LCFI38:
+ 1399 07b2 BF92      		push r11
+ 1400               	.LCFI39:
+ 1401 07b4 CF92      		push r12
+ 1402               	.LCFI40:
+ 1403 07b6 DF92      		push r13
+ 1404               	.LCFI41:
+ 1405 07b8 EF92      		push r14
+ 1406               	.LCFI42:
+ 1407 07ba FF92      		push r15
+ 1408               	.LCFI43:
+ 1409 07bc 0F93      		push r16
+ 1410               	.LCFI44:
+ 1411 07be 1F93      		push r17
+ 1412               	.LCFI45:
+ 1413 07c0 CF93      		push r28
+ 1414               	.LCFI46:
+ 1415 07c2 DF93      		push r29
+ 1416               	.LCFI47:
+ 1417 07c4 CDB7      		in r28,__SP_L__
+ 1418 07c6 DEB7      		in r29,__SP_H__
+ 1419               	.LCFI48:
+ 1420 07c8 6097      		sbiw r28,16
+ 1421               	.LCFI49:
+ 1422 07ca 0FB6      		in __tmp_reg__,__SREG__
+ 1423 07cc F894      		cli
+ 1424 07ce DEBF      		out __SP_H__,r29
+ 1425 07d0 0FBE      		out __SREG__,__tmp_reg__
+ 1426 07d2 CDBF      		out __SP_L__,r28
+ 1427               	/* prologue: function */
+ 1428               	/* frame size = 16 */
+ 1429               	/* stack size = 29 */
+ 1430               	.L__stack_usage = 29
+ 1431               	.LVL130:
+ 670:main.c        ****     uint16_t cbuf;
+ 671:main.c        ****     char recv_buf[16];
+ 672:main.c        ****     uint8_t loop = 1;
+ 673:main.c        ****     uint8_t bpos = 0;
+ 674:main.c        ****     uint16_t chksum = 0;
+ 1432               		.loc 1 674 0
+ 1433 07d4 00E0      		ldi r16,0
+ 1434 07d6 10E0      		ldi r17,0
+ 673:main.c        ****     uint8_t bpos = 0;
+ 1435               		.loc 1 673 0
+ 1436 07d8 912C      		mov r9,__zero_reg__
+ 675:main.c        **** 
+ 676:main.c        ****     while (loop) {
+ 677:main.c        ****       cbuf = uart_getc();
+ 678:main.c        ****       if ( cbuf & UART_NO_DATA ) {
+ 679:main.c        ****         loop = 0;
+ 680:main.c        ****       } else { /*have data*/
+ 681:main.c        ****           RMRXLED_PORT ^= (1<<RMRXLED_PIN); /* toggle led */
+ 1437               		.loc 1 681 0
+ 1438 07da 80E1      		ldi r24,lo8(16)
+ 1439 07dc 882E      		mov r8,r24
+ 682:main.c        ****           switch (cbuf & 0xFF) {
+ 683:main.c        ****             case 0x00:
+ 684:main.c        ****               LS("(NUL)");
+ 685:main.c        ****               recv_state = S_NULL;
+ 686:main.c        ****               bpos=0; chksum=0;
+ 687:main.c        ****               break;
+ 688:main.c        ****             case 0x02:
+ 689:main.c        ****               LS("(STX)");
+ 690:main.c        ****               recv_state = S_STX;
+ 691:main.c        ****               bpos=0; chksum=0;
+ 692:main.c        ****               break;
+ 693:main.c        ****             case 0x03:
+ 694:main.c        ****               LS("(ETX)");
+ 695:main.c        ****               recv_state = S_ETX;
+ 1440               		.loc 1 695 0
+ 1441 07de 93E0      		ldi r25,lo8(3)
+ 1442 07e0 D92E      		mov r13,r25
+ 696:main.c        ****               //FIXME: sendack only if chksum is ok!
+ 697:main.c        ****               uart_putc(0x06); // send ACK
+ 698:main.c        ****               break;
+ 699:main.c        ****             case 0x06:
+ 700:main.c        ****               LS("(ACK)");
+ 701:main.c        ****               recv_state = S_ACK;
+ 702:main.c        ****               bpos=0; chksum=0;
+ 703:main.c        ****               break;
+ 704:main.c        ****             case 0x15:
+ 705:main.c        ****               LS("(NACK)");
+ 706:main.c        ****               recv_state = S_NULL;
+ 707:main.c        ****               nackmsg++;
+ 708:main.c        ****               bpos=0; chksum=0;
+ 709:main.c        ****               break;
+ 710:main.c        ****             default: //ASCII
+ 711:main.c        ****               LV(tmp);
+ 712:main.c        ****               if (recv_state == S_STX) {
+ 713:main.c        ****                 recv_state = S_DATA;
+ 1443               		.loc 1 713 0
+ 1444 07e2 24E1      		ldi r18,lo8(20)
+ 1445 07e4 C22E      		mov r12,r18
+ 690:main.c        ****               recv_state = S_STX;
+ 1446               		.loc 1 690 0
+ 1447 07e6 32E0      		ldi r19,lo8(2)
+ 1448 07e8 732E      		mov r7,r19
+ 676:main.c        ****     while (loop) {
+ 1449               		.loc 1 676 0
+ 1450 07ea 00C0      		rjmp .L158
+ 1451               	.LVL131:
+ 1452               	.L169:
+ 681:main.c        ****           RMRXLED_PORT ^= (1<<RMRXLED_PIN); /* toggle led */
+ 1453               		.loc 1 681 0
+ 1454 07ec 8BB1      		in r24,0xb
+ 1455 07ee 8825      		eor r24,r8
+ 1456 07f0 8BB9      		out 0xb,r24
+ 682:main.c        ****           switch (cbuf & 0xFF) {
+ 1457               		.loc 1 682 0
+ 1458 07f2 7501      		movw r14,r10
+ 1459 07f4 FF24      		clr r15
+ 1460 07f6 23E0      		ldi r18,3
+ 1461 07f8 E216      		cp r14,r18
+ 1462 07fa F104      		cpc r15,__zero_reg__
+ 1463 07fc 01F0      		breq .L162
+ 1464 07fe 00F4      		brsh .L165
+ 1465 0800 E114      		cp r14,__zero_reg__
+ 1466 0802 F104      		cpc r15,__zero_reg__
+ 1467 0804 01F0      		breq .L160
+ 1468 0806 82E0      		ldi r24,2
+ 1469 0808 E816      		cp r14,r24
+ 1470 080a F104      		cpc r15,__zero_reg__
+ 1471 080c 01F4      		brne .L159
+ 1472 080e 00C0      		rjmp .L161
+ 1473               	.L165:
+ 1474 0810 96E0      		ldi r25,6
+ 1475 0812 E916      		cp r14,r25
+ 1476 0814 F104      		cpc r15,__zero_reg__
+ 1477 0816 01F0      		breq .L163
+ 1478 0818 25E1      		ldi r18,21
+ 1479 081a E216      		cp r14,r18
+ 1480 081c F104      		cpc r15,__zero_reg__
+ 1481 081e 01F4      		brne .L159
+ 1482 0820 00C0      		rjmp .L164
+ 1483               	.L160:
+ 685:main.c        ****               recv_state = S_NULL;
+ 1484               		.loc 1 685 0
+ 1485 0822 1092 0000 		sts recv_state,__zero_reg__
+ 1486               	.LVL132:
+ 1487 0826 00C0      		rjmp .L195
+ 1488               	.LVL133:
+ 1489               	.L161:
+ 690:main.c        ****               recv_state = S_STX;
+ 1490               		.loc 1 690 0
+ 1491 0828 7092 0000 		sts recv_state,r7
+ 1492               	.LVL134:
+ 1493 082c 00C0      		rjmp .L195
+ 1494               	.LVL135:
+ 1495               	.L162:
+ 695:main.c        ****               recv_state = S_ETX;
+ 1496               		.loc 1 695 0
+ 1497 082e D092 0000 		sts recv_state,r13
+ 697:main.c        ****               uart_putc(0x06); // send ACK
+ 1498               		.loc 1 697 0
+ 1499 0832 86E0      		ldi r24,lo8(6)
+ 1500 0834 0E94 0000 		call uart_putc
+ 1501               	.LVL136:
+ 698:main.c        ****               break;
+ 1502               		.loc 1 698 0
+ 1503 0838 00C0      		rjmp .L166
+ 1504               	.L163:
+ 701:main.c        ****               recv_state = S_ACK;
+ 1505               		.loc 1 701 0
+ 1506 083a 86E0      		ldi r24,lo8(6)
+ 1507 083c 8093 0000 		sts recv_state,r24
+ 1508               	.LVL137:
+ 1509 0840 00C0      		rjmp .L195
+ 1510               	.LVL138:
+ 1511               	.L164:
+ 706:main.c        ****               recv_state = S_NULL;
+ 1512               		.loc 1 706 0
+ 1513 0842 1092 0000 		sts recv_state,__zero_reg__
+ 707:main.c        ****               nackmsg++;
+ 1514               		.loc 1 707 0
+ 1515 0846 8091 0000 		lds r24,nackmsg
+ 1516 084a 8F5F      		subi r24,lo8(-(1))
+ 1517 084c 8093 0000 		sts nackmsg,r24
+ 1518               	.LVL139:
+ 1519 0850 00C0      		rjmp .L195
+ 1520               	.LVL140:
+ 1521               	.L159:
+ 712:main.c        ****               if (recv_state == S_STX) {
+ 1522               		.loc 1 712 0
+ 1523 0852 8091 0000 		lds r24,recv_state
+ 1524 0856 8230      		cpi r24,lo8(2)
+ 1525 0858 01F4      		brne .L166
+ 1526               		.loc 1 713 0
+ 1527 085a C092 0000 		sts recv_state,r12
+ 1528               	.LVL141:
+ 1529               	.L195:
+ 714:main.c        ****                 bpos=0; chksum=0;
+ 1530               		.loc 1 714 0
+ 1531 085e 00E0      		ldi r16,0
+ 1532 0860 10E0      		ldi r17,0
+ 1533 0862 912C      		mov r9,__zero_reg__
+ 1534               	.LVL142:
+ 1535               	.L166:
+ 715:main.c        ****               }
+ 716:main.c        ****               break;
+ 717:main.c        ****           }
+ 718:main.c        ****           switch (recv_state) {
+ 1536               		.loc 1 718 0
+ 1537 0864 8091 0000 		lds r24,recv_state
+ 1538 0868 8431      		cpi r24,lo8(20)
+ 1539 086a 01F4      		brne .L167
+ 719:main.c        ****             case S_DATA:
+ 720:main.c        ****               recv_buf[bpos] = cbuf & 0xFF;
+ 1540               		.loc 1 720 0
+ 1541 086c E1E0      		ldi r30,lo8(1)
+ 1542 086e F0E0      		ldi r31,0
+ 1543 0870 EC0F      		add r30,r28
+ 1544 0872 FD1F      		adc r31,r29
+ 1545 0874 E90D      		add r30,r9
+ 1546 0876 F11D      		adc r31,__zero_reg__
+ 1547 0878 A082      		st Z,r10
+ 721:main.c        ****               chksum += cbuf & 0xFF;
+ 1548               		.loc 1 721 0
+ 1549 087a 0E0D      		add r16,r14
+ 1550 087c 1F1D      		adc r17,r15
+ 1551               	.LVL143:
+ 722:main.c        ****               if (bpos < sizeof (recv_buf))
+ 1552               		.loc 1 722 0
+ 1553 087e 4FE0      		ldi r20,lo8(15)
+ 1554 0880 4915      		cp r20,r9
+ 1555 0882 00F0      		brlo .L167
+ 723:main.c        ****                 bpos++;
+ 1556               		.loc 1 723 0
+ 1557 0884 9394      		inc r9
+ 1558               	.LVL144:
+ 1559               	.L167:
+ 1560               	.LBB20:
+ 1561               	.LBB21:
+ 1562               		.file 2 "/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h"
+   1:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** /* Copyright (c) 2002, Marek Michalkiewicz
+   2:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    Copyright (c) 2004,2005,2007 Joerg Wunsch
+   3:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    Copyright (c) 2007  Florin-Viorel Petrov
+   4:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    All rights reserved.
+   5:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+   6:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    Redistribution and use in source and binary forms, with or without
+   7:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    modification, are permitted provided that the following conditions are met:
+   8:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+   9:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    * Redistributions of source code must retain the above copyright
+  10:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****      notice, this list of conditions and the following disclaimer.
+  11:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+  12:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    * Redistributions in binary form must reproduce the above copyright
+  13:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****      notice, this list of conditions and the following disclaimer in
+  14:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****      the documentation and/or other materials provided with the
+  15:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****      distribution.
+  16:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+  17:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    * Neither the name of the copyright holders nor the names of
+  18:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****      contributors may be used to endorse or promote products derived
+  19:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****      from this software without specific prior written permission.
+  20:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+  21:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  22:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****   AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  23:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  24:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****   ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+  25:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****   LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  26:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****   CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+  27:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****   SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+  28:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****   INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+  29:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****   CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  30:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  31:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****   POSSIBILITY OF SUCH DAMAGE. */
+  32:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+  33:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** /* $Id: delay.h.in 2251 2011-09-14 08:20:33Z joerg_wunsch $ */
+  34:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+  35:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** #ifndef _UTIL_DELAY_H_
+  36:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** #define _UTIL_DELAY_H_ 1
+  37:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+  38:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** #ifndef __HAS_DELAY_CYCLES
+  39:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** #define __HAS_DELAY_CYCLES 1
+  40:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** #endif
+  41:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+  42:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** #include <inttypes.h>
+  43:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** #include <util/delay_basic.h>
+  44:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** #include <math.h>
+  45:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+  46:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** /** \file */
+  47:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** /** \defgroup util_delay <util/delay.h>: Convenience functions for busy-wait delay loops
+  48:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     \code
+  49:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     #define F_CPU 1000000UL  // 1 MHz
+  50:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     //#define F_CPU 14.7456E6
+  51:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     #include <util/delay.h>
+  52:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     \endcode
+  53:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+  54:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     \note As an alternative method, it is possible to pass the
+  55:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     F_CPU macro down to the compiler from the Makefile.
+  56:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     Obviously, in that case, no \c \#define statement should be
+  57:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     used.
+  58:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+  59:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     The functions in this header file are wrappers around the basic
+  60:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     busy-wait functions from <util/delay_basic.h>.  They are meant as
+  61:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     convenience functions where actual time values can be specified
+  62:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     rather than a number of cycles to wait for.  The idea behind is
+  63:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     that compile-time constant expressions will be eliminated by
+  64:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     compiler optimization so floating-point expressions can be used
+  65:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     to calculate the number of delay cycles needed based on the CPU
+  66:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     frequency passed by the macro F_CPU.
+  67:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+  68:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     \note In order for these functions to work as intended, compiler
+  69:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     optimizations <em>must</em> be enabled, and the delay time
+  70:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     <em>must</em> be an expression that is a known constant at
+  71:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     compile-time.  If these requirements are not met, the resulting
+  72:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     delay will be much longer (and basically unpredictable), and
+  73:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     applications that otherwise do not use floating-point calculations
+  74:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     will experience severe code bloat by the floating-point library
+  75:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     routines linked into the application.
+  76:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+  77:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     The functions available allow the specification of microsecond, and
+  78:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     millisecond delays directly, using the application-supplied macro
+  79:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     F_CPU as the CPU clock frequency (in Hertz).
+  80:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+  81:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** */
+  82:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+  83:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** #if !defined(__DOXYGEN__)
+  84:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** static inline void _delay_us(double __us) __attribute__((always_inline));
+  85:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** static inline void _delay_ms(double __ms) __attribute__((always_inline));
+  86:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** #endif
+  87:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+  88:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** #ifndef F_CPU
+  89:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** /* prevent compiler error by supplying a default */
+  90:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** # warning "F_CPU not defined for <util/delay.h>"
+  91:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** # define F_CPU 1000000UL
+  92:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** #endif
+  93:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+  94:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** #ifndef __OPTIMIZE__
+  95:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** # warning "Compiler optimizations disabled; functions from <util/delay.h> won't work as designed"
+  96:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** #endif
+  97:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+  98:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** #if __HAS_DELAY_CYCLES && defined(__OPTIMIZE__) && \
+  99:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****   !defined(__DELAY_BACKWARD_COMPATIBLE__) &&	   \
+ 100:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****   __STDC_HOSTED__
+ 101:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** #  include <math.h>
+ 102:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** #endif
+ 103:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+ 104:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** /**
+ 105:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    \ingroup util_delay
+ 106:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+ 107:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    Perform a delay of \c __ms milliseconds, using _delay_loop_2().
+ 108:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+ 109:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    The macro F_CPU is supposed to be defined to a
+ 110:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    constant defining the CPU clock frequency (in Hertz).
+ 111:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+ 112:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    The maximal possible delay is 262.14 ms / F_CPU in MHz.
+ 113:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+ 114:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    When the user request delay which exceed the maximum possible one,
+ 115:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    _delay_ms() provides a decreased resolution functionality. In this
+ 116:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    mode _delay_ms() will work with a resolution of 1/10 ms, providing
+ 117:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    delays up to 6.5535 seconds (independent from CPU frequency).  The
+ 118:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    user will not be informed about decreased resolution.
+ 119:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+ 120:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    If the avr-gcc toolchain has __builtin_avr_delay_cycles(unsigned long)
+ 121:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    support, maximal possible delay is 4294967.295 ms/ F_CPU in MHz. For
+ 122:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    values greater than the maximal possible delay, overflows results in
+ 123:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    no delay i.e., 0ms.
+ 124:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+ 125:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    Conversion of __us into clock cycles may not always result in integer.
+ 126:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    By default, the clock cycles rounded up to next integer. This ensures that
+ 127:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    the user gets atleast __us microseconds of delay.
+ 128:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+ 129:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    Alternatively, user can define __DELAY_ROUND_DOWN__ and __DELAY_ROUND_CLOSEST__
+ 130:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    to round down and round to closest integer.
+ 131:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+ 132:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    Note: The new implementation of _delay_ms(double __ms) with 
+ 133:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     __builtin_avr_delay_cycles(unsigned long) support is not backward compatible. 
+ 134:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    User can define __DELAY_BACKWARD_COMPATIBLE__ to get a backward compatible delay.
+ 135:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    Also, the backward compatible
+ 136:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    algorithm will be chosen if the code is compiled in a <em>freestanding
+ 137:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    environment</em> (GCC option \c -ffreestanding), as the math functions
+ 138:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    required for rounding are not available to the compiler then.
+ 139:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+ 140:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****  */
+ 141:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** void
+ 142:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** _delay_ms(double __ms)
+ 143:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** {
+ 144:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 	uint16_t __ticks;
+ 145:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 	double __tmp ; 
+ 146:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** #if __HAS_DELAY_CYCLES && defined(__OPTIMIZE__) && \
+ 147:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****   !defined(__DELAY_BACKWARD_COMPATIBLE__) &&	   \
+ 148:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****   __STDC_HOSTED__
+ 149:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 	uint32_t __ticks_dc;
+ 150:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 	extern void __builtin_avr_delay_cycles(unsigned long);
+ 151:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 	__tmp = ((F_CPU) / 1e3) * __ms;
+ 152:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+ 153:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 	#if defined(__DELAY_ROUND_DOWN__)
+ 154:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 		__ticks_dc = (uint32_t)fabs(__tmp);
+ 155:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+ 156:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 	#elif defined(__DELAY_ROUND_CLOSEST__)
+ 157:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 		__ticks_dc = (uint32_t)(fabs(__tmp)+0.5);
+ 158:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+ 159:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 	#else
+ 160:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 		//round up by default
+ 161:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+ 162:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 	#endif
+ 163:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+ 164:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 	__builtin_avr_delay_cycles(__ticks_dc);
+ 1563               		.loc 2 164 0
+ 1564 0886 8FEC      		ldi r24,lo8(1999)
+ 1565 0888 97E0      		ldi r25,hi8(1999)
+ 1566 088a 0197      		1: sbiw r24,1
+ 1567 088c 01F4      		brne 1b
+ 1568 088e 00C0      		rjmp .
+ 1569 0890 0000      		nop
+ 1570               	.LVL145:
+ 1571               	.L158:
+ 1572               	.LBE21:
+ 1573               	.LBE20:
+ 677:main.c        ****       cbuf = uart_getc();
+ 1574               		.loc 1 677 0 discriminator 1
+ 1575 0892 0E94 0000 		call uart_getc
+ 1576               	.LVL146:
+ 1577 0896 5C01      		movw r10,r24
+ 1578               	.LVL147:
+ 678:main.c        ****       if ( cbuf & UART_NO_DATA ) {
+ 1579               		.loc 1 678 0 discriminator 1
+ 1580 0898 90FF      		sbrs r25,0
+ 1581 089a 00C0      		rjmp .L169
+ 1582               	.LVL148:
+ 724:main.c        ****               break;
+ 725:main.c        ****           }
+ 726:main.c        ****               _delay_ms(1); /* FIXME: sleep a little.. */
+ 727:main.c        ****       }
+ 728:main.c        ****     }
+ 729:main.c        **** 
+ 730:main.c        ****     //quirk, substract last two bytes
+ 731:main.c        ****     chksum -= recv_buf[bpos-2] + recv_buf[bpos-1];
+ 1583               		.loc 1 731 0 discriminator 1
+ 1584 089c 292D      		mov r18,r9
+ 1585 089e 30E0      		ldi r19,0
+ 1586 08a0 FE01      		movw r30,r28
+ 1587 08a2 3197      		sbiw r30,1
+ 1588 08a4 E20F      		add r30,r18
+ 1589 08a6 F31F      		adc r31,r19
+ 1590 08a8 8081      		ld r24,Z
+ 1591 08aa FE01      		movw r30,r28
+ 1592 08ac E20F      		add r30,r18
+ 1593 08ae F31F      		adc r31,r19
+ 1594 08b0 F080      		ld r15,Z
+ 1595 08b2 2F2D      		mov r18,r15
+ 1596 08b4 30E0      		ldi r19,0
+ 1597 08b6 280F      		add r18,r24
+ 1598 08b8 311D      		adc r19,__zero_reg__
+ 1599 08ba 021B      		sub r16,r18
+ 1600 08bc 130B      		sbc r17,r19
+ 1601               	.LVL149:
+ 732:main.c        ****     chksum &= 0xFF;
+ 1602               		.loc 1 732 0 discriminator 1
+ 1603 08be 1127      		clr r17
+ 1604               	.LVL150:
+ 733:main.c        **** 
+ 734:main.c        ****     uint8_t chksum_recv = hex2dec(recv_buf[bpos-2])*16 + hex2dec(recv_buf[bpos-1]);
+ 1605               		.loc 1 734 0 discriminator 1
+ 1606 08c0 0E94 0000 		call hex2dec
+ 1607               	.LVL151:
+ 1608 08c4 E82E      		mov r14,r24
+ 1609 08c6 8F2D      		mov r24,r15
+ 1610 08c8 0E94 0000 		call hex2dec
+ 1611               	.LVL152:
+ 1612 08cc 90E1      		ldi r25,lo8(16)
+ 1613 08ce E99E      		mul r14,r25
+ 1614 08d0 800D      		add r24,r0
+ 1615 08d2 1124      		clr __zero_reg__
+ 1616               	.LVL153:
+ 735:main.c        ****     if (chksum != chksum_recv && bpos > 0)
+ 1617               		.loc 1 735 0 discriminator 1
+ 1618 08d4 90E0      		ldi r25,0
+ 1619 08d6 0817      		cp r16,r24
+ 1620 08d8 1907      		cpc r17,r25
+ 1621 08da 01F0      		breq .L170
+ 1622 08dc 9920      		tst r9
+ 1623 08de 01F0      		breq .L171
+ 736:main.c        ****       eflag |= (1<<5);
+ 1624               		.loc 1 736 0
+ 1625 08e0 2091 0000 		lds r18,eflag
+ 1626 08e4 2062      		ori r18,lo8(32)
+ 1627 08e6 00C0      		rjmp .L196
+ 1628               	.L170:
+ 737:main.c        ****     else if (chksum == chksum_recv && bpos > 0)
+ 1629               		.loc 1 737 0 discriminator 1
+ 1630 08e8 9920      		tst r9
+ 1631 08ea 01F0      		breq .L171
+ 738:main.c        ****       eflag &= ~(1<<5);
+ 1632               		.loc 1 738 0
+ 1633 08ec 2091 0000 		lds r18,eflag
+ 1634 08f0 2F7D      		andi r18,lo8(-33)
+ 1635               	.L196:
+ 1636 08f2 2093 0000 		sts eflag,r18
+ 1637               	.L171:
+ 739:main.c        **** 
+ 740:main.c        ****     /*
+ 741:main.c        ****     uint32_t tmpl;
+ 742:main.c        ****     uint16_t tmpi;
+ 743:main.c        ****     uint8_t  tmpb;
+ 744:main.c        ****     float tmpf;
+ 745:main.c        ****     */
+ 746:main.c        ****     if ((recv_buf[0] == 'C' || recv_buf[0] == '8') && chksum == chksum_recv) {
+ 1638               		.loc 1 746 0
+ 1639 08f6 2981      		ldd r18,Y+1
+ 1640 08f8 2334      		cpi r18,lo8(67)
+ 1641 08fa 01F0      		breq .L172
+ 1642               		.loc 1 746 0 is_stmt 0 discriminator 2
+ 1643 08fc 2833      		cpi r18,lo8(56)
+ 1644 08fe 01F0      		breq .+2
+ 1645 0900 00C0      		rjmp .L157
+ 1646               	.L172:
+ 1647               		.loc 1 746 0 discriminator 1
+ 1648 0902 0817      		cp r16,r24
+ 1649 0904 1907      		cpc r17,r25
+ 1650 0906 01F0      		breq .+2
+ 1651 0908 00C0      		rjmp .L157
+ 747:main.c        ****       switch (recv_buf[1]) {
+ 1652               		.loc 1 747 0 is_stmt 1
+ 1653 090a 8A81      		ldd r24,Y+2
+ 1654 090c 8234      		cpi r24,lo8(66)
+ 1655 090e 01F4      		brne .+2
+ 1656 0910 00C0      		rjmp .L179
+ 1657 0912 00F4      		brsh .L184
+ 1658 0914 8433      		cpi r24,lo8(52)
+ 1659 0916 01F4      		brne .+2
+ 1660 0918 00C0      		rjmp .L176
+ 1661 091a 00F4      		brsh .L185
+ 1662 091c 8233      		cpi r24,lo8(50)
+ 1663 091e 01F0      		breq .+2
+ 1664 0920 00C0      		rjmp .L174
+ 1665 0922 00C0      		rjmp .L175
+ 1666               	.L185:
+ 1667 0924 8833      		cpi r24,lo8(56)
+ 1668 0926 01F4      		brne .+2
+ 1669 0928 00C0      		rjmp .L177
+ 1670 092a 8933      		cpi r24,lo8(57)
+ 1671 092c 01F0      		breq .+2
+ 1672 092e 00C0      		rjmp .L174
+ 1673 0930 00C0      		rjmp .L178
+ 1674               	.L184:
+ 1675 0932 8434      		cpi r24,lo8(68)
+ 1676 0934 01F4      		brne .+2
+ 1677 0936 00C0      		rjmp .L181
+ 1678 0938 00F4      		brsh .+2
+ 1679 093a 00C0      		rjmp .L180
+ 1680 093c 8534      		cpi r24,lo8(69)
+ 1681 093e 01F4      		brne .+2
+ 1682 0940 00C0      		rjmp .L182
+ 1683 0942 8634      		cpi r24,lo8(70)
+ 1684 0944 01F0      		breq .+2
+ 1685 0946 00C0      		rjmp .L174
+ 1686 0948 00C0      		rjmp .L183
+ 1687               	.L175:
+ 748:main.c        ****         case '2':
+ 749:main.c        ****           LS("Status: ")
+ 750:main.c        ****           /* just push the bytes into buffer - no decode .. */
+ 751:main.c        ****           rmdata[0].b1 = hex2dec(recv_buf[2])*16 + hex2dec(recv_buf[3]);
+ 1688               		.loc 1 751 0
+ 1689 094a 8B81      		ldd r24,Y+3
+ 1690 094c 0E94 0000 		call hex2dec
+ 1691               	.LVL154:
+ 1692 0950 182F      		mov r17,r24
+ 1693 0952 8C81      		ldd r24,Y+4
+ 1694 0954 0E94 0000 		call hex2dec
+ 1695               	.LVL155:
+ 1696 0958 20E1      		ldi r18,lo8(16)
+ 1697 095a 129F      		mul r17,r18
+ 1698 095c 800D      		add r24,r0
+ 1699 095e 1124      		clr __zero_reg__
+ 1700 0960 8093 0000 		sts rmdata,r24
+ 752:main.c        ****           /*
+ 753:main.c        ****           tmpb = hex2dec(recv_buf[2])*16 + hex2dec(recv_buf[3]);
+ 754:main.c        ****           rmstate.error = (tmpb & 0x02);
+ 755:main.c        ****           rmstate.button = (tmpb & 0x08);
+ 756:main.c        ****           rmstate.alarm1 = (tmpb & 0x10);
+ 757:main.c        ****           rmstate.onbatt = (tmpb & 0x20);
+ 758:main.c        ****           LVB(tmpb)
+ 759:main.c        ****           */
+ 760:main.c        ****           rmdata[0].b2 = hex2dec(recv_buf[4])*16 + hex2dec(recv_buf[5]);
+ 1701               		.loc 1 760 0
+ 1702 0964 8D81      		ldd r24,Y+5
+ 1703 0966 0E94 0000 		call hex2dec
+ 1704               	.LVL156:
+ 1705 096a 182F      		mov r17,r24
+ 1706 096c 8E81      		ldd r24,Y+6
+ 1707 096e 0E94 0000 		call hex2dec
+ 1708               	.LVL157:
+ 1709 0972 40E1      		ldi r20,lo8(16)
+ 1710 0974 149F      		mul r17,r20
+ 1711 0976 800D      		add r24,r0
+ 1712 0978 1124      		clr __zero_reg__
+ 1713 097a 8093 0000 		sts rmdata+1,r24
+ 761:main.c        ****           /*
+ 762:main.c        ****           tmpb = hex2dec(recv_buf[4])*16 + hex2dec(recv_buf[5]);
+ 763:main.c        ****           rmstate.battlow = (tmpb & 0x01);
+ 764:main.c        ****           rmstate.smokealarm = (tmpb & 0x04);
+ 765:main.c        ****           rmstate.wirealarm = (tmpb & 0x08);
+ 766:main.c        ****           rmstate.rfalarm = (tmpb & 0x10);
+ 767:main.c        ****           rmstate.localtestalarm = (tmpb & 0x20);
+ 768:main.c        ****           rmstate.wiretestalarm = (tmpb & 0x40);
+ 769:main.c        ****           rmstate.rftestalarm = (tmpb & 0x80);
+ 770:main.c        ****           LVB(tmpb)
+ 771:main.c        ****           tmpb = hex2dec(recv_buf[6])*16 + hex2dec(recv_buf[7]);
+ 772:main.c        ****           */
+ 773:main.c        ****           rmdata[0].b3 = hex2dec(recv_buf[6])*16 + hex2dec(recv_buf[7]);
+ 1714               		.loc 1 773 0
+ 1715 097e 8F81      		ldd r24,Y+7
+ 1716 0980 0E94 0000 		call hex2dec
+ 1717               	.LVL158:
+ 1718 0984 182F      		mov r17,r24
+ 1719 0986 8885      		ldd r24,Y+8
+ 1720 0988 0E94 0000 		call hex2dec
+ 1721               	.LVL159:
+ 1722 098c 90E1      		ldi r25,lo8(16)
+ 1723 098e 199F      		mul r17,r25
+ 1724 0990 800D      		add r24,r0
+ 1725 0992 1124      		clr __zero_reg__
+ 1726 0994 8093 0000 		sts rmdata+2,r24
+ 774:main.c        ****           /*
+ 775:main.c        ****           rmstate.sbyte3 = tmpb;
+ 776:main.c        ****           LVB(tmpb)
+ 777:main.c        ****           tmpb = hex2dec(recv_buf[8])*16 + hex2dec(recv_buf[9]);
+ 778:main.c        ****           */
+ 779:main.c        ****           rmdata[0].b4 = hex2dec(recv_buf[8])*16 + hex2dec(recv_buf[9]);
+ 1727               		.loc 1 779 0
+ 1728 0998 8985      		ldd r24,Y+9
+ 1729 099a 0E94 0000 		call hex2dec
+ 1730               	.LVL160:
+ 1731 099e 182F      		mov r17,r24
+ 1732 09a0 8A85      		ldd r24,Y+10
+ 1733 09a2 0E94 0000 		call hex2dec
+ 1734               	.LVL161:
+ 1735 09a6 20E1      		ldi r18,lo8(16)
+ 1736 09a8 129F      		mul r17,r18
+ 1737 09aa 800D      		add r24,r0
+ 1738 09ac 1124      		clr __zero_reg__
+ 1739 09ae 8093 0000 		sts rmdata+3,r24
+ 780:main.c        ****           /*
+ 781:main.c        ****           rmstate.temp1err = (tmpb & 0x04);
+ 782:main.c        ****           rmstate.temp2err = (tmpb & 0x10);
+ 783:main.c        ****           rmstate.sbyte4 = tmpb;
+ 784:main.c        ****           LVB(tmpb)
+ 785:main.c        ****           LL
+ 786:main.c        ****           */
+ 787:main.c        ****           break;
+ 1740               		.loc 1 787 0
+ 1741 09b2 00C0      		rjmp .L174
+ 1742               	.L176:
+ 788:main.c        ****         case '4':
+ 789:main.c        ****           rmdata[0].u32_2 = (uint32_t) (hex2dec(recv_buf[2])*16) << 24;
+ 1743               		.loc 1 789 0
+ 1744 09b4 8B81      		ldd r24,Y+3
+ 1745 09b6 0E94 0000 		call hex2dec
+ 1746               	.LVL162:
+ 1747 09ba 882E      		mov r8,r24
+ 790:main.c        ****           rmdata[0].u32_2 += (uint32_t) (hex2dec(recv_buf[3])) << 24;
+ 1748               		.loc 1 790 0
+ 1749 09bc 8C81      		ldd r24,Y+4
+ 1750 09be 0E94 0000 		call hex2dec
+ 1751               	.LVL163:
+ 1752 09c2 182F      		mov r17,r24
+ 791:main.c        ****           rmdata[0].u32_2 += (uint32_t) (hex2dec(recv_buf[4])*16) << 16;
+ 1753               		.loc 1 791 0
+ 1754 09c4 8D81      		ldd r24,Y+5
+ 1755 09c6 0E94 0000 		call hex2dec
+ 1756               	.LVL164:
+ 1757 09ca E82E      		mov r14,r24
+ 792:main.c        ****           rmdata[0].u32_2 += (uint32_t) (hex2dec(recv_buf[5])) << 16;
+ 1758               		.loc 1 792 0
+ 1759 09cc 8E81      		ldd r24,Y+6
+ 1760 09ce 0E94 0000 		call hex2dec
+ 1761               	.LVL165:
+ 1762 09d2 082F      		mov r16,r24
+ 1763               	.LVL166:
+ 793:main.c        ****           rmdata[0].u32_2 += (uint32_t) (hex2dec(recv_buf[6])*16) << 8;
+ 1764               		.loc 1 793 0
+ 1765 09d4 8F81      		ldd r24,Y+7
+ 1766 09d6 0E94 0000 		call hex2dec
+ 1767               	.LVL167:
+ 1768 09da F82E      		mov r15,r24
+ 794:main.c        ****           rmdata[0].u32_2 += (uint32_t) (hex2dec(recv_buf[7])) << 8;
+ 1769               		.loc 1 794 0
+ 1770 09dc 8885      		ldd r24,Y+8
+ 1771 09de 0E94 0000 		call hex2dec
+ 1772               	.LVL168:
+ 1773 09e2 D82E      		mov r13,r24
+ 795:main.c        ****           rmdata[0].u32_2 += (uint32_t) (hex2dec(recv_buf[8])*16);
+ 1774               		.loc 1 795 0
+ 1775 09e4 8985      		ldd r24,Y+9
+ 1776 09e6 0E94 0000 		call hex2dec
+ 1777               	.LVL169:
+ 1778 09ea B82E      		mov r11,r24
+ 796:main.c        ****           rmdata[0].u32_2 += (uint32_t) (hex2dec(recv_buf[9]));
+ 1779               		.loc 1 796 0
+ 1780 09ec 8A85      		ldd r24,Y+10
+ 1781 09ee 0E94 0000 		call hex2dec
+ 1782               	.LVL170:
+ 790:main.c        ****           rmdata[0].u32_2 += (uint32_t) (hex2dec(recv_buf[3])) << 24;
+ 1783               		.loc 1 790 0
+ 1784 09f2 412F      		mov r20,r17
+ 1785 09f4 50E0      		ldi r21,0
+ 1786 09f6 60E0      		ldi r22,0
+ 1787 09f8 70E0      		ldi r23,0
+ 1788 09fa 742F      		mov r23,r20
+ 1789 09fc 6627      		clr r22
+ 1790 09fe 5527      		clr r21
+ 1791 0a00 4427      		clr r20
+ 792:main.c        ****           rmdata[0].u32_2 += (uint32_t) (hex2dec(recv_buf[5])) << 16;
+ 1792               		.loc 1 792 0
+ 1793 0a02 10E0      		ldi r17,0
+ 1794 0a04 20E0      		ldi r18,0
+ 1795 0a06 30E0      		ldi r19,0
+ 1796 0a08 9801      		movw r18,r16
+ 1797 0a0a 1127      		clr r17
+ 1798 0a0c 0027      		clr r16
+ 790:main.c        ****           rmdata[0].u32_2 += (uint32_t) (hex2dec(recv_buf[3])) << 24;
+ 1799               		.loc 1 790 0
+ 1800 0a0e 400F      		add r20,r16
+ 1801 0a10 511F      		adc r21,r17
+ 1802 0a12 621F      		adc r22,r18
+ 1803 0a14 731F      		adc r23,r19
+ 791:main.c        ****           rmdata[0].u32_2 += (uint32_t) (hex2dec(recv_buf[4])*16) << 16;
+ 1804               		.loc 1 791 0
+ 1805 0a16 480F      		add r20,r24
+ 1806 0a18 511D      		adc r21,__zero_reg__
+ 1807 0a1a 611D      		adc r22,__zero_reg__
+ 1808 0a1c 711D      		adc r23,__zero_reg__
+ 794:main.c        ****           rmdata[0].u32_2 += (uint32_t) (hex2dec(recv_buf[7])) << 8;
+ 1809               		.loc 1 794 0
+ 1810 0a1e 8D2D      		mov r24,r13
+ 1811 0a20 90E0      		ldi r25,0
+ 1812 0a22 A0E0      		ldi r26,0
+ 1813 0a24 B0E0      		ldi r27,0
+ 1814 0a26 BA2F      		mov r27,r26
+ 1815 0a28 A92F      		mov r26,r25
+ 1816 0a2a 982F      		mov r25,r24
+ 1817 0a2c 8827      		clr r24
+ 792:main.c        ****           rmdata[0].u32_2 += (uint32_t) (hex2dec(recv_buf[5])) << 16;
+ 1818               		.loc 1 792 0
+ 1819 0a2e 480F      		add r20,r24
+ 1820 0a30 591F      		adc r21,r25
+ 1821 0a32 6A1F      		adc r22,r26
+ 1822 0a34 7B1F      		adc r23,r27
+ 795:main.c        ****           rmdata[0].u32_2 += (uint32_t) (hex2dec(recv_buf[8])*16);
+ 1823               		.loc 1 795 0
+ 1824 0a36 80E1      		ldi r24,lo8(16)
+ 1825 0a38 B89E      		mul r11,r24
+ 1826 0a3a 8001      		movw r16,r0
+ 1827 0a3c 1124      		clr __zero_reg__
+ 1828 0a3e 2227      		clr r18
+ 1829 0a40 17FD      		sbrc r17,7
+ 1830 0a42 2095      		com r18
+ 1831 0a44 322F      		mov r19,r18
+ 793:main.c        ****           rmdata[0].u32_2 += (uint32_t) (hex2dec(recv_buf[6])*16) << 8;
+ 1832               		.loc 1 793 0
+ 1833 0a46 400F      		add r20,r16
+ 1834 0a48 511F      		adc r21,r17
+ 1835 0a4a 621F      		adc r22,r18
+ 1836 0a4c 731F      		adc r23,r19
+ 789:main.c        ****           rmdata[0].u32_2 = (uint32_t) (hex2dec(recv_buf[2])*16) << 24;
+ 1837               		.loc 1 789 0
+ 1838 0a4e 90E1      		ldi r25,lo8(16)
+ 1839 0a50 899E      		mul r8,r25
+ 1840 0a52 4001      		movw r8,r0
+ 1841 0a54 1124      		clr __zero_reg__
+ 1842 0a56 AA24      		clr r10
+ 1843 0a58 97FC      		sbrc r9,7
+ 1844 0a5a A094      		com r10
+ 1845 0a5c BA2C      		mov r11,r10
+ 1846 0a5e B82C      		mov r11,r8
+ 1847 0a60 AA24      		clr r10
+ 1848 0a62 9924      		clr r9
+ 1849 0a64 8824      		clr r8
+ 794:main.c        ****           rmdata[0].u32_2 += (uint32_t) (hex2dec(recv_buf[7])) << 8;
+ 1850               		.loc 1 794 0
+ 1851 0a66 480D      		add r20,r8
+ 1852 0a68 591D      		adc r21,r9
+ 1853 0a6a 6A1D      		adc r22,r10
+ 1854 0a6c 7B1D      		adc r23,r11
+ 791:main.c        ****           rmdata[0].u32_2 += (uint32_t) (hex2dec(recv_buf[4])*16) << 16;
+ 1855               		.loc 1 791 0
+ 1856 0a6e 20E1      		ldi r18,lo8(16)
+ 1857 0a70 E29E      		mul r14,r18
+ 1858 0a72 8001      		movw r16,r0
+ 1859 0a74 1124      		clr __zero_reg__
+ 1860 0a76 2227      		clr r18
+ 1861 0a78 17FD      		sbrc r17,7
+ 1862 0a7a 2095      		com r18
+ 1863 0a7c 322F      		mov r19,r18
+ 1864 0a7e 9801      		movw r18,r16
+ 1865 0a80 1127      		clr r17
+ 1866 0a82 0027      		clr r16
+ 795:main.c        ****           rmdata[0].u32_2 += (uint32_t) (hex2dec(recv_buf[8])*16);
+ 1867               		.loc 1 795 0
+ 1868 0a84 400F      		add r20,r16
+ 1869 0a86 511F      		adc r21,r17
+ 1870 0a88 621F      		adc r22,r18
+ 1871 0a8a 731F      		adc r23,r19
+ 793:main.c        ****           rmdata[0].u32_2 += (uint32_t) (hex2dec(recv_buf[6])*16) << 8;
+ 1872               		.loc 1 793 0
+ 1873 0a8c 20E1      		ldi r18,lo8(16)
+ 1874 0a8e F29E      		mul r15,r18
+ 1875 0a90 C001      		movw r24,r0
+ 1876 0a92 1124      		clr __zero_reg__
+ 1877 0a94 AA27      		clr r26
+ 1878 0a96 97FD      		sbrc r25,7
+ 1879 0a98 A095      		com r26
+ 1880 0a9a BA2F      		mov r27,r26
+ 1881 0a9c BA2F      		mov r27,r26
+ 1882 0a9e A92F      		mov r26,r25
+ 1883 0aa0 982F      		mov r25,r24
+ 1884 0aa2 8827      		clr r24
+ 1885               		.loc 1 796 0
+ 1886 0aa4 480F      		add r20,r24
+ 1887 0aa6 591F      		adc r21,r25
+ 1888 0aa8 6A1F      		adc r22,r26
+ 1889 0aaa 7B1F      		adc r23,r27
+ 1890 0aac 4093 0000 		sts rmdata+4,r20
+ 1891 0ab0 5093 0000 		sts rmdata+4+1,r21
+ 1892 0ab4 6093 0000 		sts rmdata+4+2,r22
+ 1893 0ab8 7093 0000 		sts rmdata+4+3,r23
+ 797:main.c        ****           /*
+ 798:main.c        ****           LS("serial: ")
+ 799:main.c        ****           tmpl = (uint32_t) (hex2dec(recv_buf[2])*16) << 24;
+ 800:main.c        ****           tmpl += (uint32_t) (hex2dec(recv_buf[3])) << 24;
+ 801:main.c        ****           tmpl += (uint32_t) (hex2dec(recv_buf[4])*16) << 16;
+ 802:main.c        ****           tmpl += (uint32_t) (hex2dec(recv_buf[5])) << 16;
+ 803:main.c        ****           tmpl += (uint32_t) (hex2dec(recv_buf[6])*16) << 8;
+ 804:main.c        ****           tmpl += (uint32_t) (hex2dec(recv_buf[7])) << 8;
+ 805:main.c        ****           tmpl += (uint32_t) (hex2dec(recv_buf[8])*16);
+ 806:main.c        ****           tmpl += (uint32_t) (hex2dec(recv_buf[9]));
+ 807:main.c        ****           rmstate.serial = tmpl;
+ 808:main.c        ****           LV(tmpl) LL
+ 809:main.c        ****           */
+ 810:main.c        ****           break;
+ 1894               		.loc 1 810 0
+ 1895 0abc 00C0      		rjmp .L174
+ 1896               	.LVL171:
+ 1897               	.L177:
+ 811:main.c        ****         case '8':
+ 812:main.c        ****           rmdata[1].b1 = (hex2dec(recv_buf[2])*16);
+ 1898               		.loc 1 812 0
+ 1899 0abe 8B81      		ldd r24,Y+3
+ 1900 0ac0 0E94 0000 		call hex2dec
+ 1901               	.LVL172:
+ 1902 0ac4 182F      		mov r17,r24
+ 813:main.c        ****           rmdata[1].b1 += (hex2dec(recv_buf[3]));
+ 1903               		.loc 1 813 0
+ 1904 0ac6 8C81      		ldd r24,Y+4
+ 1905 0ac8 0E94 0000 		call hex2dec
+ 1906               	.LVL173:
+ 1907 0acc 40E1      		ldi r20,lo8(16)
+ 1908 0ace 149F      		mul r17,r20
+ 1909 0ad0 800D      		add r24,r0
+ 1910 0ad2 1124      		clr __zero_reg__
+ 1911 0ad4 8093 0000 		sts rmdata+8,r24
+ 814:main.c        ****           rmdata[1].b2 = (hex2dec(recv_buf[4])*16);
+ 1912               		.loc 1 814 0
+ 1913 0ad8 8D81      		ldd r24,Y+5
+ 1914 0ada 0E94 0000 		call hex2dec
+ 1915               	.LVL174:
+ 1916 0ade 182F      		mov r17,r24
+ 815:main.c        ****           rmdata[1].b2 += (hex2dec(recv_buf[5]));
+ 1917               		.loc 1 815 0
+ 1918 0ae0 8E81      		ldd r24,Y+6
+ 1919 0ae2 0E94 0000 		call hex2dec
+ 1920               	.LVL175:
+ 1921 0ae6 90E1      		ldi r25,lo8(16)
+ 1922 0ae8 199F      		mul r17,r25
+ 1923 0aea 800D      		add r24,r0
+ 1924 0aec 1124      		clr __zero_reg__
+ 1925 0aee 8093 0000 		sts rmdata+9,r24
+ 816:main.c        ****           rmdata[1].b3 = (hex2dec(recv_buf[6])*16);
+ 1926               		.loc 1 816 0
+ 1927 0af2 8F81      		ldd r24,Y+7
+ 1928 0af4 0E94 0000 		call hex2dec
+ 1929               	.LVL176:
+ 1930 0af8 182F      		mov r17,r24
+ 817:main.c        ****           rmdata[1].b3 += (hex2dec(recv_buf[7]));
+ 1931               		.loc 1 817 0
+ 1932 0afa 8885      		ldd r24,Y+8
+ 1933 0afc 0E94 0000 		call hex2dec
+ 1934               	.LVL177:
+ 1935 0b00 20E1      		ldi r18,lo8(16)
+ 1936 0b02 129F      		mul r17,r18
+ 1937 0b04 800D      		add r24,r0
+ 1938 0b06 1124      		clr __zero_reg__
+ 1939 0b08 8093 0000 		sts rmdata+10,r24
+ 818:main.c        ****           rmdata[1].b4 = (hex2dec(recv_buf[8])*16);
+ 1940               		.loc 1 818 0
+ 1941 0b0c 8985      		ldd r24,Y+9
+ 1942 0b0e 0E94 0000 		call hex2dec
+ 1943               	.LVL178:
+ 1944 0b12 182F      		mov r17,r24
+ 819:main.c        ****           rmdata[1].b4 += (hex2dec(recv_buf[9]));
+ 1945               		.loc 1 819 0
+ 1946 0b14 8A85      		ldd r24,Y+10
+ 1947 0b16 0E94 0000 		call hex2dec
+ 1948               	.LVL179:
+ 1949 0b1a 40E1      		ldi r20,lo8(16)
+ 1950 0b1c 149F      		mul r17,r20
+ 1951 0b1e 800D      		add r24,r0
+ 1952 0b20 1124      		clr __zero_reg__
+ 1953 0b22 8093 0000 		sts rmdata+11,r24
+ 820:main.c        ****           /*
+ 821:main.c        ****           LS("?: ")
+ 822:main.c        ****           tmpl = (uint32_t) (hex2dec(recv_buf[2])*16) << 24;
+ 823:main.c        ****           tmpl += (uint32_t) (hex2dec(recv_buf[3])) << 24;
+ 824:main.c        ****           tmpl += (uint32_t) (hex2dec(recv_buf[4])*16) << 16;
+ 825:main.c        ****           tmpl += (uint32_t) (hex2dec(recv_buf[5])) << 16;
+ 826:main.c        ****           tmpl += (uint32_t) (hex2dec(recv_buf[6])*16) << 8;
+ 827:main.c        ****           tmpl += (uint32_t) (hex2dec(recv_buf[7])) << 8;
+ 828:main.c        ****           tmpl += (uint32_t) (hex2dec(recv_buf[8])*16);
+ 829:main.c        ****           tmpl += (uint32_t) (hex2dec(recv_buf[9]));
+ 830:main.c        ****           LV(tmpl) LL
+ 831:main.c        ****           */
+ 832:main.c        ****           break;
+ 1954               		.loc 1 832 0
+ 1955 0b26 00C0      		rjmp .L174
+ 1956               	.L178:
+ 833:main.c        ****         case '9':
+ 834:main.c        ****           rmdata[1].u32_2 = (uint32_t) (hex2dec(recv_buf[2])*16) << 24;
+ 1957               		.loc 1 834 0
+ 1958 0b28 8B81      		ldd r24,Y+3
+ 1959 0b2a 0E94 0000 		call hex2dec
+ 1960               	.LVL180:
+ 1961 0b2e 882E      		mov r8,r24
+ 835:main.c        ****           rmdata[1].u32_2 += (uint32_t) (hex2dec(recv_buf[3])) << 24;
+ 1962               		.loc 1 835 0
+ 1963 0b30 8C81      		ldd r24,Y+4
+ 1964 0b32 0E94 0000 		call hex2dec
+ 1965               	.LVL181:
+ 1966 0b36 182F      		mov r17,r24
+ 836:main.c        ****           rmdata[1].u32_2 += (uint32_t) (hex2dec(recv_buf[4])*16) << 16;
+ 1967               		.loc 1 836 0
+ 1968 0b38 8D81      		ldd r24,Y+5
+ 1969 0b3a 0E94 0000 		call hex2dec
+ 1970               	.LVL182:
+ 1971 0b3e E82E      		mov r14,r24
+ 837:main.c        ****           rmdata[1].u32_2 += (uint32_t) (hex2dec(recv_buf[5])) << 16;
+ 1972               		.loc 1 837 0
+ 1973 0b40 8E81      		ldd r24,Y+6
+ 1974 0b42 0E94 0000 		call hex2dec
+ 1975               	.LVL183:
+ 1976 0b46 082F      		mov r16,r24
+ 1977               	.LVL184:
+ 838:main.c        ****           rmdata[1].u32_2 += (uint32_t) (hex2dec(recv_buf[6])*16) << 8;
+ 1978               		.loc 1 838 0
+ 1979 0b48 8F81      		ldd r24,Y+7
+ 1980 0b4a 0E94 0000 		call hex2dec
+ 1981               	.LVL185:
+ 1982 0b4e F82E      		mov r15,r24
+ 839:main.c        ****           rmdata[1].u32_2 += (uint32_t) (hex2dec(recv_buf[7])) << 8;
+ 1983               		.loc 1 839 0
+ 1984 0b50 8885      		ldd r24,Y+8
+ 1985 0b52 0E94 0000 		call hex2dec
+ 1986               	.LVL186:
+ 1987 0b56 D82E      		mov r13,r24
+ 840:main.c        ****           rmdata[1].u32_2 += (uint32_t) (hex2dec(recv_buf[8])*16);
+ 1988               		.loc 1 840 0
+ 1989 0b58 8985      		ldd r24,Y+9
+ 1990 0b5a 0E94 0000 		call hex2dec
+ 1991               	.LVL187:
+ 1992 0b5e B82E      		mov r11,r24
+ 841:main.c        ****           rmdata[1].u32_2 += (uint32_t) (hex2dec(recv_buf[9]));
+ 1993               		.loc 1 841 0
+ 1994 0b60 8A85      		ldd r24,Y+10
+ 1995 0b62 0E94 0000 		call hex2dec
+ 1996               	.LVL188:
+ 835:main.c        ****           rmdata[1].u32_2 += (uint32_t) (hex2dec(recv_buf[3])) << 24;
+ 1997               		.loc 1 835 0
+ 1998 0b66 412F      		mov r20,r17
+ 1999 0b68 50E0      		ldi r21,0
+ 2000 0b6a 60E0      		ldi r22,0
+ 2001 0b6c 70E0      		ldi r23,0
+ 2002 0b6e 742F      		mov r23,r20
+ 2003 0b70 6627      		clr r22
+ 2004 0b72 5527      		clr r21
+ 2005 0b74 4427      		clr r20
+ 837:main.c        ****           rmdata[1].u32_2 += (uint32_t) (hex2dec(recv_buf[5])) << 16;
+ 2006               		.loc 1 837 0
+ 2007 0b76 10E0      		ldi r17,0
+ 2008 0b78 20E0      		ldi r18,0
+ 2009 0b7a 30E0      		ldi r19,0
+ 2010 0b7c 9801      		movw r18,r16
+ 2011 0b7e 1127      		clr r17
+ 2012 0b80 0027      		clr r16
+ 835:main.c        ****           rmdata[1].u32_2 += (uint32_t) (hex2dec(recv_buf[3])) << 24;
+ 2013               		.loc 1 835 0
+ 2014 0b82 400F      		add r20,r16
+ 2015 0b84 511F      		adc r21,r17
+ 2016 0b86 621F      		adc r22,r18
+ 2017 0b88 731F      		adc r23,r19
+ 836:main.c        ****           rmdata[1].u32_2 += (uint32_t) (hex2dec(recv_buf[4])*16) << 16;
+ 2018               		.loc 1 836 0
+ 2019 0b8a 480F      		add r20,r24
+ 2020 0b8c 511D      		adc r21,__zero_reg__
+ 2021 0b8e 611D      		adc r22,__zero_reg__
+ 2022 0b90 711D      		adc r23,__zero_reg__
+ 839:main.c        ****           rmdata[1].u32_2 += (uint32_t) (hex2dec(recv_buf[7])) << 8;
+ 2023               		.loc 1 839 0
+ 2024 0b92 8D2D      		mov r24,r13
+ 2025 0b94 90E0      		ldi r25,0
+ 2026 0b96 A0E0      		ldi r26,0
+ 2027 0b98 B0E0      		ldi r27,0
+ 2028 0b9a BA2F      		mov r27,r26
+ 2029 0b9c A92F      		mov r26,r25
+ 2030 0b9e 982F      		mov r25,r24
+ 2031 0ba0 8827      		clr r24
+ 837:main.c        ****           rmdata[1].u32_2 += (uint32_t) (hex2dec(recv_buf[5])) << 16;
+ 2032               		.loc 1 837 0
+ 2033 0ba2 480F      		add r20,r24
+ 2034 0ba4 591F      		adc r21,r25
+ 2035 0ba6 6A1F      		adc r22,r26
+ 2036 0ba8 7B1F      		adc r23,r27
+ 840:main.c        ****           rmdata[1].u32_2 += (uint32_t) (hex2dec(recv_buf[8])*16);
+ 2037               		.loc 1 840 0
+ 2038 0baa 80E1      		ldi r24,lo8(16)
+ 2039 0bac B89E      		mul r11,r24
+ 2040 0bae 8001      		movw r16,r0
+ 2041 0bb0 1124      		clr __zero_reg__
+ 2042 0bb2 2227      		clr r18
+ 2043 0bb4 17FD      		sbrc r17,7
+ 2044 0bb6 2095      		com r18
+ 2045 0bb8 322F      		mov r19,r18
+ 838:main.c        ****           rmdata[1].u32_2 += (uint32_t) (hex2dec(recv_buf[6])*16) << 8;
+ 2046               		.loc 1 838 0
+ 2047 0bba 400F      		add r20,r16
+ 2048 0bbc 511F      		adc r21,r17
+ 2049 0bbe 621F      		adc r22,r18
+ 2050 0bc0 731F      		adc r23,r19
+ 834:main.c        ****           rmdata[1].u32_2 = (uint32_t) (hex2dec(recv_buf[2])*16) << 24;
+ 2051               		.loc 1 834 0
+ 2052 0bc2 90E1      		ldi r25,lo8(16)
+ 2053 0bc4 899E      		mul r8,r25
+ 2054 0bc6 4001      		movw r8,r0
+ 2055 0bc8 1124      		clr __zero_reg__
+ 2056 0bca AA24      		clr r10
+ 2057 0bcc 97FC      		sbrc r9,7
+ 2058 0bce A094      		com r10
+ 2059 0bd0 BA2C      		mov r11,r10
+ 2060 0bd2 B82C      		mov r11,r8
+ 2061 0bd4 AA24      		clr r10
+ 2062 0bd6 9924      		clr r9
+ 2063 0bd8 8824      		clr r8
+ 839:main.c        ****           rmdata[1].u32_2 += (uint32_t) (hex2dec(recv_buf[7])) << 8;
+ 2064               		.loc 1 839 0
+ 2065 0bda 480D      		add r20,r8
+ 2066 0bdc 591D      		adc r21,r9
+ 2067 0bde 6A1D      		adc r22,r10
+ 2068 0be0 7B1D      		adc r23,r11
+ 836:main.c        ****           rmdata[1].u32_2 += (uint32_t) (hex2dec(recv_buf[4])*16) << 16;
+ 2069               		.loc 1 836 0
+ 2070 0be2 20E1      		ldi r18,lo8(16)
+ 2071 0be4 E29E      		mul r14,r18
+ 2072 0be6 8001      		movw r16,r0
+ 2073 0be8 1124      		clr __zero_reg__
+ 2074 0bea 2227      		clr r18
+ 2075 0bec 17FD      		sbrc r17,7
+ 2076 0bee 2095      		com r18
+ 2077 0bf0 322F      		mov r19,r18
+ 2078 0bf2 9801      		movw r18,r16
+ 2079 0bf4 1127      		clr r17
+ 2080 0bf6 0027      		clr r16
+ 840:main.c        ****           rmdata[1].u32_2 += (uint32_t) (hex2dec(recv_buf[8])*16);
+ 2081               		.loc 1 840 0
+ 2082 0bf8 400F      		add r20,r16
+ 2083 0bfa 511F      		adc r21,r17
+ 2084 0bfc 621F      		adc r22,r18
+ 2085 0bfe 731F      		adc r23,r19
+ 838:main.c        ****           rmdata[1].u32_2 += (uint32_t) (hex2dec(recv_buf[6])*16) << 8;
+ 2086               		.loc 1 838 0
+ 2087 0c00 20E1      		ldi r18,lo8(16)
+ 2088 0c02 F29E      		mul r15,r18
+ 2089 0c04 C001      		movw r24,r0
+ 2090 0c06 1124      		clr __zero_reg__
+ 2091 0c08 AA27      		clr r26
+ 2092 0c0a 97FD      		sbrc r25,7
+ 2093 0c0c A095      		com r26
+ 2094 0c0e BA2F      		mov r27,r26
+ 2095 0c10 BA2F      		mov r27,r26
+ 2096 0c12 A92F      		mov r26,r25
+ 2097 0c14 982F      		mov r25,r24
+ 2098 0c16 8827      		clr r24
+ 2099               		.loc 1 841 0
+ 2100 0c18 480F      		add r20,r24
+ 2101 0c1a 591F      		adc r21,r25
+ 2102 0c1c 6A1F      		adc r22,r26
+ 2103 0c1e 7B1F      		adc r23,r27
+ 2104 0c20 4093 0000 		sts rmdata+12,r20
+ 2105 0c24 5093 0000 		sts rmdata+12+1,r21
+ 2106 0c28 6093 0000 		sts rmdata+12+2,r22
+ 2107 0c2c 7093 0000 		sts rmdata+12+3,r23
+ 842:main.c        ****           /*
+ 843:main.c        ****           LS("Runtime: ")
+ 844:main.c        ****           tmpl = (uint32_t) (hex2dec(recv_buf[2])*16) << 24;
+ 845:main.c        ****           tmpl += (uint32_t) (hex2dec(recv_buf[3])) << 24;
+ 846:main.c        ****           tmpl += (uint32_t) (hex2dec(recv_buf[4])*16) << 16;
+ 847:main.c        ****           tmpl += (uint32_t) (hex2dec(recv_buf[5])) << 16;
+ 848:main.c        ****           tmpl += (uint32_t) (hex2dec(recv_buf[6])*16) << 8;
+ 849:main.c        ****           tmpl += (uint32_t) (hex2dec(recv_buf[7])) << 8;
+ 850:main.c        ****           tmpl += (uint32_t) (hex2dec(recv_buf[8])*16);
+ 851:main.c        ****           tmpl += (uint32_t) (hex2dec(recv_buf[9]));
+ 852:main.c        ****           rmstate.uptime = tmpl/4/60/60;
+ 853:main.c        ****           LV(tmpl/4) LS(" sek = ") LV(tmpl/4/60/60) LS("h") LL
+ 854:main.c        ****           */
+ 855:main.c        ****           break;
+ 2108               		.loc 1 855 0
+ 2109 0c30 00C0      		rjmp .L174
+ 2110               	.LVL189:
+ 2111               	.L179:
+ 856:main.c        ****         case 'B':
+ 857:main.c        ****           rmdata[2].u16_1 = (uint16_t) (hex2dec(recv_buf[2])*16) << 8;
+ 2112               		.loc 1 857 0
+ 2113 0c32 8B81      		ldd r24,Y+3
+ 2114 0c34 0E94 0000 		call hex2dec
+ 2115               	.LVL190:
+ 2116 0c38 182F      		mov r17,r24
+ 858:main.c        ****           rmdata[2].u16_1 += (uint16_t) (hex2dec(recv_buf[3])) << 8;
+ 2117               		.loc 1 858 0
+ 2118 0c3a 8C81      		ldd r24,Y+4
+ 2119 0c3c 0E94 0000 		call hex2dec
+ 2120               	.LVL191:
+ 2121 0c40 F82E      		mov r15,r24
+ 859:main.c        ****           rmdata[2].u16_1 += (uint16_t) (hex2dec(recv_buf[4])*16);
+ 2122               		.loc 1 859 0
+ 2123 0c42 8D81      		ldd r24,Y+5
+ 2124 0c44 0E94 0000 		call hex2dec
+ 2125               	.LVL192:
+ 2126 0c48 082F      		mov r16,r24
+ 2127               	.LVL193:
+ 860:main.c        ****           rmdata[2].u16_1 += (uint16_t) (hex2dec(recv_buf[5]));
+ 2128               		.loc 1 860 0
+ 2129 0c4a 8E81      		ldd r24,Y+6
+ 2130 0c4c 0E94 0000 		call hex2dec
+ 2131               	.LVL194:
+ 858:main.c        ****           rmdata[2].u16_1 += (uint16_t) (hex2dec(recv_buf[3])) << 8;
+ 2132               		.loc 1 858 0
+ 2133 0c50 3F2D      		mov r19,r15
+ 2134 0c52 20E0      		ldi r18,0
+ 2135 0c54 280F      		add r18,r24
+ 2136 0c56 311D      		adc r19,__zero_reg__
+ 859:main.c        ****           rmdata[2].u16_1 += (uint16_t) (hex2dec(recv_buf[4])*16);
+ 2137               		.loc 1 859 0
+ 2138 0c58 40E1      		ldi r20,lo8(16)
+ 2139 0c5a 049F      		mul r16,r20
+ 2140 0c5c 200D      		add r18,r0
+ 2141 0c5e 311D      		adc r19,r1
+ 2142 0c60 1124      		clr __zero_reg__
+ 857:main.c        ****           rmdata[2].u16_1 = (uint16_t) (hex2dec(recv_buf[2])*16) << 8;
+ 2143               		.loc 1 857 0
+ 2144 0c62 40E1      		ldi r20,lo8(16)
+ 2145 0c64 149F      		mul r17,r20
+ 2146 0c66 C001      		movw r24,r0
+ 2147 0c68 1124      		clr __zero_reg__
+ 2148 0c6a 982F      		mov r25,r24
+ 2149 0c6c 8827      		clr r24
+ 2150               		.loc 1 860 0
+ 2151 0c6e 280F      		add r18,r24
+ 2152 0c70 391F      		adc r19,r25
+ 2153 0c72 3093 0000 		sts rmdata+16+1,r19
+ 2154 0c76 2093 0000 		sts rmdata+16,r18
+ 861:main.c        ****           /*
+ 862:main.c        ****           LS("Smoke: ")
+ 863:main.c        ****           tmpi = (uint16_t) (hex2dec(recv_buf[2])*16) << 8;
+ 864:main.c        ****           tmpi += (uint16_t) (hex2dec(recv_buf[3])) << 8;
+ 865:main.c        ****           tmpi += (uint16_t) (hex2dec(recv_buf[4])*16);
+ 866:main.c        ****           tmpi += (uint16_t) (hex2dec(recv_buf[5]));
+ 867:main.c        ****           rmstate.smokeval = tmpi;
+ 868:main.c        ****           */
+ 869:main.c        ****           rmdata[2].b3 = (hex2dec(recv_buf[6])*16);
+ 2155               		.loc 1 869 0
+ 2156 0c7a 8F81      		ldd r24,Y+7
+ 2157 0c7c 0E94 0000 		call hex2dec
+ 2158               	.LVL195:
+ 2159 0c80 182F      		mov r17,r24
+ 870:main.c        ****           rmdata[2].b3 += (hex2dec(recv_buf[7]));
+ 2160               		.loc 1 870 0
+ 2161 0c82 8885      		ldd r24,Y+8
+ 2162 0c84 0E94 0000 		call hex2dec
+ 2163               	.LVL196:
+ 2164 0c88 90E1      		ldi r25,lo8(16)
+ 2165 0c8a 199F      		mul r17,r25
+ 2166 0c8c 800D      		add r24,r0
+ 2167 0c8e 1124      		clr __zero_reg__
+ 2168 0c90 8093 0000 		sts rmdata+18,r24
+ 871:main.c        ****           /*
+ 872:main.c        ****           LV(tmpi) LL //tmpf = tmpi *0.003223; // floats aren't good for uC
+ 873:main.c        ****           tmpb = (hex2dec(recv_buf[6])*16);
+ 874:main.c        ****           tmpb += (hex2dec(recv_buf[7]));
+ 875:main.c        ****           rmstate.smokealarms = tmpb;
+ 876:main.c        ****           */
+ 877:main.c        ****           rmdata[2].b4 = (hex2dec(recv_buf[8])*16);
+ 2169               		.loc 1 877 0
+ 2170 0c94 8985      		ldd r24,Y+9
+ 2171 0c96 0E94 0000 		call hex2dec
+ 2172               	.LVL197:
+ 2173 0c9a 182F      		mov r17,r24
+ 878:main.c        ****           rmdata[2].b4 += (hex2dec(recv_buf[9]));
+ 2174               		.loc 1 878 0
+ 2175 0c9c 8A85      		ldd r24,Y+10
+ 2176 0c9e 0E94 0000 		call hex2dec
+ 2177               	.LVL198:
+ 2178 0ca2 20E1      		ldi r18,lo8(16)
+ 2179 0ca4 129F      		mul r17,r18
+ 2180 0ca6 800D      		add r24,r0
+ 2181 0ca8 1124      		clr __zero_reg__
+ 2182 0caa 8093 0000 		sts rmdata+19,r24
+ 879:main.c        ****           /*
+ 880:main.c        ****           LS("Smoke-Alarms: ") LV(tmpb) LL
+ 881:main.c        ****           tmpb = (hex2dec(recv_buf[8])*16);
+ 882:main.c        ****           tmpb += (hex2dec(recv_buf[9]));
+ 883:main.c        ****           rmstate.smokedirt = tmpb;
+ 884:main.c        ****           LS("Dirt: ") LV(tmpb) LL
+ 885:main.c        ****           */
+ 886:main.c        ****           break;
+ 2183               		.loc 1 886 0
+ 2184 0cae 00C0      		rjmp .L174
+ 2185               	.LVL199:
+ 2186               	.L180:
+ 887:main.c        ****         case 'C':
+ 888:main.c        ****           rmdata[2].u16_3 = (uint16_t) (hex2dec(recv_buf[2])*16) << 8;
+ 2187               		.loc 1 888 0
+ 2188 0cb0 8B81      		ldd r24,Y+3
+ 2189 0cb2 0E94 0000 		call hex2dec
+ 2190               	.LVL200:
+ 2191 0cb6 182F      		mov r17,r24
+ 889:main.c        ****           rmdata[2].u16_3 += (uint16_t) (hex2dec(recv_buf[3])) << 8;
+ 2192               		.loc 1 889 0
+ 2193 0cb8 8C81      		ldd r24,Y+4
+ 2194 0cba 0E94 0000 		call hex2dec
+ 2195               	.LVL201:
+ 2196 0cbe F82E      		mov r15,r24
+ 890:main.c        ****           rmdata[2].u16_3 += (uint16_t) (hex2dec(recv_buf[4])*16);
+ 2197               		.loc 1 890 0
+ 2198 0cc0 8D81      		ldd r24,Y+5
+ 2199 0cc2 0E94 0000 		call hex2dec
+ 2200               	.LVL202:
+ 2201 0cc6 082F      		mov r16,r24
+ 2202               	.LVL203:
+ 891:main.c        ****           rmdata[2].u16_3 += (uint16_t) (hex2dec(recv_buf[5]));
+ 2203               		.loc 1 891 0
+ 2204 0cc8 8E81      		ldd r24,Y+6
+ 2205 0cca 0E94 0000 		call hex2dec
+ 2206               	.LVL204:
+ 889:main.c        ****           rmdata[2].u16_3 += (uint16_t) (hex2dec(recv_buf[3])) << 8;
+ 2207               		.loc 1 889 0
+ 2208 0cce 3F2D      		mov r19,r15
+ 2209 0cd0 20E0      		ldi r18,0
+ 2210 0cd2 280F      		add r18,r24
+ 2211 0cd4 311D      		adc r19,__zero_reg__
+ 890:main.c        ****           rmdata[2].u16_3 += (uint16_t) (hex2dec(recv_buf[4])*16);
+ 2212               		.loc 1 890 0
+ 2213 0cd6 40E1      		ldi r20,lo8(16)
+ 2214 0cd8 049F      		mul r16,r20
+ 2215 0cda 200D      		add r18,r0
+ 2216 0cdc 311D      		adc r19,r1
+ 2217 0cde 1124      		clr __zero_reg__
+ 888:main.c        ****           rmdata[2].u16_3 = (uint16_t) (hex2dec(recv_buf[2])*16) << 8;
+ 2218               		.loc 1 888 0
+ 2219 0ce0 40E1      		ldi r20,lo8(16)
+ 2220 0ce2 149F      		mul r17,r20
+ 2221 0ce4 C001      		movw r24,r0
+ 2222 0ce6 1124      		clr __zero_reg__
+ 2223 0ce8 982F      		mov r25,r24
+ 2224 0cea 8827      		clr r24
+ 2225               		.loc 1 891 0
+ 2226 0cec 280F      		add r18,r24
+ 2227 0cee 391F      		adc r19,r25
+ 2228 0cf0 3093 0000 		sts rmdata+20+1,r19
+ 2229 0cf4 2093 0000 		sts rmdata+20,r18
+ 892:main.c        ****           /*
+ 893:main.c        ****           tmpi = (uint16_t) (hex2dec(recv_buf[2])*16) << 8;
+ 894:main.c        ****           tmpi += (uint16_t) (hex2dec(recv_buf[3])) << 8;
+ 895:main.c        ****           tmpi += (uint16_t) (hex2dec(recv_buf[4])*16);
+ 896:main.c        ****           tmpi += (uint16_t) (hex2dec(recv_buf[5]));
+ 897:main.c        ****           tmpf = tmpi * 0.018369; // * 9184 / 5000
+ 898:main.c        ****           rmstate.battvolt = tmpf;
+ 899:main.c        ****           LS("Batt: ") LV(tmpf) LL
+ 900:main.c        ****           */
+ 901:main.c        ****           rmdata[2].b7 = (hex2dec(recv_buf[6])*16);
+ 2230               		.loc 1 901 0
+ 2231 0cf8 8F81      		ldd r24,Y+7
+ 2232 0cfa 0E94 0000 		call hex2dec
+ 2233               	.LVL205:
+ 2234 0cfe 182F      		mov r17,r24
+ 902:main.c        ****           rmdata[2].b7 += (hex2dec(recv_buf[7]));
+ 2235               		.loc 1 902 0
+ 2236 0d00 8885      		ldd r24,Y+8
+ 2237 0d02 0E94 0000 		call hex2dec
+ 2238               	.LVL206:
+ 2239 0d06 90E1      		ldi r25,lo8(16)
+ 2240 0d08 199F      		mul r17,r25
+ 2241 0d0a 800D      		add r24,r0
+ 2242 0d0c 1124      		clr __zero_reg__
+ 2243 0d0e 8093 0000 		sts rmdata+22,r24
+ 903:main.c        ****           /*
+ 904:main.c        ****           tmpb = (hex2dec(recv_buf[6])*16);
+ 905:main.c        ****           tmpb += (hex2dec(recv_buf[7]));
+ 906:main.c        ****           tmpf = tmpb/2-20;
+ 907:main.c        ****           rmstate.temp1 = tmpb/2-20;
+ 908:main.c        ****           LS("Temp:") LV(tmpf) LL
+ 909:main.c        ****           */
+ 910:main.c        ****           rmdata[2].b8 = (hex2dec(recv_buf[8])*16);
+ 2244               		.loc 1 910 0
+ 2245 0d12 8985      		ldd r24,Y+9
+ 2246 0d14 0E94 0000 		call hex2dec
+ 2247               	.LVL207:
+ 2248 0d18 182F      		mov r17,r24
+ 911:main.c        ****           rmdata[2].b8 += (hex2dec(recv_buf[9]));
+ 2249               		.loc 1 911 0
+ 2250 0d1a 8A85      		ldd r24,Y+10
+ 2251 0d1c 0E94 0000 		call hex2dec
+ 2252               	.LVL208:
+ 2253 0d20 20E1      		ldi r18,lo8(16)
+ 2254 0d22 129F      		mul r17,r18
+ 2255 0d24 800D      		add r24,r0
+ 2256 0d26 1124      		clr __zero_reg__
+ 2257 0d28 8093 0000 		sts rmdata+23,r24
+ 912:main.c        ****           /*
+ 913:main.c        ****           tmpb = (hex2dec(recv_buf[8])*16);
+ 914:main.c        ****           tmpb += (hex2dec(recv_buf[9]));
+ 915:main.c        ****           tmpf = tmpb/2-20;
+ 916:main.c        ****           rmstate.temp2 = tmpb/2-20;
+ 917:main.c        ****           LS("Temp:") LV(tmpf) LL
+ 918:main.c        ****           */
+ 919:main.c        ****           break;
+ 2258               		.loc 1 919 0
+ 2259 0d2c 00C0      		rjmp .L174
+ 2260               	.LVL209:
+ 2261               	.L181:
+ 920:main.c        ****         case 'D':
+ 921:main.c        ****           rmdata[3].b1 = (hex2dec(recv_buf[2])*16);
+ 2262               		.loc 1 921 0
+ 2263 0d2e 8B81      		ldd r24,Y+3
+ 2264 0d30 0E94 0000 		call hex2dec
+ 2265               	.LVL210:
+ 2266 0d34 182F      		mov r17,r24
+ 922:main.c        ****           rmdata[3].b1 += (hex2dec(recv_buf[3]));
+ 2267               		.loc 1 922 0
+ 2268 0d36 8C81      		ldd r24,Y+4
+ 2269 0d38 0E94 0000 		call hex2dec
+ 2270               	.LVL211:
+ 2271 0d3c 40E1      		ldi r20,lo8(16)
+ 2272 0d3e 149F      		mul r17,r20
+ 2273 0d40 800D      		add r24,r0
+ 2274 0d42 1124      		clr __zero_reg__
+ 2275 0d44 8093 0000 		sts rmdata+24,r24
+ 923:main.c        ****           rmdata[3].b2 = (hex2dec(recv_buf[4])*16);
+ 2276               		.loc 1 923 0
+ 2277 0d48 8D81      		ldd r24,Y+5
+ 2278 0d4a 0E94 0000 		call hex2dec
+ 2279               	.LVL212:
+ 2280 0d4e 182F      		mov r17,r24
+ 924:main.c        ****           rmdata[3].b2 += (hex2dec(recv_buf[5]));
+ 2281               		.loc 1 924 0
+ 2282 0d50 8E81      		ldd r24,Y+6
+ 2283 0d52 0E94 0000 		call hex2dec
+ 2284               	.LVL213:
+ 2285 0d56 90E1      		ldi r25,lo8(16)
+ 2286 0d58 199F      		mul r17,r25
+ 2287 0d5a 800D      		add r24,r0
+ 2288 0d5c 1124      		clr __zero_reg__
+ 2289 0d5e 8093 0000 		sts rmdata+25,r24
+ 925:main.c        ****           rmdata[3].b3 = (hex2dec(recv_buf[6])*16);
+ 2290               		.loc 1 925 0
+ 2291 0d62 8F81      		ldd r24,Y+7
+ 2292 0d64 0E94 0000 		call hex2dec
+ 2293               	.LVL214:
+ 2294 0d68 182F      		mov r17,r24
+ 926:main.c        ****           rmdata[3].b3 += (hex2dec(recv_buf[7]));
+ 2295               		.loc 1 926 0
+ 2296 0d6a 8885      		ldd r24,Y+8
+ 2297 0d6c 0E94 0000 		call hex2dec
+ 2298               	.LVL215:
+ 2299 0d70 20E1      		ldi r18,lo8(16)
+ 2300 0d72 129F      		mul r17,r18
+ 2301 0d74 800D      		add r24,r0
+ 2302 0d76 1124      		clr __zero_reg__
+ 2303 0d78 8093 0000 		sts rmdata+26,r24
+ 927:main.c        ****           rmdata[3].b4 = (hex2dec(recv_buf[8])*16);
+ 2304               		.loc 1 927 0
+ 2305 0d7c 8985      		ldd r24,Y+9
+ 2306 0d7e 0E94 0000 		call hex2dec
+ 2307               	.LVL216:
+ 2308 0d82 182F      		mov r17,r24
+ 928:main.c        ****           rmdata[3].b4 += (hex2dec(recv_buf[9]));
+ 2309               		.loc 1 928 0
+ 2310 0d84 8A85      		ldd r24,Y+10
+ 2311 0d86 0E94 0000 		call hex2dec
+ 2312               	.LVL217:
+ 2313 0d8a 40E1      		ldi r20,lo8(16)
+ 2314 0d8c 149F      		mul r17,r20
+ 2315 0d8e 800D      		add r24,r0
+ 2316 0d90 1124      		clr __zero_reg__
+ 2317 0d92 8093 0000 		sts rmdata+27,r24
+ 929:main.c        ****           /*
+ 930:main.c        ****           tmpb = (hex2dec(recv_buf[2])*16);
+ 931:main.c        ****           tmpb += (hex2dec(recv_buf[3]));
+ 932:main.c        ****           rmstate.localtempalarms = tmpb;
+ 933:main.c        ****           LS("Therm-Alarms: ") LV(tmpb) LL
+ 934:main.c        ****           tmpb = (hex2dec(recv_buf[4])*16);
+ 935:main.c        ****           tmpb += (hex2dec(recv_buf[5]));
+ 936:main.c        ****           rmstate.localtestalarms = tmpb;
+ 937:main.c        ****           LS("Test-Alarms: ") LV(tmpb) LL
+ 938:main.c        ****           tmpb = (hex2dec(recv_buf[6])*16);
+ 939:main.c        ****           tmpb += (hex2dec(recv_buf[7]));
+ 940:main.c        ****           rmstate.rfalarms = tmpb;
+ 941:main.c        ****           LS("Remote-Alarms RF:") LV(tmpb) LL
+ 942:main.c        ****           tmpb = (hex2dec(recv_buf[8])*16);
+ 943:main.c        ****           tmpb += (hex2dec(recv_buf[9]));
+ 944:main.c        ****           rmstate.wirealarms = tmpb;
+ 945:main.c        ****           LS("Remote-Alarms Wire:") LV(tmpb) LL
+ 946:main.c        ****           */
+ 947:main.c        ****           break;
+ 2318               		.loc 1 947 0
+ 2319 0d96 00C0      		rjmp .L174
+ 2320               	.L182:
+ 948:main.c        ****         case 'E':
+ 949:main.c        ****           rmdata[3].b5 = (hex2dec(recv_buf[2])*16);
+ 2321               		.loc 1 949 0
+ 2322 0d98 8B81      		ldd r24,Y+3
+ 2323 0d9a 0E94 0000 		call hex2dec
+ 2324               	.LVL218:
+ 2325 0d9e 182F      		mov r17,r24
+ 950:main.c        ****           rmdata[3].b5 += (hex2dec(recv_buf[3]));
+ 2326               		.loc 1 950 0
+ 2327 0da0 8C81      		ldd r24,Y+4
+ 2328 0da2 0E94 0000 		call hex2dec
+ 2329               	.LVL219:
+ 2330 0da6 90E1      		ldi r25,lo8(16)
+ 2331 0da8 199F      		mul r17,r25
+ 2332 0daa 800D      		add r24,r0
+ 2333 0dac 1124      		clr __zero_reg__
+ 2334 0dae 8093 0000 		sts rmdata+28,r24
+ 951:main.c        ****           rmdata[3].b6 = (hex2dec(recv_buf[4])*16);
+ 2335               		.loc 1 951 0
+ 2336 0db2 8D81      		ldd r24,Y+5
+ 2337 0db4 0E94 0000 		call hex2dec
+ 2338               	.LVL220:
+ 2339 0db8 182F      		mov r17,r24
+ 952:main.c        ****           rmdata[3].b6 += (hex2dec(recv_buf[5]));
+ 2340               		.loc 1 952 0
+ 2341 0dba 8E81      		ldd r24,Y+6
+ 2342 0dbc 0E94 0000 		call hex2dec
+ 2343               	.LVL221:
+ 2344 0dc0 20E1      		ldi r18,lo8(16)
+ 2345 0dc2 129F      		mul r17,r18
+ 2346 0dc4 800D      		add r24,r0
+ 2347 0dc6 1124      		clr __zero_reg__
+ 2348 0dc8 8093 0000 		sts rmdata+29,r24
+ 953:main.c        ****           /*
+ 954:main.c        ****           tmpb = (hex2dec(recv_buf[2])*16);
+ 955:main.c        ****           tmpb += (hex2dec(recv_buf[3]));
+ 956:main.c        ****           rmstate.wiretestalarms = tmpb;
+ 957:main.c        ****           LS("Test-Alarms Wire: ") LV(tmpb) LL
+ 958:main.c        ****           tmpb = (hex2dec(recv_buf[4])*16);
+ 959:main.c        ****           tmpb += (hex2dec(recv_buf[5]));
+ 960:main.c        ****           rmstate.rftestalarms = tmpb;
+ 961:main.c        ****           LS("Test-Alarms RF: ") LV(tmpb) LL
+ 962:main.c        ****           */
+ 963:main.c        ****           break;
+ 2349               		.loc 1 963 0
+ 2350 0dcc 00C0      		rjmp .L174
+ 2351               	.L183:
+ 964:main.c        ****         case 'F': //unknwon!
+ 965:main.c        ****           rmdata[4].b1 = (hex2dec(recv_buf[2])*16);
+ 2352               		.loc 1 965 0
+ 2353 0dce 8B81      		ldd r24,Y+3
+ 2354 0dd0 0E94 0000 		call hex2dec
+ 2355               	.LVL222:
+ 2356 0dd4 182F      		mov r17,r24
+ 966:main.c        ****           rmdata[4].b1 += (hex2dec(recv_buf[3]));
+ 2357               		.loc 1 966 0
+ 2358 0dd6 8C81      		ldd r24,Y+4
+ 2359 0dd8 0E94 0000 		call hex2dec
+ 2360               	.LVL223:
+ 2361 0ddc 40E1      		ldi r20,lo8(16)
+ 2362 0dde 149F      		mul r17,r20
+ 2363 0de0 800D      		add r24,r0
+ 2364 0de2 1124      		clr __zero_reg__
+ 2365 0de4 8093 0000 		sts rmdata+32,r24
+ 967:main.c        ****           rmdata[4].b2 = (hex2dec(recv_buf[4])*16);
+ 2366               		.loc 1 967 0
+ 2367 0de8 8D81      		ldd r24,Y+5
+ 2368 0dea 0E94 0000 		call hex2dec
+ 2369               	.LVL224:
+ 2370 0dee 182F      		mov r17,r24
+ 968:main.c        ****           rmdata[4].b2 += (hex2dec(recv_buf[5]));
+ 2371               		.loc 1 968 0
+ 2372 0df0 8E81      		ldd r24,Y+6
+ 2373 0df2 0E94 0000 		call hex2dec
+ 2374               	.LVL225:
+ 2375 0df6 90E1      		ldi r25,lo8(16)
+ 2376 0df8 199F      		mul r17,r25
+ 2377 0dfa 800D      		add r24,r0
+ 2378 0dfc 1124      		clr __zero_reg__
+ 2379 0dfe 8093 0000 		sts rmdata+33,r24
+ 969:main.c        ****           rmdata[4].b3 = (hex2dec(recv_buf[6])*16);
+ 2380               		.loc 1 969 0
+ 2381 0e02 8F81      		ldd r24,Y+7
+ 2382 0e04 0E94 0000 		call hex2dec
+ 2383               	.LVL226:
+ 2384 0e08 182F      		mov r17,r24
+ 970:main.c        ****           rmdata[4].b3 += (hex2dec(recv_buf[7]));
+ 2385               		.loc 1 970 0
+ 2386 0e0a 8885      		ldd r24,Y+8
+ 2387 0e0c 0E94 0000 		call hex2dec
+ 2388               	.LVL227:
+ 2389 0e10 20E1      		ldi r18,lo8(16)
+ 2390 0e12 129F      		mul r17,r18
+ 2391 0e14 800D      		add r24,r0
+ 2392 0e16 1124      		clr __zero_reg__
+ 2393 0e18 8093 0000 		sts rmdata+34,r24
+ 971:main.c        ****           rmdata[4].b4 = (hex2dec(recv_buf[8])*16);
+ 2394               		.loc 1 971 0
+ 2395 0e1c 8985      		ldd r24,Y+9
+ 2396 0e1e 0E94 0000 		call hex2dec
+ 2397               	.LVL228:
+ 2398 0e22 182F      		mov r17,r24
+ 972:main.c        ****           rmdata[4].b4 += (hex2dec(recv_buf[9]));
+ 2399               		.loc 1 972 0
+ 2400 0e24 8A85      		ldd r24,Y+10
+ 2401 0e26 0E94 0000 		call hex2dec
+ 2402               	.LVL229:
+ 2403 0e2a 40E1      		ldi r20,lo8(16)
+ 2404 0e2c 149F      		mul r17,r20
+ 2405 0e2e 800D      		add r24,r0
+ 2406 0e30 1124      		clr __zero_reg__
+ 2407 0e32 8093 0000 		sts rmdata+35,r24
+ 2408               	.LVL230:
+ 2409               	.L174:
+ 973:main.c        ****       }
+ 974:main.c        ****       serflag=0; /* we got something, so clear errorflag */
+ 2410               		.loc 1 974 0
+ 2411 0e36 1092 0000 		sts serflag,__zero_reg__
+ 975:main.c        ****       RMRXLED_PORT ^= (1<<RMRXLED_PIN); /* toggle led */
+ 2412               		.loc 1 975 0
+ 2413 0e3a 8BB1      		in r24,0xb
+ 2414 0e3c 90E1      		ldi r25,lo8(16)
+ 2415 0e3e 8927      		eor r24,r25
+ 2416 0e40 8BB9      		out 0xb,r24
+ 2417               	.L157:
+ 2418               	/* epilogue start */
+ 976:main.c        ****     }
+ 977:main.c        **** }
+ 2419               		.loc 1 977 0
+ 2420 0e42 6096      		adiw r28,16
+ 2421 0e44 0FB6      		in __tmp_reg__,__SREG__
+ 2422 0e46 F894      		cli
+ 2423 0e48 DEBF      		out __SP_H__,r29
+ 2424 0e4a 0FBE      		out __SREG__,__tmp_reg__
+ 2425 0e4c CDBF      		out __SP_L__,r28
+ 2426 0e4e DF91      		pop r29
+ 2427 0e50 CF91      		pop r28
+ 2428 0e52 1F91      		pop r17
+ 2429 0e54 0F91      		pop r16
+ 2430 0e56 FF90      		pop r15
+ 2431 0e58 EF90      		pop r14
+ 2432 0e5a DF90      		pop r13
+ 2433 0e5c CF90      		pop r12
+ 2434 0e5e BF90      		pop r11
+ 2435 0e60 AF90      		pop r10
+ 2436               	.LVL231:
+ 2437 0e62 9F90      		pop r9
+ 2438               	.LVL232:
+ 2439 0e64 8F90      		pop r8
+ 2440 0e66 7F90      		pop r7
+ 2441 0e68 0895      		ret
+ 2442               	.LFE10:
+ 2444               	.global	__vector_6
+ 2446               	__vector_6:
+ 2447               	.LFB11:
+ 978:main.c        **** 
+ 979:main.c        **** //FIXME: enable real watchdog?
+ 980:main.c        **** ISR(WDT_vect) {
+ 2448               		.loc 1 980 0
+ 2449 0e6a 1F92      		push r1
+ 2450               	.LCFI50:
+ 2451 0e6c 0F92      		push r0
+ 2452               	.LCFI51:
+ 2453 0e6e 0FB6      		in r0,__SREG__
+ 2454 0e70 0F92      		push r0
+ 2455 0e72 1124      		clr __zero_reg__
+ 2456 0e74 8F93      		push r24
+ 2457               	.LCFI52:
+ 2458 0e76 9F93      		push r25
+ 2459               	.LCFI53:
+ 2460 0e78 AF93      		push r26
+ 2461               	.LCFI54:
+ 2462 0e7a BF93      		push r27
+ 2463               	.LCFI55:
+ 2464               	/* prologue: Signal */
+ 2465               	/* frame size = 0 */
+ 2466               	/* stack size = 7 */
+ 2467               	.L__stack_usage = 7
+ 981:main.c        ****   uptime += 2;
+ 2468               		.loc 1 981 0
+ 2469 0e7c 8091 0000 		lds r24,uptime
+ 2470 0e80 9091 0000 		lds r25,uptime+1
+ 2471 0e84 A091 0000 		lds r26,uptime+2
+ 2472 0e88 B091 0000 		lds r27,uptime+3
+ 2473 0e8c 0296      		adiw r24,2
+ 2474 0e8e A11D      		adc r26,__zero_reg__
+ 2475 0e90 B11D      		adc r27,__zero_reg__
+ 2476 0e92 8093 0000 		sts uptime,r24
+ 2477 0e96 9093 0000 		sts uptime+1,r25
+ 2478 0e9a A093 0000 		sts uptime+2,r26
+ 2479 0e9e B093 0000 		sts uptime+3,r27
+ 2480               	/* epilogue start */
+ 982:main.c        **** }
+ 2481               		.loc 1 982 0
+ 2482 0ea2 BF91      		pop r27
+ 2483 0ea4 AF91      		pop r26
+ 2484 0ea6 9F91      		pop r25
+ 2485 0ea8 8F91      		pop r24
+ 2486 0eaa 0F90      		pop r0
+ 2487 0eac 0FBE      		out __SREG__,r0
+ 2488 0eae 0F90      		pop r0
+ 2489 0eb0 1F90      		pop r1
+ 2490 0eb2 1895      		reti
+ 2491               	.LFE11:
+ 2493               		.section	.rodata
+ 2494               	.LC0:
+ 2495 000a 32        		.byte	50
+ 2496 000b 36        		.byte	54
+ 2497 000c 32        		.byte	50
+ 2498 000d 34        		.byte	52
+ 2499 000e 36        		.byte	54
+ 2500 000f 34        		.byte	52
+ 2501 0010 38        		.byte	56
+ 2502 0011 36        		.byte	54
+ 2503 0012 38        		.byte	56
+ 2504 0013 39        		.byte	57
+ 2505 0014 36        		.byte	54
+ 2506 0015 39        		.byte	57
+ 2507 0016 42        		.byte	66
+ 2508 0017 37        		.byte	55
+ 2509 0018 32        		.byte	50
+ 2510 0019 43        		.byte	67
+ 2511 001a 37        		.byte	55
+ 2512 001b 33        		.byte	51
+ 2513 001c 44        		.byte	68
+ 2514 001d 37        		.byte	55
+ 2515 001e 34        		.byte	52
+ 2516 001f 45        		.byte	69
+ 2517 0020 37        		.byte	55
+ 2518 0021 35        		.byte	53
+ 2519 0022 46        		.byte	70
+ 2520 0023 37        		.byte	55
+ 2521 0024 36        		.byte	54
+ 2522               		.section	.text.startup,"ax",@progbits
+ 2523               	.global	main
+ 2525               	main:
+ 2526               	.LFB12:
+ 983:main.c        **** 
+ 984:main.c        **** int main(void) {
+ 2527               		.loc 1 984 0
+ 2528 0000 CF93      		push r28
+ 2529               	.LCFI56:
+ 2530 0002 DF93      		push r29
+ 2531               	.LCFI57:
+ 2532 0004 CDB7      		in r28,__SP_L__
+ 2533 0006 DEB7      		in r29,__SP_H__
+ 2534               	.LCFI58:
+ 2535 0008 6B97      		sbiw r28,27
+ 2536               	.LCFI59:
+ 2537 000a 0FB6      		in __tmp_reg__,__SREG__
+ 2538 000c F894      		cli
+ 2539 000e DEBF      		out __SP_H__,r29
+ 2540 0010 0FBE      		out __SREG__,__tmp_reg__
+ 2541 0012 CDBF      		out __SP_L__,r28
+ 2542               	/* prologue: function */
+ 2543               	/* frame size = 27 */
+ 2544               	/* stack size = 29 */
+ 2545               	.L__stack_usage = 29
+ 985:main.c        ****     cli();
+ 2546               		.loc 1 985 0
+ 2547               	/* #APP */
+ 2548               	 ;  985 "main.c" 1
+ 2549 0014 F894      		cli
+ 2550               	 ;  0 "" 2
+ 986:main.c        ****     wdt_enable(WDTO_2S);
+ 2551               		.loc 1 986 0
+ 2552               	/* #NOAPP */
+ 2553 0016 2FE0      		ldi r18,lo8(15)
+ 2554 0018 88E1      		ldi r24,lo8(24)
+ 2555 001a 90E0      		ldi r25,0
+ 2556               	/* #APP */
+ 2557               	 ;  986 "main.c" 1
+ 2558 001c 0FB6      		in __tmp_reg__,__SREG__
+ 2559 001e F894      		cli
+ 2560 0020 A895      		wdr
+ 2561 0022 8093 6000 		sts 96,r24
+ 2562 0026 0FBE      		out __SREG__,__tmp_reg__
+ 2563 0028 2093 6000 		sts 96,r18
+ 2564               		
+ 2565               	 ;  0 "" 2
+ 987:main.c        ****     wdt_reset();
+ 2566               		.loc 1 987 0
+ 2567               	 ;  987 "main.c" 1
+ 2568 002c A895      		wdr
+ 2569               	 ;  0 "" 2
+ 988:main.c        ****     wdt_disable();
+ 2570               		.loc 1 988 0
+ 2571               	/* #NOAPP */
+ 2572 002e 88E1      		ldi r24,lo8(24)
+ 2573               	/* #APP */
+ 2574               	 ;  988 "main.c" 1
+ 2575 0030 0FB6      		in __tmp_reg__, __SREG__
+ 2576 0032 F894      		cli
+ 2577 0034 8093 6000 		sts 96, r24
+ 2578 0038 1092 6000 		sts 96, __zero_reg__
+ 2579 003c 0FBE      		out __SREG__,__tmp_reg__
+ 2580               		
+ 2581               	 ;  0 "" 2
+ 989:main.c        ****     WDTCSR = 0;
+ 2582               		.loc 1 989 0
+ 2583               	/* #NOAPP */
+ 2584 003e 1092 6000 		sts 96,__zero_reg__
+ 990:main.c        ****     WDTCSR |= ((1<<WDCE)|(1<<WDP3)); /* ((1<<WDP2)|(1<<WDP1)|(1<<WDP0)) WDT_ISR every 2s - (1<<WDP3
+ 2585               		.loc 1 990 0
+ 2586 0042 8091 6000 		lds r24,96
+ 2587 0046 8063      		ori r24,lo8(48)
+ 2588 0048 8093 6000 		sts 96,r24
+ 991:main.c        ****     WDTCSR |= (1<<WDIE); /* only enable int, no real watchdog */
+ 2589               		.loc 1 991 0
+ 2590 004c 8091 6000 		lds r24,96
+ 2591 0050 8064      		ori r24,lo8(64)
+ 2592 0052 8093 6000 		sts 96,r24
+ 992:main.c        ****     /* WDTIE doesnt really work on atmega, while well on attiny84! its much too fast.. */
+ 993:main.c        **** 
+ 994:main.c        ****     mode=OWM_SLEEP;
+ 2593               		.loc 1 994 0
+ 2594 0056 1092 0000 		sts mode,__zero_reg__
+ 995:main.c        ****     wmode=OWW_NO_WRITE;
+ 2595               		.loc 1 995 0
+ 2596 005a 82E0      		ldi r24,lo8(2)
+ 2597 005c 8093 0000 		sts wmode,r24
+ 996:main.c        ****     OW_DDR&=~OW_PINN;
+ 2598               		.loc 1 996 0
+ 2599 0060 5298      		cbi 0xa,2
+ 997:main.c        **** 
+ 998:main.c        ****     INIT_AVR
+ 2600               		.loc 1 998 0
+ 2601 0062 80E8      		ldi r24,lo8(-128)
+ 2602 0064 8093 6100 		sts 97,r24
+ 2603 0068 1092 6100 		sts 97,__zero_reg__
+ 2604 006c 1092 6E00 		sts 110,__zero_reg__
+ 2605 0070 11E0      		ldi r17,lo8(1)
+ 2606 0072 1DBB      		out 0x1d,r17
+ 2607 0074 83E0      		ldi r24,lo8(3)
+ 2608 0076 85BD      		out 0x25,r24
+ 2609 0078 8091 6000 		lds r24,96
+ 2610 007c 8761      		ori r24,lo8(23)
+ 2611 007e 8093 6000 		sts 96,r24
+ 2612 0082 8091 6000 		lds r24,96
+ 2613 0086 8064      		ori r24,lo8(64)
+ 2614 0088 8093 6000 		sts 96,r24
+ 999:main.c        ****     PWRSAVE_AVR
+1000:main.c        ****     init_eeprom();
+ 2615               		.loc 1 1000 0
+ 2616 008c 0E94 0000 		call init_eeprom
+ 2617               	.LVL233:
+1001:main.c        **** 
+1002:main.c        **** #define UART_BAUD_RATE 9600
+1003:main.c        ****     uart_init( UART_BAUD_SELECT(UART_BAUD_RATE,F_CPU) );
+ 2618               		.loc 1 1003 0
+ 2619 0090 83E3      		ldi r24,lo8(51)
+ 2620 0092 90E0      		ldi r25,0
+ 2621 0094 0E94 0000 		call uart_init
+ 2622               	.LVL234:
+1004:main.c        **** 
+1005:main.c        ****     INIT_LED_PINS
+ 2623               		.loc 1 1005 0
+ 2624 0098 549A      		sbi 0xa,4
+ 2625 009a 579A      		sbi 0xa,7
+1006:main.c        **** 
+1007:main.c        ****     SET_OWINT_FALLING;
+ 2626               		.loc 1 1007 0
+ 2627 009c 8091 6900 		lds r24,105
+ 2628 00a0 8260      		ori r24,lo8(2)
+ 2629 00a2 8093 6900 		sts 105,r24
+ 2630 00a6 8091 6900 		lds r24,105
+ 2631 00aa 8E7F      		andi r24,lo8(-2)
+ 2632 00ac 8093 6900 		sts 105,r24
+1008:main.c        ****     DIS_TIMER;
+ 2633               		.loc 1 1008 0
+ 2634 00b0 8091 6E00 		lds r24,110
+ 2635 00b4 8E7F      		andi r24,lo8(-2)
+ 2636 00b6 8093 6E00 		sts 110,r24
+1009:main.c        ****     EN_OWINT;
+ 2637               		.loc 1 1009 0
+ 2638 00ba E89A      		sbi 0x1d,0
+ 2639 00bc 1CBB      		out 0x1c,r17
+1010:main.c        **** 
+1011:main.c        ****     sei();
+ 2640               		.loc 1 1011 0
+ 2641               	/* #APP */
+ 2642               	 ;  1011 "main.c" 1
+ 2643 00be 7894      		sei
+ 2644               	 ;  0 "" 2
+1012:main.c        ****     //force sleep first
+1013:main.c        ****     DIS_TIMER;
+ 2645               		.loc 1 1013 0
+ 2646               	/* #NOAPP */
+ 2647 00c0 8091 6E00 		lds r24,110
+ 2648 00c4 8E7F      		andi r24,lo8(-2)
+ 2649 00c6 8093 6E00 		sts 110,r24
+1014:main.c        ****     EN_OWINT; SET_OWINT_LOWLEVEL;
+ 2650               		.loc 1 1014 0
+ 2651 00ca E89A      		sbi 0x1d,0
+ 2652 00cc 1CBB      		out 0x1c,r17
+ 2653 00ce 8091 6900 		lds r24,105
+ 2654 00d2 8C7F      		andi r24,lo8(-4)
+ 2655 00d4 8093 6900 		sts 105,r24
+1015:main.c        ****     sleepmode=SLEEP_MODE_PWR_DOWN;
+ 2656               		.loc 1 1015 0
+ 2657 00d8 84E0      		ldi r24,lo8(4)
+ 2658 00da 8093 0000 		sts sleepmode,r24
+ 2659               	.LBB22:
+1016:main.c        **** 
+1017:main.c        ****     while(1){
+1018:main.c        ****         processSerial();
+1019:main.c        ****         RMRXLED_PORT &= ~(1<<RMRXLED_PIN); /* led off */
+1020:main.c        ****         sleep_enable();
+1021:main.c        ****         set_sleep_mode(sleepmode);
+1022:main.c        ****         sleep_cpu();
+1023:main.c        ****         //FIXME: this is dumb waste of space..
+1024:main.c        ****         uint8_t reqA[9][3] = {
+ 2660               		.loc 1 1024 0
+ 2661 00de 4BE1      		ldi r20,lo8(27)
+ 2662 00e0 D42E      		mov r13,r20
+1025:main.c        **** //was:                              { 0x02, 0x30, 0x34, 0x36, 0x34, 0x03 },
+1026:main.c        ****                               { 0x32, 0x36, 0x32 },
+1027:main.c        ****                               { 0x34, 0x36, 0x34 },
+1028:main.c        ****                               { 0x38, 0x36, 0x38 },
+1029:main.c        ****                               { 0x39, 0x36, 0x39 },
+1030:main.c        ****                               { 0x42, 0x37, 0x32 },
+1031:main.c        ****                               { 0x43, 0x37, 0x33 },
+1032:main.c        ****                               { 0x44, 0x37, 0x34 },
+1033:main.c        ****                               { 0x45, 0x37, 0x35 },
+1034:main.c        ****                               { 0x46, 0x37, 0x36 },
+1035:main.c        ****                              };
+1036:main.c        ****         serflag = 1; // should be cleared in processSerial if we receive smthg.
+ 2663               		.loc 1 1036 0
+ 2664 00e2 CC24      		clr r12
+ 2665 00e4 C394      		inc r12
+ 984:main.c        **** int main(void) {
+ 2666               		.loc 1 984 0
+ 2667 00e6 7E01      		movw r14,r28
+ 2668 00e8 28E1      		ldi r18,24
+ 2669 00ea E20E      		add r14,r18
+ 2670 00ec F11C      		adc r15,__zero_reg__
+ 2671               	.L203:
+1018:main.c        ****         processSerial();
+ 2672               		.loc 1 1018 0
+ 2673 00ee 0E94 0000 		call processSerial
+ 2674               	.LVL235:
+1019:main.c        ****         RMRXLED_PORT &= ~(1<<RMRXLED_PIN); /* led off */
+ 2675               		.loc 1 1019 0
+ 2676 00f2 5C98      		cbi 0xb,4
+1020:main.c        ****         sleep_enable();
+ 2677               		.loc 1 1020 0
+ 2678 00f4 83B7      		in r24,0x33
+ 2679 00f6 8160      		ori r24,lo8(1)
+ 2680 00f8 83BF      		out 0x33,r24
+1021:main.c        ****         set_sleep_mode(sleepmode);
+ 2681               		.loc 1 1021 0
+ 2682 00fa 83B7      		in r24,0x33
+ 2683 00fc 9091 0000 		lds r25,sleepmode
+ 2684 0100 817F      		andi r24,lo8(-15)
+ 2685 0102 892B      		or r24,r25
+ 2686 0104 83BF      		out 0x33,r24
+1022:main.c        ****         sleep_cpu();
+ 2687               		.loc 1 1022 0
+ 2688               	/* #APP */
+ 2689               	 ;  1022 "main.c" 1
+ 2690 0106 8895      		sleep
+ 2691               		
+ 2692               	 ;  0 "" 2
+1024:main.c        ****         uint8_t reqA[9][3] = {
+ 2693               		.loc 1 1024 0
+ 2694               	/* #NOAPP */
+ 2695 0108 E0E0      		ldi r30,lo8(.LC0)
+ 2696 010a F0E0      		ldi r31,hi8(.LC0)
+ 2697 010c DE01      		movw r26,r28
+ 2698 010e 1196      		adiw r26,1
+ 2699 0110 8D2D      		mov r24,r13
+ 2700               		0:
+ 2701 0112 0190      		ld r0,Z+
+ 2702 0114 0D92      		st X+,r0
+ 2703 0116 8A95      		dec r24
+ 2704 0118 01F4      		brne 0b
+ 2705               		.loc 1 1036 0
+ 2706 011a C092 0000 		sts serflag,r12
+ 2707               	.LVL236:
+ 2708 011e 8E01      		movw r16,r28
+ 2709 0120 0D5F      		subi r16,-3
+ 2710 0122 1F4F      		sbci r17,-1
+ 2711               	.LVL237:
+ 2712               	.L199:
+ 2713               	.LBB23:
+1037:main.c        ****         for (uint8_t j=0;j<7;j++) {
+1038:main.c        ****         //uint8_t req2[] = { 0x02, 0x30, 0x37, 0x30, 0x30, 0x30, 0x38, 0x32, 0x46, 0x03 };
+1039:main.c        ****         /* Send queries: 2,4,8,9,B,C,D,E,F */
+1040:main.c        ****           uart_putc(0x02);uart_putc(0x30);
+ 2714               		.loc 1 1040 0
+ 2715 0124 82E0      		ldi r24,lo8(2)
+ 2716 0126 0E94 0000 		call uart_putc
+ 2717               	.LVL238:
+ 2718 012a 80E3      		ldi r24,lo8(48)
+ 2719 012c 0E94 0000 		call uart_putc
+ 2720               	.LVL239:
+ 2721               	.LBB24:
+ 984:main.c        **** int main(void) {
+ 2722               		.loc 1 984 0
+ 2723 0130 F801      		movw r30,r16
+ 2724 0132 3297      		sbiw r30,2
+1041:main.c        ****           for (uint8_t k=0;k<3;k++) {
+1042:main.c        ****             uart_putc(reqA[j][k]);
+ 2725               		.loc 1 1042 0
+ 2726 0134 8081      		ld r24,Z
+ 2727 0136 0E94 0000 		call uart_putc
+ 2728               	.LVL240:
+ 984:main.c        **** int main(void) {
+ 2729               		.loc 1 984 0
+ 2730 013a F801      		movw r30,r16
+ 2731 013c 3197      		sbiw r30,1
+ 2732               		.loc 1 1042 0
+ 2733 013e 8081      		ld r24,Z
+ 2734 0140 0E94 0000 		call uart_putc
+ 2735               	.LVL241:
+ 2736 0144 F801      		movw r30,r16
+ 2737 0146 8081      		ld r24,Z
+ 2738 0148 0E94 0000 		call uart_putc
+ 2739               	.LVL242:
+ 2740               	.LBE24:
+1043:main.c        ****           }
+1044:main.c        ****           uart_putc(0x03);
+ 2741               		.loc 1 1044 0
+ 2742 014c 83E0      		ldi r24,lo8(3)
+ 2743 014e 0E94 0000 		call uart_putc
+ 2744               	.LVL243:
+1045:main.c        ****           processSerial();
+ 2745               		.loc 1 1045 0
+ 2746 0152 0E94 0000 		call processSerial
+ 2747               	.LVL244:
+1046:main.c        ****           RMRXLED_PORT &= ~(1<<RMRXLED_PIN); /* led off */
+ 2748               		.loc 1 1046 0
+ 2749 0156 5C98      		cbi 0xb,4
+ 2750               	.LVL245:
+ 2751               	.LBB25:
+ 2752               	.LBB26:
+ 2753               		.loc 2 164 0
+ 2754 0158 FFEF      		ldi r31,lo8(799999)
+ 2755 015a 24E3      		ldi r18,hi8(799999)
+ 2756 015c 8CE0      		ldi r24,hlo8(799999)
+ 2757 015e F150      		1: subi r31,1
+ 2758 0160 2040      		sbci r18,0
+ 2759 0162 8040      		sbci r24,0
+ 2760 0164 01F4      		brne 1b
+ 2761 0166 00C0      		rjmp .
+ 2762 0168 0000      		nop
+ 2763 016a 0D5F      		subi r16,-3
+ 2764 016c 1F4F      		sbci r17,-1
+ 2765               	.LBE26:
+ 2766               	.LBE25:
+1037:main.c        ****         for (uint8_t j=0;j<7;j++) {
+ 2767               		.loc 1 1037 0
+ 2768 016e 0E15      		cp r16,r14
+ 2769 0170 1F05      		cpc r17,r15
+ 2770 0172 01F4      		brne .L199
+ 2771               	.LBE23:
+1047:main.c        ****           _delay_ms(500);
+1048:main.c        ****         }
+1049:main.c        ****         if (serflag)
+ 2772               		.loc 1 1049 0
+ 2773 0174 9091 0000 		lds r25,serflag
+ 2774 0178 8091 0000 		lds r24,eflag
+ 2775 017c 9923      		tst r25
+ 2776 017e 01F0      		breq .L200
+1050:main.c        ****           eflag |= (1<<4);
+ 2777               		.loc 1 1050 0
+ 2778 0180 8061      		ori r24,lo8(16)
+ 2779 0182 00C0      		rjmp .L208
+ 2780               	.L200:
+1051:main.c        ****         else
+1052:main.c        ****           eflag &= ~(1<<4);
+ 2781               		.loc 1 1052 0
+ 2782 0184 8F7E      		andi r24,lo8(-17)
+ 2783               	.L208:
+ 2784 0186 8093 0000 		sts eflag,r24
+1053:main.c        **** 
+1054:main.c        ****         processSerial();
+ 2785               		.loc 1 1054 0
+ 2786 018a 0E94 0000 		call processSerial
+ 2787               	.LVL246:
+1055:main.c        ****         RMRXLED_PORT &= ~(1<<RMRXLED_PIN); /* led off */
+ 2788               		.loc 1 1055 0
+ 2789 018e 5C98      		cbi 0xb,4
+1056:main.c        ****         OWRXLED_PORT &= ~(1<<OWRXLED_PIN); /* led off */
+ 2790               		.loc 1 1056 0
+ 2791 0190 5F98      		cbi 0xb,7
+1057:main.c        ****         set_sleep_mode(sleepmode);
+ 2792               		.loc 1 1057 0
+ 2793 0192 83B7      		in r24,0x33
+ 2794 0194 9091 0000 		lds r25,sleepmode
+ 2795 0198 817F      		andi r24,lo8(-15)
+ 2796 019a 892B      		or r24,r25
+ 2797 019c 83BF      		out 0x33,r24
+1058:main.c        ****         sleep_cpu();
+ 2798               		.loc 1 1058 0
+ 2799               	/* #APP */
+ 2800               	 ;  1058 "main.c" 1
+ 2801 019e 8895      		sleep
+ 2802               		
+ 2803               	 ;  0 "" 2
+ 2804               	.LVL247:
+ 2805               	/* #NOAPP */
+ 2806               	.LBB27:
+ 2807               	.LBB28:
+ 2808               		.loc 2 164 0
+ 2809 01a0 9FEF      		ldi r25,lo8(15999999)
+ 2810 01a2 E3E2      		ldi r30,hi8(15999999)
+ 2811 01a4 F4EF      		ldi r31,hlo8(15999999)
+ 2812 01a6 9150      		1: subi r25,1
+ 2813 01a8 E040      		sbci r30,0
+ 2814 01aa F040      		sbci r31,0
+ 2815 01ac 01F4      		brne 1b
+ 2816 01ae 00C0      		rjmp .
+ 2817 01b0 0000      		nop
+ 2818               	.LBE28:
+ 2819               	.LBE27:
+1059:main.c        **** 
+1060:main.c        ****         // we sleep the cpu anyway and get waked at least every 2s
+1061:main.c        ****         _delay_ms(10000);
+1062:main.c        **** 
+1063:main.c        ****         if (ewrite_flag) {
+ 2820               		.loc 1 1063 0
+ 2821 01b2 8091 0000 		lds r24,ewrite_flag
+ 2822 01b6 8823      		tst r24
+ 2823 01b8 01F0      		breq .L202
+1064:main.c        ****           eeprom_update_dword((uint32_t *) (ewrite_flag+0), eewrite_buf.u32_1);
+ 2824               		.loc 1 1064 0
+ 2825 01ba 8091 0000 		lds r24,ewrite_flag
+ 2826 01be 4091 0000 		lds r20,eewrite_buf
+ 2827 01c2 5091 0000 		lds r21,eewrite_buf+1
+ 2828 01c6 6091 0000 		lds r22,eewrite_buf+2
+ 2829 01ca 7091 0000 		lds r23,eewrite_buf+3
+ 2830 01ce 90E0      		ldi r25,0
+ 2831 01d0 0E94 0000 		call __eeupd_dword_m328p
+ 2832               	.LVL248:
+1065:main.c        ****           ewrite_flag = 0;
+ 2833               		.loc 1 1065 0
+ 2834 01d4 1092 0000 		sts ewrite_flag,__zero_reg__
+ 2835               	.L202:
+1066:main.c        ****         }
+1067:main.c        ****         OWRXLED_PORT &= ~(1<<OWRXLED_PIN); /* led off */
+ 2836               		.loc 1 1067 0
+ 2837 01d8 5F98      		cbi 0xb,7
+ 2838               	.LBE22:
+1068:main.c        ****     }
+ 2839               		.loc 1 1068 0
+ 2840 01da 00C0      		rjmp .L203
+ 2841               	.LFE12:
+ 2843               		.comm	eewrite_buf,8,1
+ 2844               		.comm	ewrite_flag,1,1
+ 2845               	.global	crcerrcnt
+ 2846               		.section .bss
+ 2849               	crcerrcnt:
+ 2850 0000 00        		.zero	1
+ 2851               		.comm	serflag,1,1
+ 2852               		.comm	eflag,1,1
+ 2853               	.global	rcnt
+ 2854               		.data
+ 2857               	rcnt:
+ 2858 0000 0100      		.word	1
+ 2859               	.global	stype
+ 2862               	stype:
+ 2863 0002 02        		.byte	2
+ 2864               	.global	version
+ 2867               	version:
+ 2868 0003 0401      		.word	260
+ 2869               		.comm	srcount,1,1
+ 2870               		.comm	actbit,1,1
+ 2871               		.comm	wmode,1,1
+ 2872               		.comm	mode,1,1
+ 2873               		.comm	bytep,1,1
+ 2874               		.comm	bitp,1,1
+ 2875               	.global	owid
+ 2878               	owid:
+ 2879 0005 E1        		.byte	-31
+ 2880 0006 E1        		.byte	-31
+ 2881 0007 00        		.byte	0
+ 2882 0008 00        		.byte	0
+ 2883 0009 00        		.byte	0
+ 2884 000a 03        		.byte	3
+ 2885 000b 28        		.byte	40
+ 2886 000c 28        		.byte	40
+ 2887               		.comm	cbuf,1,1
+ 2888               		.comm	sleepmode,1,1
+ 2889               		.comm	istat,1,1
+ 2890               		.comm	lastcps,1,1
+ 2891               		.comm	page,1,1
+ 2892               		.comm	scrc,2,1
+ 2893               	.global	nackmsg
+ 2894               		.section .bss
+ 2897               	nackmsg:
+ 2898 0001 00        		.zero	1
+ 2899               	.global	recv_state
+ 2902               	recv_state:
+ 2903 0002 00        		.zero	1
+ 2904               		.comm	rmdata,40,1
+ 2905               		.comm	scratchpad,11,1
+ 2906               	.global	uptime
+ 2909               	uptime:
+ 2910 0003 0000 0000 		.zero	4
+ 2911               	.global	EE_LABEL_MAXLEN
+ 2912               		.section	.rodata
+ 2915               	EE_LABEL_MAXLEN:
+ 2916 0025 1F        		.byte	31
+ 2917               	.global	EE_LABEL_OFFSET
+ 2920               	EE_LABEL_OFFSET:
+ 2921 0026 32        		.byte	50
+ 2922               	.global	EE_VERSION_OFFSET
+ 2925               	EE_VERSION_OFFSET:
+ 2926 0027 2D        		.byte	45
+ 2927               	.global	EE_TYPE_OFFSET
+ 2930               	EE_TYPE_OFFSET:
+ 2931 0028 2C        		.byte	44
+ 2932               	.global	EE_COUNTER_OFFSET
+ 2935               	EE_COUNTER_OFFSET:
+ 2936 0029 0C        		.byte	12
+ 2937               	.global	EE_RCNT_OFFSET
+ 2940               	EE_RCNT_OFFSET:
+ 2941 002a 0A        		.byte	10
+ 2942               	.global	EE_OWID_OFFSET
+ 2945               	EE_OWID_OFFSET:
+ 2946 002b 02        		.byte	2
+ 2947               	.global	EE_MAGIC_OFFSET
+ 2950               	EE_MAGIC_OFFSET:
+ 2951 002c 00        		.zero	1
+ 2952               	.global	EE_DEFTYPE
+ 2955               	EE_DEFTYPE:
+ 2956 002d 01        		.byte	1
+ 2957               	.global	EE_MAGIC_NUMBER
+ 2960               	EE_MAGIC_NUMBER:
+ 2961 002e E2E1      		.word	-7710
+ 3384               	.Letext0:
+ 3385               		.file 3 "/usr/lib/gcc/avr/4.7.2/../../../avr/include/stdint.h"
+ 3386               		.file 4 "common.h"
+ 3387               		.file 5 "/usr/lib/gcc/avr/4.7.2/../../../avr/include/avr/eeprom.h"
+ 3388               		.file 6 "uart.h"
+DEFINED SYMBOLS
+                            *ABS*:00000000 main.c
+     /tmp/ccmy59x1.s:2      *ABS*:0000003e __SP_H__
+     /tmp/ccmy59x1.s:3      *ABS*:0000003d __SP_L__
+     /tmp/ccmy59x1.s:4      *ABS*:0000003f __SREG__
+     /tmp/ccmy59x1.s:5      *ABS*:00000000 __tmp_reg__
+     /tmp/ccmy59x1.s:6      *ABS*:00000001 __zero_reg__
+     /tmp/ccmy59x1.s:11     .text:00000000 __vector_1
+                            *COM*:00000001 wmode
+                            *COM*:00000001 mode
+                            *COM*:00000001 sleepmode
+                            *COM*:00000001 srcount
+     /tmp/ccmy59x1.s:158    .text:000000b8 __vector_16
+                            *COM*:00000001 bytep
+                            *COM*:00000001 bitp
+                            *COM*:00000001 actbit
+                            *COM*:00000002 scrc
+                            *COM*:00000001 cbuf
+     /tmp/ccmy59x1.s:2878   .data:00000005 owid
+                            *COM*:00000001 page
+                            *COM*:0000000b scratchpad
+     /tmp/ccmy59x1.s:2862   .data:00000002 stype
+                            *COM*:00000001 eflag
+     /tmp/ccmy59x1.s:2867   .data:00000003 version
+     /tmp/ccmy59x1.s:2909   .bss:00000003 uptime
+     /tmp/ccmy59x1.s:2857   .data:00000000 rcnt
+     /tmp/ccmy59x1.s:2849   .bss:00000000 crcerrcnt
+                            *COM*:00000028 rmdata
+                            *COM*:00000001 ewrite_flag
+                            *COM*:00000008 eewrite_buf
+     /tmp/ccmy59x1.s:1196   .text:000006b6 init_eeprom
+     /tmp/ccmy59x1.s:1340   .text:0000078a hex2dec
+     /tmp/ccmy59x1.s:1388   .text:000007aa processSerial
+     /tmp/ccmy59x1.s:2902   .bss:00000002 recv_state
+     /tmp/ccmy59x1.s:2897   .bss:00000001 nackmsg
+                            *COM*:00000001 serflag
+     /tmp/ccmy59x1.s:2446   .text:00000e6a __vector_6
+     /tmp/ccmy59x1.s:2525   .text.startup:00000000 main
+                            *COM*:00000001 istat
+                            *COM*:00000001 lastcps
+     /tmp/ccmy59x1.s:2915   .rodata:00000025 EE_LABEL_MAXLEN
+     /tmp/ccmy59x1.s:2920   .rodata:00000026 EE_LABEL_OFFSET
+     /tmp/ccmy59x1.s:2925   .rodata:00000027 EE_VERSION_OFFSET
+     /tmp/ccmy59x1.s:2930   .rodata:00000028 EE_TYPE_OFFSET
+     /tmp/ccmy59x1.s:2935   .rodata:00000029 EE_COUNTER_OFFSET
+     /tmp/ccmy59x1.s:2940   .rodata:0000002a EE_RCNT_OFFSET
+     /tmp/ccmy59x1.s:2945   .rodata:0000002b EE_OWID_OFFSET
+     /tmp/ccmy59x1.s:2950   .rodata:0000002c EE_MAGIC_OFFSET
+     /tmp/ccmy59x1.s:2955   .rodata:0000002d EE_DEFTYPE
+     /tmp/ccmy59x1.s:2960   .rodata:0000002e EE_MAGIC_NUMBER
+
+UNDEFINED SYMBOLS
+__eerd_dword_m328p
+uart_putc
+__eerd_word_m328p
+__eerd_byte_m328p
+__eeupd_word_m328p
+__eewr_word_m328p
+__eewr_byte_m328p
+uart_getc
+uart_init
+__eeupd_dword_m328p
+__do_copy_data
+__do_clear_bss

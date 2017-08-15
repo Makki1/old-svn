@@ -1,0 +1,2684 @@
+   1               		.file	"main.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.text
+   8               	.Ltext0:
+   9               	.global	__vector_13
+  11               	__vector_13:
+  12               	.LFB7:
+  13               		.file 1 "main.c"
+   1:main.c        **** /*
+   2:main.c        ****  * OWSlave
+   3:main.c        ****  *
+   4:main.c        ****  * This program is free software: you can redistribute it and/or modify
+   5:main.c        ****  * it under the terms of the GNU General Public License as published by
+   6:main.c        ****  * the Free Software Foundation, either version 3 of the License, or
+   7:main.c        ****  *  any later version.
+   8:main.c        ****  *
+   9:main.c        ****  * This program is distributed in the hope that it will be useful,
+  10:main.c        ****  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+  11:main.c        ****  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  12:main.c        ****  * GNU General Public License for more details.
+  13:main.c        ****  *
+  14:main.c        ****  * You should have received a copy of the GNU General Public License
+  15:main.c        ****  * along with this program.  If not, see <http: * www.gnu.org/licenses/>.
+  16:main.c        ****  *
+  17:main.c        ****  * based on owdevice - A small 1-Wire emulator for AVR Microcontroller
+  18:main.c        ****  *
+  19:main.c        ****  * Copyright (C) 2012  Tobias Mueller mail (at) tobynet.de
+  20:main.c        ****  *
+  21:main.c        ****  * VERSION 1.3pre2 for ATmega48
+  22:main.c        ****  *
+  23:main.c        ****  * Created: 15.05.2013 13:36:59
+  24:main.c        ****  *  Author: Michael Markstaller
+  25:main.c        ****  *
+  26:main.c        ****  * use included Makefile: just change target MCU and avrdude params
+  27:main.c        ****  *
+  28:main.c        ****  * Changelog:
+  29:main.c        ****  * v1.3pre2
+  30:main.c        ****  *  - combined prototype for Counter / RM with full owfs-support as family E1
+  31:main.c        ****  * v1.3pre1:
+  32:main.c        ****  *  - Major cleanup code: define serial & debug-macros
+  33:main.c        ****  *  - adjust ISR to exact current defines in avr-libc, add uartlib (tiny24|44|84/25|45|85 missing y
+  34:main.c        ****  *  - add EEPROM-functions
+  35:main.c        ****  *  - add basic ow function-commands instead of page/memory access used in DS2423
+  36:main.c        ****  *  - Family E1 introduced
+  37:main.c        ****  *  - much testcode
+  38:main.c        ****  * v1.2: basic code
+  39:main.c        ****  */
+  40:main.c        **** 
+  41:main.c        **** 
+  42:main.c        **** #include <stdlib.h>
+  43:main.c        **** #include <avr/io.h>
+  44:main.c        **** #include <avr/interrupt.h>
+  45:main.c        **** #include <avr/eeprom.h>
+  46:main.c        **** #include <avr/sleep.h>
+  47:main.c        **** #include <avr/pgmspace.h>
+  48:main.c        **** #include "uart.h" //FIXME: also exclude in Makefile for attiny!
+  49:main.c        **** #include "common.h"
+  50:main.c        **** 
+  51:main.c        **** #define DEBUG 1
+  52:main.c        **** #include "debug.h"
+  53:main.c        **** 
+  54:main.c        **** #ifdef __AVR_ATtiny25__
+  55:main.c        **** // OW_PORT Pin 7  - PB2
+  56:main.c        **** 
+  57:main.c        **** //OW Pin
+  58:main.c        **** #define OW_PORT PORTB //1 Wire Port
+  59:main.c        **** #define OW_PIN PINB //1 Wire Pin as number
+  60:main.c        **** #define OW_PORTN (1<<PINB2)  //Pin as bit in registers
+  61:main.c        **** #define OW_PINN (1<<PINB2)
+  62:main.c        **** #define OW_DDR DDRB  //pin direction register
+  63:main.c        **** #define SET_LOW OW_DDR|=OW_PINN;OW_PORT&=~OW_PORTN;  //set 1-Wire line to low
+  64:main.c        **** #define RESET_LOW {OW_DDR&=~OW_PINN;}  //set 1-Wire pin as input
+  65:main.c        **** //Pin interrupt
+  66:main.c        **** #define EN_OWINT {GIMSK|=(1<<INT0);GIFR|=(1<<INTF0);}  //enable interrupt
+  67:main.c        **** #define DIS_OWINT  GIMSK&=~(1<<INT0);  //disable interrupt
+  68:main.c        **** #define SET_RISING MCUCR=(1<<ISC01)|(1<<ISC00);  //set interrupt at rising edge
+  69:main.c        **** #define SET_FALLING MCUCR=(1<<ISC01); //set interrupt at falling edge
+  70:main.c        **** #define CHK_INT_EN (GIMSK&(1<<INT0))==(1<<INT0) //test if interrupt enabled
+  71:main.c        **** #define PIN_INT ISR(INT0_vect)  // the interrupt service routine
+  72:main.c        **** //Timer Interrupt
+  73:main.c        **** #define EN_TIMER {TIMSK |= (1<<TOIE0); TIFR|=(1<<TOV0);} //enable timer interrupt
+  74:main.c        **** #define DIS_TIMER TIMSK  &= ~(1<<TOIE0); // disable timer interrupt
+  75:main.c        **** #define TCNT_REG TCNT0  //register of timer-counter
+  76:main.c        **** #define TIMER_INT ISR(TIM0_OVF_vect) //the timer interrupt service routine
+  77:main.c        **** 
+  78:main.c        **** 
+  79:main.c        **** #define OWT_MIN_RESET 51
+  80:main.c        **** #define OWT_RESET_PRESENCE 4
+  81:main.c        **** #define OWT_PRESENCE 20
+  82:main.c        **** #define OWT_READLINE 3 //3 for fast master, 4 for slow master and long lines
+  83:main.c        **** #define OWT_LOWTIME 3 //3 for fast master, 4 for slow master and long lines
+  84:main.c        **** 
+  85:main.c        **** //Initializations of AVR
+  86:main.c        **** #define INIT_AVR CLKPR=(1<<CLKPCE); \
+  87:main.c        ****                    CLKPR=0; /*8Mhz*/  \
+  88:main.c        ****                    TIMSK=0; \
+  89:main.c        ****                    GIMSK=(1<<INT0);  /*set direct GIMSK register*/ \
+  90:main.c        ****                    TCCR0B=(1<<CS00)|(1<<CS01); /*8mhz /64 couse 8 bit Timer interrupt every 8us*/ \
+  91:main.c        ****                 /* FIXME: disable ADC, Pullups to save power here? */
+  92:main.c        **** 
+  93:main.c        **** 
+  94:main.c        **** #define PC_INT_ISR ISR(PCINT0_vect) { /*ATT25 with 0 by PCINT*/ \
+  95:main.c        ****                     if (((PINB&(1<<PINB0))==0)&&((istat&(1<<PINB0))==(1<<PINB0))) {    Counter1++; 
+  96:main.c        ****                     if (((PINB&(1<<PINB1))==0)&&((istat&(1<<PINB1))==(1<<PINB1))) {    Counter2++; 
+  97:main.c        ****                     if (((PINB&(1<<PINB3))==0)&&((istat&(1<<PINB3))==(1<<PINB3))) {    Counter3++; 
+  98:main.c        ****                     if (((PINB&(1<<PINB4))==0)&&((istat&(1<<PINB4))==(1<<PINB4))) {    Counter4++; 
+  99:main.c        ****                     istat=PINB;}    \
+ 100:main.c        **** 
+ 101:main.c        **** #define INIT_COUNTER_PINS /* Counter Interrupt */\
+ 102:main.c        ****                         GIMSK|=(1<<PCIE);\
+ 103:main.c        ****                         PCMSK=(1<<PCINT0)|(1<<PCINT1)|(1<<PCINT3)|(1<<PCINT4);    \
+ 104:main.c        ****                         DDRB &=~((1<<PINB0)|(1<<PINB1)|(1<<PINB3)|(1<<PINB4)); \
+ 105:main.c        ****                         istat=PINB;\
+ 106:main.c        **** 
+ 107:main.c        **** #endif // __AVR_ATtiny25__
+ 108:main.c        **** 
+ 109:main.c        **** #if defined(__AVR_ATtiny2313A__) || defined(__AVR_ATtiny2313__)
+ 110:main.c        **** // OW_PORT Pin 6  - PD2
+ 111:main.c        **** 
+ 112:main.c        **** //OW Pin
+ 113:main.c        **** #define OW_PORT PORTD //1 Wire Port
+ 114:main.c        **** #define OW_PIN PIND //1 Wire Pin as number
+ 115:main.c        **** #define OW_PORTN (1<<PIND2)  //Pin as bit in registers
+ 116:main.c        **** #define OW_PINN (1<<PIND2)
+ 117:main.c        **** #define OW_DDR DDRD  //pin direction register
+ 118:main.c        **** #define SET_LOW OW_DDR|=OW_PINN;OW_PORT&=~OW_PORTN;  //set 1-Wire line to low
+ 119:main.c        **** #define RESET_LOW {OW_DDR&=~OW_PINN;}  //set 1-Wire pin as input
+ 120:main.c        **** //Pin interrupt
+ 121:main.c        **** #define EN_OWINT {GIMSK|=(1<<INT0);EIFR|=(1<<INTF0);}  //enable interrupt
+ 122:main.c        **** #define DIS_OWINT  GIMSK&=~(1<<INT0);  //disable interrupt
+ 123:main.c        **** #define SET_RISING MCUCR|=(1<<ISC01)|(1<<ISC00);  //set interrupt at rising edge
+ 124:main.c        **** #define SET_FALLING {MCUCR|=(1<<ISC01);MCUCR&=~(1<<ISC00);} //set interrupt at falling edge
+ 125:main.c        **** #define CHK_INT_EN (GIMSK&(1<<INT0))==(1<<INT0) //test if interrupt enabled
+ 126:main.c        **** #define PIN_INT ISR(INT0_vect)  // the interrupt service routine
+ 127:main.c        **** //Timer Interrupt
+ 128:main.c        **** #define EN_TIMER {TIMSK |= (1<<TOIE0); TIFR|=(1<<TOV0);} //enable timer interrupt
+ 129:main.c        **** #define DIS_TIMER TIMSK  &= ~(1<<TOIE0); // disable timer interrupt
+ 130:main.c        **** #define TCNT_REG TCNT0  //register of timer-counter
+ 131:main.c        **** #define TIMER_INT ISR(TIMER0_OVF_vect) //the timer interrupt service routine
+ 132:main.c        **** 
+ 133:main.c        **** 
+ 134:main.c        **** #define OWT_MIN_RESET 51
+ 135:main.c        **** #define OWT_RESET_PRESENCE 4
+ 136:main.c        **** #define OWT_PRESENCE 20
+ 137:main.c        **** #define OWT_READLINE 3 //for fast master, 4 for slow master and long lines
+ 138:main.c        **** #define OWT_LOWTIME 3 //for fast master, 4 for slow master and long lines
+ 139:main.c        **** 
+ 140:main.c        **** //Initializations of AVR
+ 141:main.c        **** #define INIT_AVR CLKPR=(1<<CLKPCE); \
+ 142:main.c        ****                    CLKPR=0; /*8Mhz*/  \
+ 143:main.c        ****                    TIMSK=0; \
+ 144:main.c        ****                    GIMSK=(1<<INT0);  /*set direct GIMSK register*/ \
+ 145:main.c        ****                    TCCR0B=(1<<CS00)|(1<<CS01); /*8mhz /64 couse 8 bit Timer interrupt every 8us*/
+ 146:main.c        ****                 /* FIXME: disable ADC to save power here? */
+ 147:main.c        **** 
+ 148:main.c        **** /* disable stuff not needed on this chip here */
+ 149:main.c        **** #define PWRSAVE_AVR ;
+ 150:main.c        **** 
+ 151:main.c        **** #if defined(__AVR_ATtiny2313__)
+ 152:main.c        **** #define PC_INT_ISR ISR(PCINT_vect) { /*ATT2313 without 0 by PCINT */ \
+ 153:main.c        ****                     if (((PINB&(1<<PINB1))==0)&&((istat&(1<<PINB1))==(1<<PINB1))) {    Counter1++; 
+ 154:main.c        ****                     if (((PINB&(1<<PINB2))==0)&&((istat&(1<<PINB2))==(1<<PINB2))) {    Counter2++; 
+ 155:main.c        ****                     if (((PINB&(1<<PINB3))==0)&&((istat&(1<<PINB3))==(1<<PINB3))) {    Counter3++; 
+ 156:main.c        ****                     if (((PINB&(1<<PINB4))==0)&&((istat&(1<<PINB4))==(1<<PINB4))) {    Counter4++; 
+ 157:main.c        ****                     istat=PINB;}    \
+ 158:main.c        **** 
+ 159:main.c        **** #endif
+ 160:main.c        **** 
+ 161:main.c        **** #if defined(__AVR_ATtiny2313A__)
+ 162:main.c        **** #define PC_INT_ISR ISR(PCINT_B_vect) { /*attiny2313a is PCINT_B_vect*/ \
+ 163:main.c        ****                     if (((PINB&(1<<PINB1))==0)&&((istat&(1<<PINB1))==(1<<PINB1))) {    Counter1++; 
+ 164:main.c        ****                     if (((PINB&(1<<PINB2))==0)&&((istat&(1<<PINB2))==(1<<PINB2))) {    Counter2++; 
+ 165:main.c        ****                     if (((PINB&(1<<PINB3))==0)&&((istat&(1<<PINB3))==(1<<PINB3))) {    Counter3++; 
+ 166:main.c        ****                     if (((PINB&(1<<PINB4))==0)&&((istat&(1<<PINB4))==(1<<PINB4))) {    Counter4++; 
+ 167:main.c        ****                     istat=PINB;}    \
+ 168:main.c        **** 
+ 169:main.c        **** #endif
+ 170:main.c        **** 
+ 171:main.c        **** #define INIT_COUNTER_PINS /* Counter Interrupt */\
+ 172:main.c        ****                         GIMSK|=(1<<PCIE);\
+ 173:main.c        ****                         PORTB |= ( (1<<PB1) | (1<<PB2) | (1<<PB3) | (1<<PB4) ); /* activate interna
+ 174:main.c        ****                         PCMSK=(1<<PCINT1)|(1<<PCINT2)|(1<<PCINT3)|(1<<PCINT4);    \
+ 175:main.c        ****                         DDRB &=~((1<<PINB1)|(1<<PINB2)|(1<<PINB3)|(1<<PINB4)); \
+ 176:main.c        ****                         istat=PINB; \
+ 177:main.c        **** 
+ 178:main.c        **** /* FIXME: !! nonsense ! just to emulate DS18B20 !! */
+ 179:main.c        **** #define CONV_TEMP   { scratchpad[0]=0x00ff;\
+ 180:main.c        ****                       scratchpad[1]=0x00ff&(0xEE>>8);\
+ 181:main.c        ****                         }
+ 182:main.c        **** 
+ 183:main.c        **** 
+ 184:main.c        **** 
+ 185:main.c        **** #endif // __AVR_ATtiny2313__
+ 186:main.c        **** 
+ 187:main.c        **** 
+ 188:main.c        **** #if defined(__AVR_ATmega48__) || (__AVR_ATmega644__)
+ 189:main.c        **** // OW_PORT Pin 4  - PD2(INT0)
+ 190:main.c        **** 
+ 191:main.c        **** //OW Pin
+ 192:main.c        **** #define OW_PORT PORTD //1 Wire Port
+ 193:main.c        **** #define OW_PIN PIND //1 Wire Pin as number
+ 194:main.c        **** #define OW_PORTN (1<<PIND2)  //Pin as bit in registers
+ 195:main.c        **** #define OW_PINN (1<<PIND2)
+ 196:main.c        **** #define OW_DDR DDRD  //pin direction register
+ 197:main.c        **** #define SET_LOW OW_DDR|=OW_PINN;OW_PORT&=~OW_PORTN;  //set 1-Wire line to low
+ 198:main.c        **** #define RESET_LOW {OW_DDR&=~OW_PINN;}  //set 1-Wire pin as input
+ 199:main.c        **** //Pin interrupt
+ 200:main.c        **** #define EN_OWINT {EIMSK|=(1<<INT0);EIFR|=(1<<INTF0);}  //enable interrupt 0
+ 201:main.c        **** #define DIS_OWINT  EIMSK&=~(1<<INT0);  //disable interrupt 0
+ 202:main.c        **** #define SET_RISING EICRA|=(1<<ISC01)|(1<<ISC00);  //set interrupt at rising edge
+ 203:main.c        **** #define SET_FALLING {EICRA|=(1<<ISC01);EICRA&=~(1<<ISC00);} //set interrupt at falling edge
+ 204:main.c        **** #define CHK_INT_EN (EIMSK&(1<<INT0))==(1<<INT0) //test if interrupt enabled
+ 205:main.c        **** #define PIN_INT ISR(INT0_vect)  // the interrupt service routine
+ 206:main.c        **** //Timer Interrupt
+ 207:main.c        **** #define EN_TIMER {TIMSK0 |= (1<<TOIE0); TIFR0|=(1<<TOV0);} //enable timer0 interrupt
+ 208:main.c        **** #define DIS_TIMER TIMSK0  &= ~(1<<TOIE0); // disable timer interrupt
+ 209:main.c        **** #define TCNT_REG TCNT0  //register of timer-counter
+ 210:main.c        **** #define TIMER_INT ISR(TIMER0_OVF_vect) //the timer interrupt service routine
+ 211:main.c        **** 
+ 212:main.c        **** //FIXME / TODO: double-check & compare timings!
+ 213:main.c        **** #define OWT_MIN_RESET 51 // tRSTL 512uS in DS, tRSTH = 584; 51 are 408uS
+ 214:main.c        **** #define OWT_RESET_PRESENCE 4 //tPDT 64uS in DS
+ 215:main.c        **** #define OWT_PRESENCE 20 // unclear, mabe between 512 and 584 uS; 20 are 160uS? real bus 9/170uS -> 
+ 216:main.c        **** #define OWT_READLINE 3 //for fast master, maybe 4 for long lines; flexible is 10 to 24 uS
+ 217:main.c        **** #define OWT_LOWTIME 3 //3=24uS for DS9490,
+ 218:main.c        **** 
+ 219:main.c        **** //Initializations of AVR
+ 220:main.c        **** #define INIT_AVR CLKPR=(1<<CLKPCE); /* FIXME! this is crap, next line disables it! */ \
+ 221:main.c        ****                   CLKPR=0; /* 8Mhz */ \
+ 222:main.c        ****                   /* CLKPR=(1<<CLKPCE)|(0<<CLKPS3)|(0<<CLKPS2)|(0<<CLKPS1)|(1<<CLKPS0);  FIXME/CHEC
+ 223:main.c        ****                   TIMSK0=0; \
+ 224:main.c        ****                   EIMSK=(1<<INT0);  /*set direct GICR INT0 enable*/ \
+ 225:main.c        ****                   TCCR0B=(1<<CS00)|(1<<CS01); /*8mhz /64 cause 8 bit Timer interrupt every 8us */ \
+ 226:main.c        ****                   /* TCCR0B=(1<<CS00)|(1<<CS01);  FIXME/CHECK: 4mhz /8 cause 8 bit Timer interrupt 
+ 227:main.c        ****                   /* MAYBE use 16bit TC1 for this @4MHz?? */ \
+ 228:main.c        ****                   /* FIXME: init TC1 for PWM/internal time-clock */ \
+ 229:main.c        ****                   /* FIXED: test wether TC0 can be still used for PWM->YES 490Hz- though it "flicke
+ 230:main.c        ****                   DDRD |= ((1<<PIND5)|(1<<PIND6)); /* PD5& as output */ \
+ 231:main.c        ****                   TCCR0A |= ((2<<COM0A0) | (2<<COM0B0) | (3<<WGM00)); /* enable output-compare-matc
+ 232:main.c        ****                   OCR0A = 128; OCR0B = 192; /* set dummy-values 50/75% */ \
+ 233:main.c        ****                   /* TCNT1 - Test */ \
+ 234:main.c        ****                   DDRB |= ((1<<PINB1)|(1<<PINB2)); /* PB1&2 as output */ \
+ 235:main.c        ****                   TIMSK1 |= (1<<TOIE1); TIFR1 |= (1<<TOV1); /* enable overflow int for timer1 */ \
+ 236:main.c        ****                   TCCR1A |= (1<<COM1A1)|(1<<COM1B1)|(1<<WGM10); /* 8bit Fast-PWM 0<<COM1A0 0<<COM1B
+ 237:main.c        ****                   TCCR1B |= (1<<WGM12)|(1<<CS11)|(1<<CS10); /* 0<<WGM13 FastPWM - Clock for TIM1 /1
+ 238:main.c        ****                   OCR1A = 128; OCR1B = 192; /* set dummy-values 50/75% */ \
+ 239:main.c        **** 
+ 240:main.c        ****                   /* /124 gives PWM cycle of 32.8ms = 30Hz ; 4885-5190 = 305 * ++ in OVF per 10s */
+ 241:main.c        ****                   /* /256 gives 125Hz? 8ms = 1222 * ++ in OVF per 10s
+ 242:main.c        ****                    * every 32us ?
+ 243:main.c        **** 
+ 244:main.c        ****                   /* !! FIXME: must set DDRB PB0/PB1 to output and remove counter below! for PWM to
+ 245:main.c        ****                   // :1024 = every 7812,5 uS?
+ 246:main.c        ****                   /* Atmega48: PD5/PD6; Attiny2313: PB2/PD5 */ \
+ 247:main.c        ****                   /* FIXME: disable ADC etc to save power here? */
+ 248:main.c        **** 
+ 249:main.c        **** #define PWRSAVE_AVR PRR = (1<<PRTWI)|(1<<PRTIM2)|(1<<PRSPI)|(1<<PRADC); /* power down TWI, TIMCNT2,
+ 250:main.c        ****                     /* |(1<<PRTIM1) enabled for now */ \
+ 251:main.c        ****                     DIDR0 = (1<<ADC5D)|(1<<ADC4D)|(1<<ADC3D)|(1<<ADC2D)|(1<<ADC1D)|(1<<ADC0D); /* d
+ 252:main.c        **** 
+ 253:main.c        **** 
+ 254:main.c        **** #define PC_INT_ISR ISR(PCINT0_vect) { /* ATmega48 is PCINT0_vect*/ \
+ 255:main.c        **** /*                    if (((PINB&(1<<PINB1))==0)&&((istat&(1<<PINB1))==(1<<PINB1))) {    Counter1++
+ 256:main.c        **** /*                    if (((PINB&(1<<PINB2))==0)&&((istat&(1<<PINB2))==(1<<PINB2))) {    Counter2++
+ 257:main.c        ****                     if (((PINB&(1<<PINB3))==0)&&((istat&(1<<PINB3))==(1<<PINB3))) {    Counter3++; 
+ 258:main.c        ****                     if (((PINB&(1<<PINB4))==0)&&((istat&(1<<PINB4))==(1<<PINB4))) {    Counter4++; 
+ 259:main.c        ****                     istat=PINB;}    \
+ 260:main.c        ****                     /* count on pintoggle */
+ 261:main.c        **** 
+ 262:main.c        ****                 /* FIXME: !!! debounce !!! */
+ 263:main.c        **** 
+ 264:main.c        **** #define INIT_COUNTER_PINS /* Init counter pins */ \
+ 265:main.c        ****                         PCICR=(1<<PCIE0); /* enable PCINT0..7 global */ \
+ 266:main.c        **** /*                        PORTB |= ( (1<<PB1) | (1<<PB2) ); */ \
+ 267:main.c        ****                         PORTB |= ( (1<<PB3) | (1<<PB4) ); /* activate internal Pull-Up PB1-4 */ \
+ 268:main.c        **** /*                        PCMSK0|= ((1<<PCINT1)|(1<<PCINT2)); */ \
+ 269:main.c        ****                         PCMSK0|= ((1<<PCINT3)|(1<<PCINT4)); /* enable PCINT1-4 PB1-4 */ \
+ 270:main.c        **** /*                        DDRB &=~((1<<PINB1)|(1<<PINB2)); */ \
+ 271:main.c        ****                         DDRB &=~((1<<PINB3)|(1<<PINB4)); /* PB1-4 as input */ \
+ 272:main.c        ****                         istat=PINB; \
+ 273:main.c        **** 
+ 274:main.c        **** /* FIXME: !! nonsense ! just to emulate DS18B20 !! */
+ 275:main.c        **** #define CONV_TEMP   { scratchpad[0]=0x00ff;\
+ 276:main.c        ****                         scratchpad[1]=0x00ff&(0x80>>8);\
+ 277:main.c        ****                         }
+ 278:main.c        **** 
+ 279:main.c        **** #endif // __AVR_ATmega48__
+ 280:main.c        **** 
+ 281:main.c        **** LV_SETUP  //quirk to define itoa-outbuf..
+ 282:main.c        **** 
+ 283:main.c        **** volatile uint32_t uptime = 0; /* holds uptime in 1/4 seconds - overflows after 3.4 years */
+ 284:main.c        **** volatile uint8_t ovf_flag = 0;
+ 285:main.c        **** 
+ 286:main.c        **** 
+ 287:main.c        **** ISR(TIMER1_OVF_vect) {
+  14               		.loc 1 287 0
+  15 0000 1F92      		push r1
+  16               	.LCFI0:
+  17 0002 0F92      		push r0
+  18               	.LCFI1:
+  19 0004 0FB6      		in r0,__SREG__
+  20 0006 0F92      		push r0
+  21 0008 1124      		clr __zero_reg__
+  22 000a 8F93      		push r24
+  23               	.LCFI2:
+  24 000c 9F93      		push r25
+  25               	.LCFI3:
+  26 000e AF93      		push r26
+  27               	.LCFI4:
+  28 0010 BF93      		push r27
+  29               	.LCFI5:
+  30               	/* prologue: Signal */
+  31               	/* frame size = 0 */
+  32               	/* stack size = 7 */
+  33               	.L__stack_usage = 7
+ 288:main.c        ****   if (ovf_flag == 249) { //once every 125*4 calls we have a second
+  34               		.loc 1 288 0
+  35 0012 8091 0000 		lds r24,ovf_flag
+  36 0016 893F      		cpi r24,lo8(-7)
+  37 0018 01F4      		brne .L2
+ 289:main.c        ****     uptime++; ovf_flag=0;
+  38               		.loc 1 289 0
+  39 001a 8091 0000 		lds r24,uptime
+  40 001e 9091 0000 		lds r25,uptime+1
+  41 0022 A091 0000 		lds r26,uptime+2
+  42 0026 B091 0000 		lds r27,uptime+3
+  43 002a 0196      		adiw r24,1
+  44 002c A11D      		adc r26,__zero_reg__
+  45 002e B11D      		adc r27,__zero_reg__
+  46 0030 8093 0000 		sts uptime,r24
+  47 0034 9093 0000 		sts uptime+1,r25
+  48 0038 A093 0000 		sts uptime+2,r26
+  49 003c B093 0000 		sts uptime+3,r27
+  50 0040 1092 0000 		sts ovf_flag,__zero_reg__
+  51               	.L2:
+ 290:main.c        ****   }
+ 291:main.c        ****   ovf_flag++; //TODO: can be made better with bitshifting!
+  52               		.loc 1 291 0
+  53 0044 8091 0000 		lds r24,ovf_flag
+  54 0048 8F5F      		subi r24,lo8(-(1))
+  55 004a 8093 0000 		sts ovf_flag,r24
+  56               	/* epilogue start */
+ 292:main.c        **** 
+ 293:main.c        **** }
+  57               		.loc 1 293 0
+  58 004e BF91      		pop r27
+  59 0050 AF91      		pop r26
+  60 0052 9F91      		pop r25
+  61 0054 8F91      		pop r24
+  62 0056 0F90      		pop r0
+  63 0058 0FBE      		out __SREG__,r0
+  64 005a 0F90      		pop r0
+  65 005c 1F90      		pop r1
+  66 005e 1895      		reti
+  67               	.LFE7:
+  69               	.global	__vector_1
+  71               	__vector_1:
+  72               	.LFB8:
+ 294:main.c        **** 
+ 295:main.c        **** //#define _ONE_DEVICE_CMDS_  //Commands for only one device on bus (Not tested)
+ 296:main.c        **** 
+ 297:main.c        **** /* FIXME: !! nonsense ! just to emulate DS2423 !! */
+ 298:main.c        **** typedef union {
+ 299:main.c        ****     volatile uint8_t bytes[13];//={1,1,2,0,0,0,0,0,0,0,0,5,5};
+ 300:main.c        ****     struct {
+ 301:main.c        ****         uint16_t addr;
+ 302:main.c        ****         uint8_t read;
+ 303:main.c        ****         uint32_t counter;
+ 304:main.c        ****         uint32_t zero;
+ 305:main.c        ****         uint16_t crc;
+ 306:main.c        ****     };
+ 307:main.c        **** } counterpack_t;
+ 308:main.c        **** counterpack_t counterpack;
+ 309:main.c        **** volatile uint8_t scratchpad[9]={0x50,0x05,0x0,0x0,0x7f,0xff,0x00,0x10,0x0}; //Initial scratchpad
+ 310:main.c        **** volatile uint16_t scrc; //CRC calculation
+ 311:main.c        **** 
+ 312:main.c        **** volatile uint8_t lastcps;
+ 313:main.c        **** volatile uint32_t Counter1;
+ 314:main.c        **** volatile uint32_t Counter2;
+ 315:main.c        **** volatile uint32_t Counter3;
+ 316:main.c        **** volatile uint32_t Counter4;
+ 317:main.c        **** volatile uint8_t istat;
+ 318:main.c        **** 
+ 319:main.c        **** 
+ 320:main.c        **** volatile uint8_t cbuf; //Input buffer for a command
+ 321:main.c        **** //const uint8_t owid[8]= {0x1D, 0xA2, 0xD9, 0x84, 0x00, 0x00, 0x13, 0xF4};
+ 322:main.c        **** //uint8_t owid[8] = {0x1D, 0x48, 0x00, 0x00, 0x00, 0x00, 0x01, 0x49 };
+ 323:main.c        **** uint8_t owid[8] = {0xE1, 0xE1, 0x00, 0x00, 0x00, 0x00, 0x02, 0x20 };
+ 324:main.c        **** //example-slave uint8_t owid[8] = {0xDD, 0x01, 0x01, 0x02, 0x03, 0x04, 0x06, 0x6C };
+ 325:main.c        **** //DS2413 - unimplemented! uint8_t owid[8] = {0x3A, 0x01, 0x01, 0x02, 0x03, 0x04, 0x06, 0x60 };
+ 326:main.c        **** //uint8_t owid[8] = {0xEE, 0x01, 0x01, 0x02, 0x03, 0x04, 0x06, 0x3F };
+ 327:main.c        **** //uint8_t owid[8] = {0x28, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x9E };
+ 328:main.c        **** 
+ 329:main.c        **** // uint8_t owid[8] = ....? EEMEM
+ 330:main.c        **** volatile uint8_t bitp;  //pointer to current Byte
+ 331:main.c        **** volatile uint8_t bytep; //pointer to current Bit
+ 332:main.c        **** 
+ 333:main.c        **** volatile uint8_t mode; //state
+ 334:main.c        **** volatile uint8_t wmode; //if 0 next bit that send the device is  0
+ 335:main.c        **** volatile uint8_t actbit; //current
+ 336:main.c        **** volatile uint8_t srcount; //counter for search rom
+ 337:main.c        **** 
+ 338:main.c        **** //States / Modes
+ 339:main.c        **** #define OWM_SLEEP 0  //Waiting for next reset pulse
+ 340:main.c        **** #define OWM_RESET 1  //Reset pulse received
+ 341:main.c        **** #define OWM_PRESENCE 2  //sending presence pulse
+ 342:main.c        **** #define OWM_READ_COMMAND 3 //read 8 bit of command
+ 343:main.c        **** #define OWM_SEARCH_ROM 4  //SEARCH_ROM algorithms
+ 344:main.c        **** #define OWM_MATCH_ROM 5  //test number
+ 345:main.c        **** #define OWM_CHK_RESET 8  //waiting of rising edge from reset pulse
+ 346:main.c        **** #define OWM_GET_ADRESS 6
+ 347:main.c        **** #define OWM_READ_MEMORY_COUNTER 7
+ 348:main.c        **** #define OWM_WRITE_SCRATCHPAD 9
+ 349:main.c        **** #define OWM_READ_SCRATCHPAD 10
+ 350:main.c        **** 
+ 351:main.c        **** #define OWC_GET_VERSION 0x11
+ 352:main.c        **** #define OWC_GET_TYPE 0x12
+ 353:main.c        **** 
+ 354:main.c        **** /* DS2423:
+ 355:main.c        **** WRITE_SCRATCHPAD = 0x0F
+ 356:main.c        ****     + 2 x Target address TA1 TA2 -> CRC16
+ 357:main.c        **** The memory address range of the DS2423 is 0000H to 01FFH.
+ 358:main.c        **** READ_SCRATCHPAD = 0xAA
+ 359:main.c        **** Copy Scratchpad [5AH]
+ 360:main.c        **** Read Memory [F0H]
+ 361:main.c        **** Read Memory + Counter [A5H]
+ 362:main.c        **** */
+ 363:main.c        **** 
+ 364:main.c        **** /* Missing for DS18B20 - relevant for pullup:
+ 365:main.c        ****  * DS18B20-DS: In some situations the bus master may not know whether the DS18B20s on the bus are p
+ 366:main.c        **** or powered by external supplies. The master needs this information to determine if the strong bus p
+ 367:main.c        **** should be used during temperature conversions. To get this information, the master can issue a Skip
+ 368:main.c        **** [CCh] command followed by a Read Power Supply [B4h] command followed by a “read time slot”.
+ 369:main.c        **** During the read time slot, parasite powered DS18B20s will pull the bus low, and externally powered
+ 370:main.c        **** DS18B20s will let the bus remain high. If the bus is pulled low, the master knows that it must supp
+ 371:main.c        **** strong pullup on the 1-Wire bus during temperature conversions.
+ 372:main.c        **** */
+ 373:main.c        **** 
+ 374:main.c        **** 
+ 375:main.c        **** #ifdef _ONE_DEVICE_CMDS_
+ 376:main.c        **** #define OWM_READ_ROM 50
+ 377:main.c        **** #endif
+ 378:main.c        **** 
+ 379:main.c        **** //Write a bit after next falling edge from master
+ 380:main.c        **** //its for sending a zero as soon as possible
+ 381:main.c        **** #define OWW_NO_WRITE 2
+ 382:main.c        **** #define OWW_WRITE_1 1
+ 383:main.c        **** #define OWW_WRITE_0 0
+ 384:main.c        **** 
+ 385:main.c        **** 
+ 386:main.c        **** 
+ 387:main.c        **** PIN_INT {
+  73               		.loc 1 387 0
+  74 0060 1F92      		push r1
+  75               	.LCFI6:
+  76 0062 0F92      		push r0
+  77               	.LCFI7:
+  78 0064 0FB6      		in r0,__SREG__
+  79 0066 0F92      		push r0
+  80 0068 1124      		clr __zero_reg__
+  81 006a 2F93      		push r18
+  82               	.LCFI8:
+  83 006c 8F93      		push r24
+  84               	.LCFI9:
+  85 006e 9F93      		push r25
+  86               	.LCFI10:
+  87 0070 EF93      		push r30
+  88               	.LCFI11:
+  89 0072 FF93      		push r31
+  90               	.LCFI12:
+  91               	/* prologue: Signal */
+  92               	/* frame size = 0 */
+  93               	/* stack size = 8 */
+  94               	.L__stack_usage = 8
+ 388:main.c        ****     uint8_t lwmode=wmode;  //let this variables in registers
+  95               		.loc 1 388 0
+  96 0074 8091 0000 		lds r24,wmode
+  97               	.LVL0:
+ 389:main.c        ****     uint8_t lmode=mode;
+  98               		.loc 1 389 0
+  99 0078 9091 0000 		lds r25,mode
+ 100               	.LVL1:
+ 390:main.c        ****     if ((lwmode==OWW_WRITE_0)) {SET_LOW;lwmode=OWW_NO_WRITE;}    //if necessary set 0-Bit
+ 101               		.loc 1 390 0
+ 102 007c 8111      		cpse r24,__zero_reg__
+ 103 007e 00C0      		rjmp .L4
+ 104               		.loc 1 390 0 is_stmt 0 discriminator 1
+ 105 0080 529A      		sbi 0xa,2
+ 106 0082 5A98      		cbi 0xb,2
+ 107               	.LVL2:
+ 108 0084 82E0      		ldi r24,lo8(2)
+ 109               	.LVL3:
+ 110               	.L4:
+ 391:main.c        ****     DIS_OWINT; //disable interrupt, only in OWM_SLEEP mode it is active
+ 111               		.loc 1 391 0 is_stmt 1
+ 112 0086 E898      		cbi 0x1d,0
+ 392:main.c        ****     switch (lmode) {
+ 113               		.loc 1 392 0
+ 114 0088 E92F      		mov r30,r25
+ 115 008a F0E0      		ldi r31,0
+ 116 008c E331      		cpi r30,19
+ 117 008e F105      		cpc r31,__zero_reg__
+ 118 0090 00F4      		brsh .L5
+ 119 0092 E050      		subi r30,lo8(-(gs(.L12)))
+ 120 0094 F040      		sbci r31,hi8(-(gs(.L12)))
+ 121 0096 0994      		ijmp
+ 122               	.LVL4:
+ 123               		.section	.progmem.gcc_sw_table,"ax",@progbits
+ 124               		.p2align	1
+ 125               	.L12:
+ 126 0000 00C0      		rjmp .L6
+ 127 0002 00C0      		rjmp .L5
+ 128 0004 00C0      		rjmp .L5
+ 129 0006 00C0      		rjmp .L9
+ 130 0008 00C0      		rjmp .L8
+ 131 000a 00C0      		rjmp .L9
+ 132 000c 00C0      		rjmp .L9
+ 133 000e 00C0      		rjmp .L9
+ 134 0010 00C0      		rjmp .L10
+ 135 0012 00C0      		rjmp .L9
+ 136 0014 00C0      		rjmp .L9
+ 137 0016 00C0      		rjmp .L5
+ 138 0018 00C0      		rjmp .L5
+ 139 001a 00C0      		rjmp .L5
+ 140 001c 00C0      		rjmp .L5
+ 141 001e 00C0      		rjmp .L5
+ 142 0020 00C0      		rjmp .L5
+ 143 0022 00C0      		rjmp .L9
+ 144 0024 00C0      		rjmp .L9
+ 145               		.text
+ 146               	.L6:
+ 393:main.c        ****         case OWM_SLEEP:
+ 394:main.c        ****             TCNT_REG=~(OWT_MIN_RESET);
+ 147               		.loc 1 394 0
+ 148 0098 2CEC      		ldi r18,lo8(-52)
+ 149 009a 26BD      		out 0x26,r18
+ 395:main.c        ****             EN_OWINT; //other edges ?
+ 150               		.loc 1 395 0
+ 151 009c E89A      		sbi 0x1d,0
+ 152 009e E09A      		sbi 0x1c,0
+ 396:main.c        ****             break;
+ 153               		.loc 1 396 0
+ 154 00a0 00C0      		rjmp .L5
+ 155               	.L8:
+ 397:main.c        ****         //start of reading with falling edge from master, reading closed in timer isr
+ 398:main.c        ****         case OWM_MATCH_ROM:  //falling edge wait for receive
+ 399:main.c        ****         case OWM_WRITE_SCRATCHPAD:
+ 400:main.c        ****         case OWM_GET_ADRESS:
+ 401:main.c        ****         case OWM_READ_COMMAND:
+ 402:main.c        ****             TCNT_REG=~(OWT_READLINE); //wait a time for reading
+ 403:main.c        ****             break;
+ 404:main.c        ****         case OWM_SEARCH_ROM:   //Search algorithm waiting for receive or send
+ 405:main.c        ****             if (srcount<2) { //this means bit or complement is writing,
+ 156               		.loc 1 405 0
+ 157 00a2 2091 0000 		lds r18,srcount
+ 158               	.L9:
+ 406:main.c        ****                 TCNT_REG=~(OWT_LOWTIME);
+ 407:main.c        ****             } else
+ 408:main.c        ****                 TCNT_REG=~(OWT_READLINE);  //init for read answer of master
+ 409:main.c        ****             break;
+ 410:main.c        ****         case OWC_GET_VERSION:
+ 411:main.c        ****         case OWC_GET_TYPE:
+ 412:main.c        ****         case OWM_READ_SCRATCHPAD:  //a bit is sending
+ 413:main.c        ****             TCNT_REG=~(OWT_LOWTIME);
+ 414:main.c        ****             break;
+ 415:main.c        **** #ifdef _ONE_DEVICE_CMDS_
+ 416:main.c        ****         case OWM_READ_ROM:
+ 417:main.c        **** #endif
+ 418:main.c        ****         case OWM_READ_MEMORY_COUNTER: //a bit is sending
+ 419:main.c        ****             TCNT_REG=~(OWT_LOWTIME);
+ 159               		.loc 1 419 0
+ 160 00a6 2CEF      		ldi r18,lo8(-4)
+ 161 00a8 26BD      		out 0x26,r18
+ 420:main.c        ****             break;
+ 162               		.loc 1 420 0
+ 163 00aa 00C0      		rjmp .L5
+ 164               	.L10:
+ 421:main.c        ****         case OWM_CHK_RESET:  //rising edge of reset pulse
+ 422:main.c        ****             SET_FALLING;
+ 165               		.loc 1 422 0
+ 166 00ac 9091 6900 		lds r25,105
+ 167 00b0 9260      		ori r25,lo8(2)
+ 168 00b2 9093 6900 		sts 105,r25
+ 169 00b6 9091 6900 		lds r25,105
+ 170 00ba 9E7F      		andi r25,lo8(-2)
+ 171 00bc 9093 6900 		sts 105,r25
+ 423:main.c        ****             TCNT_REG=~(OWT_RESET_PRESENCE);  //waiting for sending presence pulse
+ 172               		.loc 1 423 0
+ 173 00c0 9BEF      		ldi r25,lo8(-5)
+ 174 00c2 96BD      		out 0x26,r25
+ 175               	.LVL5:
+ 424:main.c        ****             lmode=OWM_RESET;
+ 176               		.loc 1 424 0
+ 177 00c4 91E0      		ldi r25,lo8(1)
+ 178               	.LVL6:
+ 179               	.L5:
+ 425:main.c        ****             break;
+ 426:main.c        ****     }
+ 427:main.c        ****     EN_TIMER;
+ 180               		.loc 1 427 0
+ 181 00c6 2091 6E00 		lds r18,110
+ 182 00ca 2160      		ori r18,lo8(1)
+ 183 00cc 2093 6E00 		sts 110,r18
+ 184 00d0 A89A      		sbi 0x15,0
+ 428:main.c        ****     mode=lmode;
+ 185               		.loc 1 428 0
+ 186 00d2 9093 0000 		sts mode,r25
+ 429:main.c        ****     wmode=lwmode;
+ 187               		.loc 1 429 0
+ 188 00d6 8093 0000 		sts wmode,r24
+ 189               	/* epilogue start */
+ 430:main.c        **** 
+ 431:main.c        **** }
+ 190               		.loc 1 431 0
+ 191 00da FF91      		pop r31
+ 192 00dc EF91      		pop r30
+ 193 00de 9F91      		pop r25
+ 194               	.LVL7:
+ 195 00e0 8F91      		pop r24
+ 196               	.LVL8:
+ 197 00e2 2F91      		pop r18
+ 198 00e4 0F90      		pop r0
+ 199 00e6 0FBE      		out __SREG__,r0
+ 200 00e8 0F90      		pop r0
+ 201 00ea 1F90      		pop r1
+ 202 00ec 1895      		reti
+ 203               	.LFE8:
+ 205               	.global	__vector_16
+ 207               	__vector_16:
+ 208               	.LFB9:
+ 432:main.c        **** 
+ 433:main.c        **** TIMER_INT {
+ 209               		.loc 1 433 0
+ 210 00ee 1F92      		push r1
+ 211               	.LCFI13:
+ 212 00f0 0F92      		push r0
+ 213               	.LCFI14:
+ 214 00f2 0FB6      		in r0,__SREG__
+ 215 00f4 0F92      		push r0
+ 216 00f6 1124      		clr __zero_reg__
+ 217 00f8 CF92      		push r12
+ 218               	.LCFI15:
+ 219 00fa DF92      		push r13
+ 220               	.LCFI16:
+ 221 00fc FF92      		push r15
+ 222               	.LCFI17:
+ 223 00fe 0F93      		push r16
+ 224               	.LCFI18:
+ 225 0100 1F93      		push r17
+ 226               	.LCFI19:
+ 227 0102 2F93      		push r18
+ 228               	.LCFI20:
+ 229 0104 3F93      		push r19
+ 230               	.LCFI21:
+ 231 0106 4F93      		push r20
+ 232               	.LCFI22:
+ 233 0108 5F93      		push r21
+ 234               	.LCFI23:
+ 235 010a 6F93      		push r22
+ 236               	.LCFI24:
+ 237 010c 7F93      		push r23
+ 238               	.LCFI25:
+ 239 010e 8F93      		push r24
+ 240               	.LCFI26:
+ 241 0110 9F93      		push r25
+ 242               	.LCFI27:
+ 243 0112 AF93      		push r26
+ 244               	.LCFI28:
+ 245 0114 BF93      		push r27
+ 246               	.LCFI29:
+ 247 0116 EF93      		push r30
+ 248               	.LCFI30:
+ 249 0118 FF93      		push r31
+ 250               	.LCFI31:
+ 251 011a CF93      		push r28
+ 252               	.LCFI32:
+ 253 011c DF93      		push r29
+ 254               	.LCFI33:
+ 255 011e 00D0      		rcall .
+ 256               	.LCFI34:
+ 257 0120 CDB7      		in r28,__SP_L__
+ 258 0122 DEB7      		in r29,__SP_H__
+ 259               	.LCFI35:
+ 260               	/* prologue: Signal */
+ 261               	/* frame size = 2 */
+ 262               	/* stack size = 24 */
+ 263               	.L__stack_usage = 24
+ 434:main.c        ****     uint8_t lwmode=wmode; //let this variables in registers
+ 264               		.loc 1 434 0
+ 265 0124 4091 0000 		lds r20,wmode
+ 266               	.LVL9:
+ 435:main.c        ****     uint8_t lmode=mode;
+ 267               		.loc 1 435 0
+ 268 0128 2091 0000 		lds r18,mode
+ 269               	.LVL10:
+ 436:main.c        ****     uint8_t lbytep=bytep;
+ 270               		.loc 1 436 0
+ 271 012c 0091 0000 		lds r16,bytep
+ 272               	.LVL11:
+ 437:main.c        ****     uint8_t lbitp=bitp;
+ 273               		.loc 1 437 0
+ 274 0130 5091 0000 		lds r21,bitp
+ 275               	.LVL12:
+ 438:main.c        ****     uint8_t lsrcount=srcount;
+ 276               		.loc 1 438 0
+ 277 0134 1091 0000 		lds r17,srcount
+ 278               	.LVL13:
+ 439:main.c        ****     uint8_t lactbit=actbit;
+ 279               		.loc 1 439 0
+ 280 0138 3091 0000 		lds r19,actbit
+ 281               	.LVL14:
+ 440:main.c        ****     uint16_t lscrc=scrc;
+ 282               		.loc 1 440 0
+ 283 013c C090 0000 		lds r12,scrc
+ 284 0140 D090 0000 		lds r13,scrc+1
+ 285               	.LVL15:
+ 441:main.c        ****     //Ask input line sate
+ 442:main.c        ****     uint8_t p=((OW_PIN&OW_PINN)==OW_PINN);
+ 286               		.loc 1 442 0
+ 287 0144 F9B0      		in r15,0x9
+ 288 0146 F2FA      		bst r15,2
+ 289 0148 FF24      		clr r15
+ 290 014a F0F8      		bld r15,0
+ 291               	.LVL16:
+ 443:main.c        ****     //Interrupt still active ?
+ 444:main.c        ****     if (CHK_INT_EN) {
+ 292               		.loc 1 444 0
+ 293 014c E89B      		sbis 0x1d,0
+ 294 014e 00C0      		rjmp .L15
+ 445:main.c        ****         //maybe reset pulse
+ 446:main.c        ****         if (p==0) {
+ 295               		.loc 1 446 0
+ 296 0150 F110      		cpse r15,__zero_reg__
+ 297 0152 00C0      		rjmp .L16
+ 298               	.LVL17:
+ 447:main.c        ****             lmode=OWM_CHK_RESET;  //wait for rising edge
+ 448:main.c        ****             SET_RISING;
+ 299               		.loc 1 448 0
+ 300 0154 8091 6900 		lds r24,105
+ 301 0158 8360      		ori r24,lo8(3)
+ 302 015a 8093 6900 		sts 105,r24
+ 447:main.c        ****             lmode=OWM_CHK_RESET;  //wait for rising edge
+ 303               		.loc 1 447 0
+ 304 015e 28E0      		ldi r18,lo8(8)
+ 305               	.LVL18:
+ 306               	.L16:
+ 449:main.c        ****         }
+ 450:main.c        ****         DIS_TIMER;
+ 307               		.loc 1 450 0
+ 308 0160 8091 6E00 		lds r24,110
+ 309 0164 8E7F      		andi r24,lo8(-2)
+ 310 0166 8093 6E00 		sts 110,r24
+ 311 016a 00C0      		rjmp .L17
+ 312               	.L15:
+ 451:main.c        ****     } else
+ 452:main.c        ****     switch (lmode) {
+ 313               		.loc 1 452 0
+ 314 016c 822F      		mov r24,r18
+ 315 016e 90E0      		ldi r25,0
+ 316 0170 FC01      		movw r30,r24
+ 317 0172 3197      		sbiw r30,1
+ 318 0174 E231      		cpi r30,18
+ 319 0176 F105      		cpc r31,__zero_reg__
+ 320 0178 00F0      		brlo .+2
+ 321 017a 00C0      		rjmp .L17
+ 322 017c E050      		subi r30,lo8(-(gs(.L29)))
+ 323 017e F040      		sbci r31,hi8(-(gs(.L29)))
+ 324 0180 0994      		ijmp
+ 325               		.section	.progmem.gcc_sw_table,"ax",@progbits
+ 326               		.p2align	1
+ 327               	.L29:
+ 328 0026 00C0      		rjmp .L18
+ 329 0028 00C0      		rjmp .L19
+ 330 002a 00C0      		rjmp .L20
+ 331 002c 00C0      		rjmp .L21
+ 332 002e 00C0      		rjmp .L22
+ 333 0030 00C0      		rjmp .L23
+ 334 0032 00C0      		rjmp .L24
+ 335 0034 00C0      		rjmp .L17
+ 336 0036 00C0      		rjmp .L25
+ 337 0038 00C0      		rjmp .L26
+ 338 003a 00C0      		rjmp .L17
+ 339 003c 00C0      		rjmp .L17
+ 340 003e 00C0      		rjmp .L17
+ 341 0040 00C0      		rjmp .L17
+ 342 0042 00C0      		rjmp .L17
+ 343 0044 00C0      		rjmp .L17
+ 344 0046 00C0      		rjmp .L27
+ 345 0048 00C0      		rjmp .L28
+ 346               		.text
+ 347               	.L18:
+ 348               	.LVL19:
+ 453:main.c        ****         case OWM_RESET:  //Reset pulse and time after is finished, now go in presence state
+ 454:main.c        ****             lmode=OWM_PRESENCE;
+ 455:main.c        ****             SET_LOW;
+ 349               		.loc 1 455 0
+ 350 0182 529A      		sbi 0xa,2
+ 351 0184 5A98      		cbi 0xb,2
+ 456:main.c        ****             TCNT_REG=~(OWT_PRESENCE);
+ 352               		.loc 1 456 0
+ 353 0186 8BEE      		ldi r24,lo8(-21)
+ 354 0188 86BD      		out 0x26,r24
+ 457:main.c        ****             DIS_OWINT;  //No Pin interrupt necessary only wait for presence is done
+ 355               		.loc 1 457 0
+ 356 018a E898      		cbi 0x1d,0
+ 454:main.c        ****             lmode=OWM_PRESENCE;
+ 357               		.loc 1 454 0
+ 358 018c 22E0      		ldi r18,lo8(2)
+ 458:main.c        ****             break;
+ 359               		.loc 1 458 0
+ 360 018e 00C0      		rjmp .L78
+ 361               	.LVL20:
+ 362               	.L19:
+ 459:main.c        ****         case OWM_PRESENCE:
+ 460:main.c        ****             RESET_LOW;  //Presence is done now wait for a command
+ 363               		.loc 1 460 0
+ 364 0190 5298      		cbi 0xa,2
+ 365               	.LVL21:
+ 366 0192 00C0      		rjmp .L116
+ 367               	.LVL22:
+ 368               	.L20:
+ 461:main.c        ****             lmode=OWM_READ_COMMAND;
+ 462:main.c        ****             cbuf=0;lbitp=1;  //Command buffer have to set zero, only set bits will write in
+ 463:main.c        ****             break;
+ 464:main.c        ****         case OWM_READ_COMMAND:
+ 465:main.c        ****             if (p) {  //Set bit if line high
+ 369               		.loc 1 465 0
+ 370 0194 FF20      		tst r15
+ 371 0196 01F0      		breq .L31
+ 466:main.c        ****                 cbuf|=lbitp;
+ 372               		.loc 1 466 0
+ 373 0198 8091 0000 		lds r24,cbuf
+ 374 019c 852B      		or r24,r21
+ 375 019e 8093 0000 		sts cbuf,r24
+ 376               	.L31:
+ 467:main.c        ****             }
+ 468:main.c        ****             lbitp=(lbitp<<1);
+ 377               		.loc 1 468 0
+ 378 01a2 550F      		lsl r21
+ 379               	.LVL23:
+ 469:main.c        ****             if (!lbitp) { //8-Bits read - weird syntax?
+ 380               		.loc 1 469 0
+ 381 01a4 01F0      		breq .+2
+ 382 01a6 00C0      		rjmp .L76
+ 383               	.LVL24:
+ 470:main.c        ****                 lbitp=1;
+ 471:main.c        ****                 switch (cbuf) {
+ 384               		.loc 1 471 0
+ 385 01a8 8091 0000 		lds r24,cbuf
+ 386 01ac 8535      		cpi r24,lo8(85)
+ 387 01ae 01F0      		breq .L36
+ 388 01b0 00F4      		brsh .L40
+ 389 01b2 8231      		cpi r24,lo8(18)
+ 390 01b4 01F4      		brne .+2
+ 391 01b6 00C0      		rjmp .L33
+ 392 01b8 00F4      		brsh .L41
+ 393 01ba 8131      		cpi r24,lo8(17)
+ 394 01bc 01F0      		breq .+2
+ 395 01be 00C0      		rjmp .L32
+ 396 01c0 00C0      		rjmp .L80
+ 397               	.L41:
+ 398 01c2 8434      		cpi r24,lo8(68)
+ 399 01c4 01F0      		breq .L34
+ 400 01c6 8E34      		cpi r24,lo8(78)
+ 401 01c8 01F4      		brne .L32
+ 402 01ca 00C0      		rjmp .L35
+ 403               	.L40:
+ 404 01cc 853A      		cpi r24,lo8(-91)
+ 405 01ce 01F0      		breq .L37
+ 406 01d0 00F4      		brsh .L42
+ 407 01d2 8436      		cpi r24,lo8(100)
+ 408 01d4 01F4      		brne .L32
+ 409 01d6 00C0      		rjmp .L34
+ 410               	.L42:
+ 411 01d8 8E3B      		cpi r24,lo8(-66)
+ 412 01da 01F0      		breq .L38
+ 413 01dc 803F      		cpi r24,lo8(-16)
+ 414 01de 01F4      		brne .L32
+ 415 01e0 00C0      		rjmp .L39
+ 416               	.L36:
+ 470:main.c        ****                 lbitp=1;
+ 417               		.loc 1 470 0
+ 418 01e2 51E0      		ldi r21,lo8(1)
+ 472:main.c        ****                     case 0x55://Match ROM
+ 473:main.c        ****                         lbytep=0;
+ 419               		.loc 1 473 0
+ 420 01e4 00E0      		ldi r16,0
+ 421               	.LVL25:
+ 474:main.c        ****                         lmode=OWM_MATCH_ROM;
+ 422               		.loc 1 474 0
+ 423 01e6 25E0      		ldi r18,lo8(5)
+ 424               	.LVL26:
+ 425 01e8 00C0      		rjmp .L77
+ 426               	.LVL27:
+ 427               	.L39:
+ 475:main.c        ****                         break;
+ 476:main.c        ****                     case 0xF0:  //initialize search rom
+ 477:main.c        ****                         lmode=OWM_SEARCH_ROM;
+ 478:main.c        ****                         lsrcount=0;
+ 479:main.c        ****                         lbytep=0;
+ 480:main.c        ****                         /* FIXME: owid from eeprom - takes 4 cyc = 500ns @ 8 */
+ 481:main.c        ****                         lactbit=(owid[lbytep]&lbitp)==lbitp; //set actual bit
+ 428               		.loc 1 481 0
+ 429 01ea 4091 0000 		lds r20,owid
+ 430               	.LVL28:
+ 431 01ee 4170      		andi r20,lo8(1)
+ 432               	.LVL29:
+ 433 01f0 342F      		mov r19,r20
+ 478:main.c        ****                         lsrcount=0;
+ 434               		.loc 1 478 0
+ 435 01f2 10E0      		ldi r17,0
+ 470:main.c        ****                 lbitp=1;
+ 436               		.loc 1 470 0
+ 437 01f4 51E0      		ldi r21,lo8(1)
+ 479:main.c        ****                         lbytep=0;
+ 438               		.loc 1 479 0
+ 439 01f6 00E0      		ldi r16,0
+ 477:main.c        ****                         lmode=OWM_SEARCH_ROM;
+ 440               		.loc 1 477 0
+ 441 01f8 24E0      		ldi r18,lo8(4)
+ 482:main.c        ****                         lwmode=lactbit;  //prepare for writing when next falling edge
+ 483:main.c        ****                         break;
+ 442               		.loc 1 483 0
+ 443 01fa 00C0      		rjmp .L77
+ 444               	.LVL30:
+ 445               	.L35:
+ 484:main.c        ****                     //FIXME: case 0xEC:  //alarm search rom - TODO
+ 485:main.c        ****                     case 0x4E: //DS1820
+ 486:main.c        ****                         lmode=OWM_WRITE_SCRATCHPAD;
+ 487:main.c        ****                         lbytep=2;scratchpad[2]=0;  //initialize writing position in scratch pad
+ 446               		.loc 1 487 0
+ 447 01fc 1092 0000 		sts scratchpad+2,__zero_reg__
+ 470:main.c        ****                 lbitp=1;
+ 448               		.loc 1 470 0
+ 449 0200 51E0      		ldi r21,lo8(1)
+ 450               		.loc 1 487 0
+ 451 0202 02E0      		ldi r16,lo8(2)
+ 486:main.c        ****                         lmode=OWM_WRITE_SCRATCHPAD;
+ 452               		.loc 1 486 0
+ 453 0204 29E0      		ldi r18,lo8(9)
+ 488:main.c        ****                         break;
+ 454               		.loc 1 488 0
+ 455 0206 00C0      		rjmp .L77
+ 456               	.LVL31:
+ 457               	.L34:
+ 489:main.c        ****                     case 0x44:  //DS1820 Start Convert
+ 490:main.c        ****                     case 0x64:  // some tool uses this command
+ 491:main.c        ****                         CONV_TEMP;
+ 458               		.loc 1 491 0
+ 459 0208 8FEF      		ldi r24,lo8(-1)
+ 460 020a 8093 0000 		sts scratchpad,r24
+ 461 020e 1092 0000 		sts scratchpad+1,__zero_reg__
+ 462               	.LVL32:
+ 463 0212 00C0      		rjmp .L87
+ 464               	.LVL33:
+ 465               	.L38:
+ 492:main.c        ****                         lmode=OWM_SLEEP;
+ 493:main.c        ****                         break;
+ 494:main.c        ****                     case 0xBE: //DS1820
+ 495:main.c        ****                         lmode=OWM_READ_SCRATCHPAD; //read scratch pad
+ 496:main.c        ****                         lbytep=0;lscrc=0; //from first position
+ 497:main.c        ****                         lactbit=(lbitp&scratchpad[0])==lbitp;
+ 466               		.loc 1 497 0
+ 467 0214 4091 0000 		lds r20,scratchpad
+ 468               	.LVL34:
+ 469 0218 4170      		andi r20,lo8(1)
+ 470               	.LVL35:
+ 471 021a 342F      		mov r19,r20
+ 496:main.c        ****                         lbytep=0;lscrc=0; //from first position
+ 472               		.loc 1 496 0
+ 473 021c C12C      		mov r12,__zero_reg__
+ 474 021e D12C      		mov r13,__zero_reg__
+ 470:main.c        ****                 lbitp=1;
+ 475               		.loc 1 470 0
+ 476 0220 51E0      		ldi r21,lo8(1)
+ 496:main.c        ****                         lbytep=0;lscrc=0; //from first position
+ 477               		.loc 1 496 0
+ 478 0222 00E0      		ldi r16,0
+ 495:main.c        ****                         lmode=OWM_READ_SCRATCHPAD; //read scratch pad
+ 479               		.loc 1 495 0
+ 480 0224 2AE0      		ldi r18,lo8(10)
+ 498:main.c        ****                         lwmode=lactbit; //prepare for send firs bit
+ 499:main.c        ****                         break;
+ 481               		.loc 1 499 0
+ 482 0226 00C0      		rjmp .L77
+ 483               	.LVL36:
+ 484               	.L37:
+ 500:main.c        ****                     case 0xA5: // DS2423 Read Memory + Counter [A5H]
+ 501:main.c        ****                         lmode=OWM_GET_ADRESS; //first the master send an address
+ 502:main.c        ****                         lbytep=0;lscrc=0x7bc0; //CRC16 of 0xA5
+ 503:main.c        ****                         counterpack.bytes[0]=0;
+ 485               		.loc 1 503 0
+ 486 0228 1092 0000 		sts counterpack,__zero_reg__
+ 502:main.c        ****                         lbytep=0;lscrc=0x7bc0; //CRC16 of 0xA5
+ 487               		.loc 1 502 0
+ 488 022c B0EC      		ldi r27,lo8(-64)
+ 489 022e CB2E      		mov r12,r27
+ 490 0230 BBE7      		ldi r27,lo8(123)
+ 491 0232 DB2E      		mov r13,r27
+ 470:main.c        ****                 lbitp=1;
+ 492               		.loc 1 470 0
+ 493 0234 51E0      		ldi r21,lo8(1)
+ 502:main.c        ****                         lbytep=0;lscrc=0x7bc0; //CRC16 of 0xA5
+ 494               		.loc 1 502 0
+ 495 0236 00E0      		ldi r16,0
+ 501:main.c        ****                         lmode=OWM_GET_ADRESS; //first the master send an address
+ 496               		.loc 1 501 0
+ 497 0238 26E0      		ldi r18,lo8(6)
+ 504:main.c        ****                         break;
+ 498               		.loc 1 504 0
+ 499 023a 00C0      		rjmp .L77
+ 500               	.LVL37:
+ 501               	.L33:
+ 470:main.c        ****                 lbitp=1;
+ 502               		.loc 1 470 0
+ 503 023c 51E0      		ldi r21,lo8(1)
+ 505:main.c        **** #ifdef _ONE_DEVICE_CMDS_
+ 506:main.c        ****                     case 0xCC: //skip ROM
+ 507:main.c        ****                         lbytep=0;cbuf=0;lmode=OWM_READ_COMMAND;break;
+ 508:main.c        ****                     case 0x33: //read ROM
+ 509:main.c        ****                         lmode=OWM_READ_ROM;
+ 510:main.c        ****                         lbytep=0;
+ 511:main.c        ****                         break;
+ 512:main.c        **** #endif
+ 513:main.c        ****                     case 0x11: //E1 CUSTOM get version
+ 514:main.c        ****                         lmode=OWC_GET_VERSION;
+ 515:main.c        ****                         lbytep=0;
+ 516:main.c        ****                         break;
+ 517:main.c        ****                     case 0x12: //E1 CUSTOM get type
+ 518:main.c        ****                         lmode=OWC_GET_TYPE;
+ 519:main.c        ****                         lbytep=0;
+ 504               		.loc 1 519 0
+ 505 023e 00E0      		ldi r16,0
+ 518:main.c        ****                         lmode=OWC_GET_TYPE;
+ 506               		.loc 1 518 0
+ 507 0240 22E1      		ldi r18,lo8(18)
+ 520:main.c        ****                         break;
+ 508               		.loc 1 520 0
+ 509 0242 00C0      		rjmp .L77
+ 510               	.LVL38:
+ 511               	.L32:
+ 521:main.c        ****                     default:
+ 522:main.c        ****                         LSL("\r\nDC:")
+ 512               		.loc 1 522 0
+ 513 0244 80E0      		ldi r24,lo8(__c.1903)
+ 514 0246 90E0      		ldi r25,hi8(__c.1903)
+ 515 0248 3A83      		std Y+2,r19
+ 516 024a 4983      		std Y+1,r20
+ 517 024c 00D0      		rcall uart_puts_p
+ 518               	.LVL39:
+ 470:main.c        ****                 lbitp=1;
+ 519               		.loc 1 470 0
+ 520 024e 51E0      		ldi r21,lo8(1)
+ 521 0250 3A81      		ldd r19,Y+2
+ 522 0252 4981      		ldd r20,Y+1
+ 523 0254 00C0      		rjmp .L79
+ 524               	.LVL40:
+ 525               	.L21:
+ 523:main.c        ****                         //LVH(cbuf)
+ 524:main.c        ****                         lmode=OWM_SLEEP;  //all other commands do nothing
+ 525:main.c        ****                 }
+ 526:main.c        ****             }
+ 527:main.c        ****             break;
+ 528:main.c        ****         case OWM_SEARCH_ROM:
+ 529:main.c        ****             RESET_LOW;  //Set low also if nothing send (branch takes time and memory)
+ 526               		.loc 1 529 0
+ 527 0256 5298      		cbi 0xa,2
+ 530:main.c        ****             lsrcount++;  //next search rom mode
+ 528               		.loc 1 530 0
+ 529 0258 1F5F      		subi r17,lo8(-(1))
+ 530               	.LVL41:
+ 531:main.c        ****             switch (lsrcount) {
+ 531               		.loc 1 531 0
+ 532 025a 1130      		cpi r17,lo8(1)
+ 533 025c 01F0      		breq .L44
+ 534 025e 1330      		cpi r17,lo8(3)
+ 535 0260 01F0      		breq .+2
+ 536 0262 00C0      		rjmp .L76
+ 537 0264 00C0      		rjmp .L45
+ 538               	.L44:
+ 532:main.c        ****                 case 1:lwmode=!lactbit;  //preparation sending complement
+ 539               		.loc 1 532 0
+ 540 0266 41E0      		ldi r20,lo8(1)
+ 541               	.LVL42:
+ 542 0268 3323      		tst r19
+ 543 026a 01F4      		brne .+2
+ 544 026c 00C0      		rjmp .L76
+ 545 026e 40E0      		ldi r20,0
+ 546               	.LVL43:
+ 533:main.c        ****                     break;
+ 547               		.loc 1 533 0
+ 548 0270 00C0      		rjmp .L76
+ 549               	.LVL44:
+ 550               	.L45:
+ 534:main.c        ****                 case 3:
+ 535:main.c        ****                     if (p!=(lactbit==1)) {  //check master bit
+ 551               		.loc 1 535 0
+ 552 0272 81E0      		ldi r24,lo8(1)
+ 553 0274 3130      		cpi r19,lo8(1)
+ 554 0276 01F0      		breq .L47
+ 555 0278 80E0      		ldi r24,0
+ 556               	.L47:
+ 557 027a F812      		cpse r15,r24
+ 558 027c 00C0      		rjmp .L79
+ 536:main.c        ****                         lmode=OWM_SLEEP;  //not the same go sleep
+ 537:main.c        ****                     } else {
+ 538:main.c        ****                         lbitp=(lbitp<<1);  //prepare next bit
+ 559               		.loc 1 538 0
+ 560 027e 550F      		lsl r21
+ 561               	.LVL45:
+ 539:main.c        ****                         if (lbitp==0) {
+ 562               		.loc 1 539 0
+ 563 0280 01F4      		brne .L48
+ 564               	.LVL46:
+ 540:main.c        ****                             lbitp=1;
+ 541:main.c        ****                             lbytep++;
+ 565               		.loc 1 541 0
+ 566 0282 0F5F      		subi r16,lo8(-(1))
+ 567               	.LVL47:
+ 540:main.c        ****                             lbitp=1;
+ 568               		.loc 1 540 0
+ 569 0284 51E0      		ldi r21,lo8(1)
+ 542:main.c        ****                             if (lbytep>=8) {
+ 570               		.loc 1 542 0
+ 571 0286 0830      		cpi r16,lo8(8)
+ 572 0288 00F0      		brlo .+2
+ 573 028a 00C0      		rjmp .L79
+ 574               	.LVL48:
+ 575               	.L48:
+ 543:main.c        ****                                 lmode=OWM_SLEEP;  //all bits processed
+ 544:main.c        ****                                 break;
+ 545:main.c        ****                             }
+ 546:main.c        ****                         }
+ 547:main.c        ****                         lsrcount=0;
+ 548:main.c        ****                         /* FIXME: owid from eeprom - takes 4 cyc = 500ns @ 8 */
+ 549:main.c        ****                         lactbit=(owid[lbytep]&lbitp)==lbitp;
+ 576               		.loc 1 549 0
+ 577 028c E02F      		mov r30,r16
+ 578 028e F0E0      		ldi r31,0
+ 579 0290 E050      		subi r30,lo8(-(owid))
+ 580 0292 F040      		sbci r31,hi8(-(owid))
+ 581 0294 8081      		ld r24,Z
+ 582 0296 8523      		and r24,r21
+ 583 0298 31E0      		ldi r19,lo8(1)
+ 584               	.LVL49:
+ 585 029a 8513      		cpse r24,r21
+ 586 029c 30E0      		ldi r19,0
+ 587               	.L49:
+ 588               	.LVL50:
+ 550:main.c        ****                         lwmode=lactbit;
+ 589               		.loc 1 550 0
+ 590 029e 432F      		mov r20,r19
+ 547:main.c        ****                         lsrcount=0;
+ 591               		.loc 1 547 0
+ 592 02a0 10E0      		ldi r17,0
+ 593 02a2 00C0      		rjmp .L76
+ 594               	.LVL51:
+ 595               	.L22:
+ 551:main.c        ****                     }
+ 552:main.c        ****                     break;
+ 553:main.c        ****             }
+ 554:main.c        ****             break;
+ 555:main.c        ****         case OWM_MATCH_ROM:
+ 556:main.c        ****             /* FIXME: owid from eeprom - takes 4 cyc = 500ns @ 8 */
+ 557:main.c        ****             if (p==((owid[lbytep]&lbitp)==lbitp)) {  //Compare with ID Buffer
+ 596               		.loc 1 557 0
+ 597 02a4 E02F      		mov r30,r16
+ 598 02a6 F0E0      		ldi r31,0
+ 599 02a8 E050      		subi r30,lo8(-(owid))
+ 600 02aa F040      		sbci r31,hi8(-(owid))
+ 601 02ac 8081      		ld r24,Z
+ 602 02ae 8523      		and r24,r21
+ 603 02b0 91E0      		ldi r25,lo8(1)
+ 604 02b2 8513      		cpse r24,r21
+ 605 02b4 90E0      		ldi r25,0
+ 606               	.L50:
+ 607 02b6 F912      		cpse r15,r25
+ 608 02b8 00C0      		rjmp .L79
+ 558:main.c        ****                 lbitp=(lbitp<<1);
+ 609               		.loc 1 558 0
+ 610 02ba 550F      		lsl r21
+ 611               	.LVL52:
+ 559:main.c        ****                 if (!lbitp) {
+ 612               		.loc 1 559 0
+ 613 02bc 01F0      		breq .+2
+ 614 02be 00C0      		rjmp .L76
+ 560:main.c        ****                     lbytep++;
+ 615               		.loc 1 560 0
+ 616 02c0 0F5F      		subi r16,lo8(-(1))
+ 617               	.LVL53:
+ 561:main.c        ****                     lbitp=1;
+ 562:main.c        ****                     if (lbytep>=8) {
+ 618               		.loc 1 562 0
+ 619 02c2 0830      		cpi r16,lo8(8)
+ 620 02c4 00F4      		brsh .+2
+ 621 02c6 00C0      		rjmp .L82
+ 622               	.LVL54:
+ 623               	.L116:
+ 563:main.c        ****                         lmode=OWM_READ_COMMAND;  //same? get next command
+ 564:main.c        **** 
+ 565:main.c        ****                         cbuf=0;
+ 624               		.loc 1 565 0
+ 625 02c8 1092 0000 		sts cbuf,__zero_reg__
+ 561:main.c        ****                     lbitp=1;
+ 626               		.loc 1 561 0
+ 627 02cc 51E0      		ldi r21,lo8(1)
+ 563:main.c        ****                         lmode=OWM_READ_COMMAND;  //same? get next command
+ 628               		.loc 1 563 0
+ 629 02ce 23E0      		ldi r18,lo8(3)
+ 566:main.c        ****                         break;
+ 630               		.loc 1 566 0
+ 631 02d0 00C0      		rjmp .L77
+ 632               	.LVL55:
+ 633               	.L25:
+ 567:main.c        ****                     }
+ 568:main.c        ****                 }
+ 569:main.c        ****             } else {
+ 570:main.c        ****                 lmode=OWM_SLEEP;
+ 571:main.c        ****             }
+ 572:main.c        ****             break;
+ 573:main.c        ****         case OWM_WRITE_SCRATCHPAD:
+ 574:main.c        ****             if (p) {
+ 634               		.loc 1 574 0
+ 635 02d2 FF20      		tst r15
+ 636 02d4 01F0      		breq .L51
+ 575:main.c        ****                 scratchpad[lbytep]|=lbitp;
+ 637               		.loc 1 575 0
+ 638 02d6 E02F      		mov r30,r16
+ 639 02d8 F0E0      		ldi r31,0
+ 640 02da E050      		subi r30,lo8(-(scratchpad))
+ 641 02dc F040      		sbci r31,hi8(-(scratchpad))
+ 642 02de 8081      		ld r24,Z
+ 643 02e0 852B      		or r24,r21
+ 644 02e2 8083      		st Z,r24
+ 645               	.L51:
+ 576:main.c        ****             }
+ 577:main.c        ****             lbitp=(lbitp<<1);
+ 646               		.loc 1 577 0
+ 647 02e4 550F      		lsl r21
+ 648               	.LVL56:
+ 578:main.c        ****             if (!lbitp) {
+ 649               		.loc 1 578 0
+ 650 02e6 01F0      		breq .+2
+ 651 02e8 00C0      		rjmp .L76
+ 579:main.c        ****                 lbytep++;
+ 652               		.loc 1 579 0
+ 653 02ea 0F5F      		subi r16,lo8(-(1))
+ 654               	.LVL57:
+ 580:main.c        ****                 lbitp=1;
+ 581:main.c        ****                 if (lbytep==5) {
+ 655               		.loc 1 581 0
+ 656 02ec 0530      		cpi r16,lo8(5)
+ 657 02ee 01F4      		brne .+2
+ 658 02f0 00C0      		rjmp .L87
+ 582:main.c        ****                     lmode=OWM_SLEEP;
+ 583:main.c        ****                     break;
+ 584:main.c        ****                 } else scratchpad[lbytep]=0;
+ 659               		.loc 1 584 0
+ 660 02f2 E02F      		mov r30,r16
+ 661 02f4 F0E0      		ldi r31,0
+ 662 02f6 E050      		subi r30,lo8(-(scratchpad))
+ 663 02f8 F040      		sbci r31,hi8(-(scratchpad))
+ 664 02fa 00C0      		rjmp .L118
+ 665               	.LVL58:
+ 666               	.L26:
+ 585:main.c        ****             }
+ 586:main.c        ****             break;
+ 587:main.c        ****         case OWM_READ_SCRATCHPAD:
+ 588:main.c        ****             RESET_LOW;
+ 667               		.loc 1 588 0
+ 668 02fc 5298      		cbi 0xa,2
+ 589:main.c        ****             if ((lscrc&1)!=lactbit) lscrc=(lscrc>>1)^0x8c; else lscrc >>=1;
+ 669               		.loc 1 589 0
+ 670 02fe B601      		movw r22,r12
+ 671 0300 6170      		andi r22,1
+ 672 0302 7727      		clr r23
+ 673 0304 832F      		mov r24,r19
+ 674 0306 90E0      		ldi r25,0
+ 675 0308 D694      		lsr r13
+ 676 030a C794      		ror r12
+ 677               	.LVL59:
+ 678 030c 6817      		cp r22,r24
+ 679 030e 7907      		cpc r23,r25
+ 680 0310 01F0      		breq .L53
+ 681               		.loc 1 589 0 is_stmt 0 discriminator 1
+ 682 0312 8CE8      		ldi r24,140
+ 683 0314 C826      		eor r12,r24
+ 684               	.LVL60:
+ 685               	.L53:
+ 590:main.c        ****             lbitp=(lbitp<<1);
+ 686               		.loc 1 590 0 is_stmt 1
+ 687 0316 550F      		lsl r21
+ 688               	.LVL61:
+ 591:main.c        ****             if (!lbitp) {
+ 689               		.loc 1 591 0
+ 690 0318 01F4      		brne .L54
+ 592:main.c        ****                 lbytep++;
+ 691               		.loc 1 592 0
+ 692 031a 0F5F      		subi r16,lo8(-(1))
+ 693               	.LVL62:
+ 593:main.c        ****                 lbitp=1;
+ 594:main.c        ****                 if (lbytep>=9) {
+ 694               		.loc 1 594 0
+ 695 031c 0930      		cpi r16,lo8(9)
+ 696 031e 00F0      		brlo .+2
+ 697 0320 00C0      		rjmp .L87
+ 595:main.c        ****                     lmode=OWM_SLEEP;
+ 596:main.c        ****                     break;
+ 597:main.c        ****                 } else if (lbytep==8) scratchpad[8]=lscrc;
+ 698               		.loc 1 597 0
+ 699 0322 0830      		cpi r16,lo8(8)
+ 700 0324 01F4      		brne .L85
+ 701               		.loc 1 597 0 is_stmt 0 discriminator 1
+ 702 0326 C092 0000 		sts scratchpad+8,r12
+ 703               	.L85:
+ 593:main.c        ****                 lbitp=1;
+ 704               		.loc 1 593 0 is_stmt 1
+ 705 032a 51E0      		ldi r21,lo8(1)
+ 706               	.LVL63:
+ 707               	.L54:
+ 598:main.c        ****             }
+ 599:main.c        ****             lactbit=(lbitp&scratchpad[lbytep])==lbitp;
+ 708               		.loc 1 599 0
+ 709 032c E02F      		mov r30,r16
+ 710 032e F0E0      		ldi r31,0
+ 711 0330 E050      		subi r30,lo8(-(scratchpad))
+ 712 0332 F040      		sbci r31,hi8(-(scratchpad))
+ 713 0334 00C0      		rjmp .L121
+ 714               	.L23:
+ 600:main.c        ****             lwmode=lactbit;
+ 601:main.c        ****             break;
+ 602:main.c        ****         case OWM_GET_ADRESS:
+ 603:main.c        ****             //FIXME: copy value to local varible/"scratchpad"?? it might change during read!
+ 604:main.c        ****             if (p) { //Get the Address for reading
+ 715               		.loc 1 604 0
+ 716 0336 FF20      		tst r15
+ 717 0338 01F0      		breq .L56
+ 605:main.c        ****                 counterpack.bytes[lbytep]|=lbitp;
+ 718               		.loc 1 605 0
+ 719 033a E02F      		mov r30,r16
+ 720 033c F0E0      		ldi r31,0
+ 721 033e E050      		subi r30,lo8(-(counterpack))
+ 722 0340 F040      		sbci r31,hi8(-(counterpack))
+ 723 0342 8081      		ld r24,Z
+ 724 0344 852B      		or r24,r21
+ 725 0346 8083      		st Z,r24
+ 726               	.L56:
+ 606:main.c        ****             }
+ 607:main.c        ****             //address is part of crc
+ 608:main.c        ****             if ((lscrc&1)!=p) lscrc=(lscrc>>1)^0xA001; else lscrc >>=1;
+ 727               		.loc 1 608 0
+ 728 0348 B601      		movw r22,r12
+ 729 034a 6170      		andi r22,1
+ 730 034c 7727      		clr r23
+ 731 034e 8F2D      		mov r24,r15
+ 732 0350 90E0      		ldi r25,0
+ 733 0352 D694      		lsr r13
+ 734 0354 C794      		ror r12
+ 735               	.LVL64:
+ 736 0356 6817      		cp r22,r24
+ 737 0358 7907      		cpc r23,r25
+ 738 035a 01F0      		breq .L58
+ 739               		.loc 1 608 0 is_stmt 0 discriminator 1
+ 740 035c E1E0      		ldi r30,1
+ 741 035e CE26      		eor r12,r30
+ 742 0360 E0EA      		ldi r30,160
+ 743 0362 DE26      		eor r13,r30
+ 744               	.LVL65:
+ 745               	.L58:
+ 609:main.c        ****             lbitp=(lbitp<<1);
+ 746               		.loc 1 609 0 is_stmt 1
+ 747 0364 550F      		lsl r21
+ 748               	.LVL66:
+ 610:main.c        ****             if (!lbitp) {
+ 749               		.loc 1 610 0
+ 750 0366 01F0      		breq .+2
+ 751 0368 00C0      		rjmp .L76
+ 611:main.c        ****                 lbytep++;
+ 752               		.loc 1 611 0
+ 753 036a 0F5F      		subi r16,lo8(-(1))
+ 754               	.LVL67:
+ 612:main.c        ****                 lbitp=1;
+ 613:main.c        ****                 if (lbytep==2) {
+ 755               		.loc 1 613 0
+ 756 036c 0230      		cpi r16,lo8(2)
+ 757 036e 01F4      		brne .L59
+ 758               	.LVL68:
+ 614:main.c        ****                     lmode=OWM_READ_MEMORY_COUNTER;
+ 615:main.c        ****                     lactbit=(lbitp&counterpack.bytes[lbytep])==lbitp;
+ 759               		.loc 1 615 0
+ 760 0370 4091 0000 		lds r20,counterpack+2
+ 761               	.LVL69:
+ 762 0374 4170      		andi r20,lo8(1)
+ 763               	.LVL70:
+ 616:main.c        ****                     lwmode=lactbit;
+ 617:main.c        ****                     lsrcount=(counterpack.addr&0xfe0)+0x20-counterpack.addr;
+ 764               		.loc 1 617 0
+ 765 0376 8091 0000 		lds r24,counterpack
+ 766 037a 9091 0000 		lds r25,counterpack+1
+ 767 037e 9C01      		movw r18,r24
+ 768 0380 207E      		andi r18,224
+ 769 0382 3327      		clr r19
+ 770 0384 122F      		mov r17,r18
+ 771               	.LVL71:
+ 772 0386 181B      		sub r17,r24
+ 773 0388 105E      		subi r17,lo8(-(32))
+ 774               	.LVL72:
+ 615:main.c        ****                     lactbit=(lbitp&counterpack.bytes[lbytep])==lbitp;
+ 775               		.loc 1 615 0
+ 776 038a 342F      		mov r19,r20
+ 612:main.c        ****                 lbitp=1;
+ 777               		.loc 1 612 0
+ 778 038c 51E0      		ldi r21,lo8(1)
+ 614:main.c        ****                     lmode=OWM_READ_MEMORY_COUNTER;
+ 779               		.loc 1 614 0
+ 780 038e 27E0      		ldi r18,lo8(7)
+ 618:main.c        ****                     //bytes between start and Counter Values, Iam never understanding why so much??
+ 619:main.c        ****                     break;
+ 781               		.loc 1 619 0
+ 782 0390 00C0      		rjmp .L77
+ 783               	.LVL73:
+ 784               	.L59:
+ 620:main.c        ****                 } else counterpack.bytes[lbytep]=0;
+ 785               		.loc 1 620 0
+ 786 0392 E02F      		mov r30,r16
+ 787 0394 F0E0      		ldi r31,0
+ 788 0396 E050      		subi r30,lo8(-(counterpack))
+ 789 0398 F040      		sbci r31,hi8(-(counterpack))
+ 790               	.L118:
+ 791 039a 1082      		st Z,__zero_reg__
+ 792 039c 00C0      		rjmp .L82
+ 793               	.LVL74:
+ 794               	.L24:
+ 621:main.c        ****             }
+ 622:main.c        ****             break;
+ 623:main.c        ****         case OWM_READ_MEMORY_COUNTER:
+ 624:main.c        ****             RESET_LOW;
+ 795               		.loc 1 624 0
+ 796 039e 5298      		cbi 0xa,2
+ 625:main.c        ****             //CRC16 Calculation
+ 626:main.c        ****             if ((lscrc&1)!=lactbit)
+ 797               		.loc 1 626 0
+ 798 03a0 B601      		movw r22,r12
+ 799 03a2 6170      		andi r22,1
+ 800 03a4 7727      		clr r23
+ 801 03a6 832F      		mov r24,r19
+ 802 03a8 90E0      		ldi r25,0
+ 803 03aa D694      		lsr r13
+ 804 03ac C794      		ror r12
+ 805               	.LVL75:
+ 806 03ae 6817      		cp r22,r24
+ 807 03b0 7907      		cpc r23,r25
+ 808 03b2 01F0      		breq .L61
+ 627:main.c        ****               lscrc=(lscrc>>1)^0xA001;
+ 809               		.loc 1 627 0
+ 810 03b4 F1E0      		ldi r31,1
+ 811 03b6 CF26      		eor r12,r31
+ 812 03b8 F0EA      		ldi r31,160
+ 813 03ba DF26      		eor r13,r31
+ 814               	.LVL76:
+ 815               	.L61:
+ 628:main.c        ****             else
+ 629:main.c        ****               lscrc >>=1;
+ 630:main.c        ****             p=lactbit;
+ 631:main.c        ****             lbitp=(lbitp<<1);
+ 816               		.loc 1 631 0
+ 817 03bc 550F      		lsl r21
+ 818               	.LVL77:
+ 632:main.c        ****             if (!lbitp) {
+ 819               		.loc 1 632 0
+ 820 03be 01F0      		breq .+2
+ 821 03c0 00C0      		rjmp .L62
+ 633:main.c        ****                 lbytep++;
+ 822               		.loc 1 633 0
+ 823 03c2 802F      		mov r24,r16
+ 824 03c4 8F5F      		subi r24,lo8(-(1))
+ 825               	.LVL78:
+ 634:main.c        ****                 lbitp=1;
+ 635:main.c        ****                 if (lbytep==3) {
+ 826               		.loc 1 635 0
+ 827 03c6 8330      		cpi r24,lo8(3)
+ 828 03c8 01F0      		breq .+2
+ 829 03ca 00C0      		rjmp .L86
+ 636:main.c        ****                     lsrcount--;
+ 830               		.loc 1 636 0
+ 831 03cc 1150      		subi r17,lo8(-(-1))
+ 832               	.LVL79:
+ 637:main.c        ****                     if (lsrcount) lbytep--;
+ 833               		.loc 1 637 0
+ 834 03ce 01F0      		breq .+2
+ 835 03d0 00C0      		rjmp .L63
+ 638:main.c        ****                     else  {//now copy counter in send buffer
+ 639:main.c        ****                         switch (counterpack.addr&0xFe0) {
+ 836               		.loc 1 639 0
+ 837 03d2 8091 0000 		lds r24,counterpack
+ 838 03d6 9091 0000 		lds r25,counterpack+1
+ 839               	.LVL80:
+ 840 03da 807E      		andi r24,224
+ 841 03dc 9F70      		andi r25,15
+ 842 03de 803A      		cpi r24,-96
+ 843 03e0 31E0      		ldi r19,1
+ 844 03e2 9307      		cpc r25,r19
+ 845 03e4 01F0      		breq .L66
+ 846               	.LVL81:
+ 847 03e6 00F4      		brsh .L69
+ 848 03e8 8038      		cpi r24,-128
+ 849 03ea 9140      		sbci r25,1
+ 850 03ec 01F4      		brne .L64
+ 851 03ee 00C0      		rjmp .L65
+ 852               	.L69:
+ 853 03f0 803C      		cpi r24,-64
+ 854 03f2 31E0      		ldi r19,1
+ 855 03f4 9307      		cpc r25,r19
+ 856 03f6 01F0      		breq .L67
+ 857 03f8 803E      		cpi r24,-32
+ 858 03fa 9140      		sbci r25,1
+ 859 03fc 01F4      		brne .L64
+ 860 03fe 00C0      		rjmp .L68
+ 861               	.L65:
+ 640:main.c        ****                         case 0x180:
+ 641:main.c        ****                             counterpack.counter=Counter1;
+ 862               		.loc 1 641 0
+ 863 0400 8091 0000 		lds r24,Counter1
+ 864 0404 9091 0000 		lds r25,Counter1+1
+ 865 0408 A091 0000 		lds r26,Counter1+2
+ 866 040c B091 0000 		lds r27,Counter1+3
+ 867 0410 00C0      		rjmp .L117
+ 868               	.L66:
+ 642:main.c        ****                         break;
+ 643:main.c        ****                         case 0x1A0:
+ 644:main.c        ****                             counterpack.counter=Counter2;
+ 869               		.loc 1 644 0
+ 870 0412 8091 0000 		lds r24,Counter2
+ 871 0416 9091 0000 		lds r25,Counter2+1
+ 872 041a A091 0000 		lds r26,Counter2+2
+ 873 041e B091 0000 		lds r27,Counter2+3
+ 874 0422 00C0      		rjmp .L117
+ 875               	.L67:
+ 645:main.c        ****                             break;
+ 646:main.c        ****                         case 0x1C0:
+ 647:main.c        ****                             counterpack.counter=Counter3;
+ 876               		.loc 1 647 0
+ 877 0424 8091 0000 		lds r24,Counter3
+ 878 0428 9091 0000 		lds r25,Counter3+1
+ 879 042c A091 0000 		lds r26,Counter3+2
+ 880 0430 B091 0000 		lds r27,Counter3+3
+ 881 0434 00C0      		rjmp .L117
+ 882               	.L68:
+ 648:main.c        ****                             break;
+ 649:main.c        ****                         case 0x1E0:
+ 650:main.c        ****                             counterpack.counter=Counter4;
+ 883               		.loc 1 650 0
+ 884 0436 8091 0000 		lds r24,Counter4
+ 885 043a 9091 0000 		lds r25,Counter4+1
+ 886 043e A091 0000 		lds r26,Counter4+2
+ 887 0442 B091 0000 		lds r27,Counter4+3
+ 888               	.L117:
+ 889 0446 8093 0000 		sts counterpack+3,r24
+ 890 044a 9093 0000 		sts counterpack+3+1,r25
+ 891 044e A093 0000 		sts counterpack+3+2,r26
+ 892 0452 B093 0000 		sts counterpack+3+3,r27
+ 651:main.c        ****                             break;
+ 893               		.loc 1 651 0
+ 894 0456 00C0      		rjmp .L70
+ 895               	.L64:
+ 652:main.c        ****                         default: counterpack.counter=0;
+ 896               		.loc 1 652 0
+ 897 0458 1092 0000 		sts counterpack+3,__zero_reg__
+ 898 045c 1092 0000 		sts counterpack+3+1,__zero_reg__
+ 899 0460 1092 0000 		sts counterpack+3+2,__zero_reg__
+ 900 0464 1092 0000 		sts counterpack+3+3,__zero_reg__
+ 901 0468 00C0      		rjmp .L70
+ 902               	.LVL82:
+ 903               	.L86:
+ 635:main.c        ****                 if (lbytep==3) {
+ 904               		.loc 1 635 0
+ 905 046a 082F      		mov r16,r24
+ 906               	.L63:
+ 907               	.LVL83:
+ 653:main.c        ****                         }
+ 654:main.c        ****                     }
+ 655:main.c        ****                 }
+ 656:main.c        ****                 if (lbytep>=13) { //done sending
+ 908               		.loc 1 656 0
+ 909 046c 0D30      		cpi r16,lo8(13)
+ 910 046e 00F0      		brlo .+2
+ 911 0470 00C0      		rjmp .L87
+ 657:main.c        ****                     lmode=OWM_SLEEP;
+ 658:main.c        ****                     break;
+ 659:main.c        ****                 }
+ 660:main.c        ****                 if ((lbytep==11)&&(lbitp==1)) { //Send CRC
+ 912               		.loc 1 660 0
+ 913 0472 0B30      		cpi r16,lo8(11)
+ 914 0474 01F4      		brne .L88
+ 661:main.c        ****                     counterpack.crc=~lscrc;
+ 915               		.loc 1 661 0
+ 916 0476 C601      		movw r24,r12
+ 917 0478 8095      		com r24
+ 918 047a 9095      		com r25
+ 919 047c 9093 0000 		sts counterpack+11+1,r25
+ 920 0480 8093 0000 		sts counterpack+11,r24
+ 921               	.LVL84:
+ 922               	.L88:
+ 634:main.c        ****                 lbitp=1;
+ 923               		.loc 1 634 0
+ 924 0484 51E0      		ldi r21,lo8(1)
+ 925               	.LVL85:
+ 926               	.L62:
+ 662:main.c        ****                 }
+ 663:main.c        **** 
+ 664:main.c        ****             }
+ 665:main.c        ****             lactbit=(lbitp&counterpack.bytes[lbytep])==lbitp;
+ 927               		.loc 1 665 0
+ 928 0486 E02F      		mov r30,r16
+ 929 0488 F0E0      		ldi r31,0
+ 930 048a E050      		subi r30,lo8(-(counterpack))
+ 931 048c F040      		sbci r31,hi8(-(counterpack))
+ 932               	.L121:
+ 933 048e 8081      		ld r24,Z
+ 934 0490 8523      		and r24,r21
+ 935 0492 00C0      		rjmp .L120
+ 936               	.LVL86:
+ 937               	.L27:
+ 666:main.c        ****             lwmode=lactbit;
+ 667:main.c        ****             break;
+ 668:main.c        ****         case OWC_GET_VERSION:
+ 669:main.c        ****             RESET_LOW;
+ 938               		.loc 1 669 0
+ 939 0494 5298      		cbi 0xa,2
+ 670:main.c        ****             lbitp=(lbitp<<1);
+ 940               		.loc 1 670 0
+ 941 0496 550F      		lsl r21
+ 942               	.LVL87:
+ 671:main.c        ****             if (!lbitp) {
+ 943               		.loc 1 671 0
+ 944 0498 01F4      		brne .L72
+ 672:main.c        ****                 lbytep++;
+ 945               		.loc 1 672 0
+ 946 049a 0F5F      		subi r16,lo8(-(1))
+ 947               	.LVL88:
+ 673:main.c        ****                 lbitp=1;
+ 948               		.loc 1 673 0
+ 949 049c 51E0      		ldi r21,lo8(1)
+ 674:main.c        ****                 if (lbytep>=2) {
+ 950               		.loc 1 674 0
+ 951 049e 0230      		cpi r16,lo8(2)
+ 952 04a0 00F4      		brsh .L79
+ 953               	.LVL89:
+ 954               	.L72:
+ 675:main.c        ****                     lmode=OWM_SLEEP;
+ 676:main.c        ****                     break;
+ 677:main.c        ****                 }
+ 678:main.c        ****             }
+ 679:main.c        ****             //lactbit=(lbitp&owid[lbytep])==lbitp;
+ 680:main.c        ****             lactbit=(lbitp& 0x89)==lbitp;
+ 955               		.loc 1 680 0
+ 956 04a2 852F      		mov r24,r21
+ 957 04a4 8978      		andi r24,lo8(-119)
+ 958 04a6 00C0      		rjmp .L120
+ 959               	.L28:
+ 681:main.c        ****             lwmode=lactbit;
+ 682:main.c        ****             break;
+ 683:main.c        ****         case OWC_GET_TYPE:
+ 684:main.c        ****             RESET_LOW;
+ 960               		.loc 1 684 0
+ 961 04a8 5298      		cbi 0xa,2
+ 685:main.c        ****             lbitp=(lbitp<<1);
+ 962               		.loc 1 685 0
+ 963 04aa 550F      		lsl r21
+ 964               	.LVL90:
+ 686:main.c        ****             if (!lbitp) {
+ 965               		.loc 1 686 0
+ 966 04ac 01F4      		brne .L74
+ 687:main.c        ****                 lbytep++;
+ 967               		.loc 1 687 0
+ 968 04ae 0F5F      		subi r16,lo8(-(1))
+ 969               	.LVL91:
+ 688:main.c        ****                 lbitp=1;
+ 970               		.loc 1 688 0
+ 971 04b0 51E0      		ldi r21,lo8(1)
+ 689:main.c        ****                 if (lbytep>=1) {
+ 972               		.loc 1 689 0
+ 973 04b2 01F4      		brne .L79
+ 974               	.LVL92:
+ 975               	.L74:
+ 690:main.c        ****                     lmode=OWM_SLEEP;
+ 691:main.c        ****                     break;
+ 692:main.c        ****                 }
+ 693:main.c        ****             }
+ 694:main.c        ****             lactbit=(lbitp& 0x88)==lbitp;
+ 976               		.loc 1 694 0
+ 977 04b4 852F      		mov r24,r21
+ 978 04b6 8878      		andi r24,lo8(-120)
+ 979               	.LVL93:
+ 980               	.L120:
+ 981 04b8 31E0      		ldi r19,lo8(1)
+ 982 04ba 8513      		cpse r24,r21
+ 983 04bc 30E0      		ldi r19,0
+ 984               	.L75:
+ 985               	.LVL94:
+ 695:main.c        ****             lwmode=lactbit;
+ 986               		.loc 1 695 0
+ 987 04be 432F      		mov r20,r19
+ 696:main.c        ****             break;
+ 988               		.loc 1 696 0
+ 989 04c0 00C0      		rjmp .L76
+ 990               	.LVL95:
+ 991               	.L17:
+ 697:main.c        **** 
+ 698:main.c        **** #ifdef _ONE_DEVICE_CMDS_
+ 699:main.c        ****         case OWM_READ_ROM:
+ 700:main.c        ****             RESET_LOW;
+ 701:main.c        ****             lbitp=(lbitp<<1);
+ 702:main.c        ****             if (!lbitp) {
+ 703:main.c        ****                 lbytep++;
+ 704:main.c        ****                 lbitp=1;
+ 705:main.c        ****                 if (lbytep>=8) {
+ 706:main.c        ****                     lmode=OWM_SLEEP;
+ 707:main.c        ****                     break;
+ 708:main.c        ****                 }
+ 709:main.c        ****             }
+ 710:main.c        ****             lactbit=(lbitp&owid[lbytep])==lbitp;
+ 711:main.c        ****             lwmode=lactbit;
+ 712:main.c        ****             break;
+ 713:main.c        **** #endif
+ 714:main.c        ****         }
+ 715:main.c        ****         if (lmode==OWM_SLEEP) {DIS_TIMER;}
+ 992               		.loc 1 715 0
+ 993 04c2 2111      		cpse r18,__zero_reg__
+ 994 04c4 00C0      		rjmp .L76
+ 995               	.LVL96:
+ 996               	.L79:
+ 997               		.loc 1 715 0 is_stmt 0 discriminator 1
+ 998 04c6 8091 6E00 		lds r24,110
+ 999 04ca 8E7F      		andi r24,lo8(-2)
+ 1000 04cc 8093 6E00 		sts 110,r24
+ 1001 04d0 20E0      		ldi r18,0
+ 1002 04d2 00C0      		rjmp .L77
+ 1003               	.LVL97:
+ 1004               	.L76:
+ 716:main.c        ****         if (lmode!=OWM_PRESENCE)  {
+ 1005               		.loc 1 716 0 is_stmt 1
+ 1006 04d4 2230      		cpi r18,lo8(2)
+ 1007 04d6 01F0      		breq .L78
+ 1008               	.LVL98:
+ 1009               	.L77:
+ 717:main.c        ****             TCNT_REG=~(OWT_MIN_RESET-OWT_READLINE);  //OWT_READLINE around OWT_LOWTIME
+ 1010               		.loc 1 717 0
+ 1011 04d8 8FEC      		ldi r24,lo8(-49)
+ 1012 04da 86BD      		out 0x26,r24
+ 718:main.c        ****             EN_OWINT;
+ 1013               		.loc 1 718 0
+ 1014 04dc E89A      		sbi 0x1d,0
+ 1015 04de E09A      		sbi 0x1c,0
+ 1016               	.L78:
+ 719:main.c        ****         }
+ 720:main.c        ****         mode=lmode;
+ 1017               		.loc 1 720 0
+ 1018 04e0 2093 0000 		sts mode,r18
+ 721:main.c        ****         wmode=lwmode;
+ 1019               		.loc 1 721 0
+ 1020 04e4 4093 0000 		sts wmode,r20
+ 722:main.c        ****         bytep=lbytep;
+ 1021               		.loc 1 722 0
+ 1022 04e8 0093 0000 		sts bytep,r16
+ 723:main.c        ****         bitp=lbitp;
+ 1023               		.loc 1 723 0
+ 1024 04ec 5093 0000 		sts bitp,r21
+ 724:main.c        ****         srcount=lsrcount;
+ 1025               		.loc 1 724 0
+ 1026 04f0 1093 0000 		sts srcount,r17
+ 725:main.c        ****         actbit=lactbit;
+ 1027               		.loc 1 725 0
+ 1028 04f4 3093 0000 		sts actbit,r19
+ 726:main.c        ****         scrc=lscrc;
+ 1029               		.loc 1 726 0
+ 1030 04f8 D092 0000 		sts scrc+1,r13
+ 1031 04fc C092 0000 		sts scrc,r12
+ 1032 0500 00C0      		rjmp .L115
+ 1033               	.LVL99:
+ 1034               	.L70:
+ 634:main.c        ****                 lbitp=1;
+ 1035               		.loc 1 634 0
+ 1036 0502 03E0      		ldi r16,lo8(3)
+ 1037 0504 00C0      		rjmp .L88
+ 1038               	.LVL100:
+ 1039               	.L80:
+ 470:main.c        ****                 lbitp=1;
+ 1040               		.loc 1 470 0
+ 1041 0506 51E0      		ldi r21,lo8(1)
+ 515:main.c        ****                         lbytep=0;
+ 1042               		.loc 1 515 0
+ 1043 0508 00E0      		ldi r16,0
+ 1044               	.LVL101:
+ 514:main.c        ****                         lmode=OWC_GET_VERSION;
+ 1045               		.loc 1 514 0
+ 1046 050a 21E1      		ldi r18,lo8(17)
+ 1047               	.LVL102:
+ 1048 050c 00C0      		rjmp .L77
+ 1049               	.LVL103:
+ 1050               	.L82:
+ 561:main.c        ****                     lbitp=1;
+ 1051               		.loc 1 561 0
+ 1052 050e 51E0      		ldi r21,lo8(1)
+ 1053 0510 00C0      		rjmp .L76
+ 1054               	.LVL104:
+ 1055               	.L87:
+ 634:main.c        ****                 lbitp=1;
+ 1056               		.loc 1 634 0
+ 1057 0512 51E0      		ldi r21,lo8(1)
+ 1058 0514 00C0      		rjmp .L79
+ 1059               	.LVL105:
+ 1060               	.L115:
+ 1061               	/* epilogue start */
+ 727:main.c        **** }
+ 1062               		.loc 1 727 0
+ 1063 0516 0F90      		pop __tmp_reg__
+ 1064 0518 0F90      		pop __tmp_reg__
+ 1065 051a DF91      		pop r29
+ 1066 051c CF91      		pop r28
+ 1067 051e FF91      		pop r31
+ 1068 0520 EF91      		pop r30
+ 1069 0522 BF91      		pop r27
+ 1070 0524 AF91      		pop r26
+ 1071 0526 9F91      		pop r25
+ 1072 0528 8F91      		pop r24
+ 1073 052a 7F91      		pop r23
+ 1074 052c 6F91      		pop r22
+ 1075 052e 5F91      		pop r21
+ 1076 0530 4F91      		pop r20
+ 1077 0532 3F91      		pop r19
+ 1078 0534 2F91      		pop r18
+ 1079 0536 1F91      		pop r17
+ 1080 0538 0F91      		pop r16
+ 1081 053a FF90      		pop r15
+ 1082 053c DF90      		pop r13
+ 1083 053e CF90      		pop r12
+ 1084 0540 0F90      		pop r0
+ 1085 0542 0FBE      		out __SREG__,r0
+ 1086 0544 0F90      		pop r0
+ 1087 0546 1F90      		pop r1
+ 1088 0548 1895      		reti
+ 1089               	.LFE9:
+ 1091               	.global	__vector_3
+ 1093               	__vector_3:
+ 1094               	.LFB10:
+ 728:main.c        **** 
+ 729:main.c        **** 
+ 730:main.c        **** 
+ 731:main.c        **** PC_INT_ISR  //for counting  defined for specific device
+ 1095               		.loc 1 731 0
+ 1096 054a 1F92      		push r1
+ 1097               	.LCFI36:
+ 1098 054c 0F92      		push r0
+ 1099               	.LCFI37:
+ 1100 054e 0FB6      		in r0,__SREG__
+ 1101 0550 0F92      		push r0
+ 1102 0552 1124      		clr __zero_reg__
+ 1103 0554 8F93      		push r24
+ 1104               	.LCFI38:
+ 1105 0556 9F93      		push r25
+ 1106               	.LCFI39:
+ 1107 0558 AF93      		push r26
+ 1108               	.LCFI40:
+ 1109 055a BF93      		push r27
+ 1110               	.LCFI41:
+ 1111               	/* prologue: Signal */
+ 1112               	/* frame size = 0 */
+ 1113               	/* stack size = 7 */
+ 1114               	.L__stack_usage = 7
+ 1115               		.loc 1 731 0
+ 1116 055c 1B99      		sbic 0x3,3
+ 1117 055e 00C0      		rjmp .L123
+ 1118               		.loc 1 731 0 is_stmt 0 discriminator 1
+ 1119 0560 8091 0000 		lds r24,istat
+ 1120 0564 83FF      		sbrs r24,3
+ 1121 0566 00C0      		rjmp .L123
+ 1122               		.loc 1 731 0 discriminator 3
+ 1123 0568 8091 0000 		lds r24,Counter3
+ 1124 056c 9091 0000 		lds r25,Counter3+1
+ 1125 0570 A091 0000 		lds r26,Counter3+2
+ 1126 0574 B091 0000 		lds r27,Counter3+3
+ 1127 0578 0196      		adiw r24,1
+ 1128 057a A11D      		adc r26,__zero_reg__
+ 1129 057c B11D      		adc r27,__zero_reg__
+ 1130 057e 8093 0000 		sts Counter3,r24
+ 1131 0582 9093 0000 		sts Counter3+1,r25
+ 1132 0586 A093 0000 		sts Counter3+2,r26
+ 1133 058a B093 0000 		sts Counter3+3,r27
+ 1134               	.L123:
+ 1135               		.loc 1 731 0 discriminator 2
+ 1136 058e 1C99      		sbic 0x3,4
+ 1137 0590 00C0      		rjmp .L124
+ 1138               		.loc 1 731 0 discriminator 4
+ 1139 0592 8091 0000 		lds r24,istat
+ 1140 0596 84FF      		sbrs r24,4
+ 1141 0598 00C0      		rjmp .L124
+ 1142               		.loc 1 731 0 discriminator 6
+ 1143 059a 8091 0000 		lds r24,Counter4
+ 1144 059e 9091 0000 		lds r25,Counter4+1
+ 1145 05a2 A091 0000 		lds r26,Counter4+2
+ 1146 05a6 B091 0000 		lds r27,Counter4+3
+ 1147 05aa 0196      		adiw r24,1
+ 1148 05ac A11D      		adc r26,__zero_reg__
+ 1149 05ae B11D      		adc r27,__zero_reg__
+ 1150 05b0 8093 0000 		sts Counter4,r24
+ 1151 05b4 9093 0000 		sts Counter4+1,r25
+ 1152 05b8 A093 0000 		sts Counter4+2,r26
+ 1153 05bc B093 0000 		sts Counter4+3,r27
+ 1154               	.L124:
+ 1155               		.loc 1 731 0 discriminator 5
+ 1156 05c0 83B1      		in r24,0x3
+ 1157 05c2 8093 0000 		sts istat,r24
+ 1158               	/* epilogue start */
+ 1159 05c6 BF91      		pop r27
+ 1160 05c8 AF91      		pop r26
+ 1161 05ca 9F91      		pop r25
+ 1162 05cc 8F91      		pop r24
+ 1163 05ce 0F90      		pop r0
+ 1164 05d0 0FBE      		out __SREG__,r0
+ 1165 05d2 0F90      		pop r0
+ 1166 05d4 1F90      		pop r1
+ 1167 05d6 1895      		reti
+ 1168               	.LFE10:
+ 1170               	.global	init_eeprom
+ 1172               	init_eeprom:
+ 1173               	.LFB11:
+ 732:main.c        **** 
+ 733:main.c        **** void init_eeprom(void) {
+ 1174               		.loc 1 733 0 is_stmt 1
+ 1175 05d8 0F93      		push r16
+ 1176               	.LCFI42:
+ 1177 05da 1F93      		push r17
+ 1178               	.LCFI43:
+ 1179 05dc CF93      		push r28
+ 1180               	.LCFI44:
+ 1181 05de DF93      		push r29
+ 1182               	.LCFI45:
+ 1183               	/* prologue: function */
+ 1184               	/* frame size = 0 */
+ 1185               	/* stack size = 4 */
+ 1186               	.L__stack_usage = 4
+ 734:main.c        ****     /* check magic, read slave address and counter values, resetcount, init-name, */
+ 735:main.c        ****     if (eeprom_read_word(EE_MAGIC_OFFSET) == EE_MAGIC_NUMBER) {
+ 1187               		.loc 1 735 0
+ 1188 05e0 80E0      		ldi r24,0
+ 1189 05e2 90E0      		ldi r25,0
+ 1190 05e4 00D0      		rcall __eerd_word_m48
+ 1191               	.LVL106:
+ 1192 05e6 823E      		cpi r24,-30
+ 1193 05e8 914E      		sbci r25,-31
+ 1194 05ea 01F0      		breq .+2
+ 1195 05ec 00C0      		rjmp .L132
+ 1196 05ee 00E0      		ldi r16,lo8(owid)
+ 1197 05f0 10E0      		ldi r17,hi8(owid)
+ 1198 05f2 C2E0      		ldi r28,lo8(2)
+ 1199 05f4 D0E0      		ldi r29,0
+ 1200               	.L133:
+ 1201               	.LBB7:
+ 736:main.c        ****       //EEPROM valid -> read counters & settings
+ 737:main.c        ****       for (uint16_t i=EE_OWID_OFFSET;i<EE_OWID_OFFSET+8;i++)
+ 738:main.c        ****         owid[i-EE_OWID_OFFSET] = eeprom_read_byte((uint8_t *) i);
+ 1202               		.loc 1 738 0 discriminator 2
+ 1203 05f6 CE01      		movw r24,r28
+ 1204 05f8 00D0      		rcall __eerd_byte_m48
+ 1205               	.LVL107:
+ 1206 05fa F801      		movw r30,r16
+ 1207 05fc 8193      		st Z+,r24
+ 1208 05fe 8F01      		movw r16,r30
+ 737:main.c        ****       for (uint16_t i=EE_OWID_OFFSET;i<EE_OWID_OFFSET+8;i++)
+ 1209               		.loc 1 737 0 discriminator 2
+ 1210 0600 2196      		adiw r28,1
+ 1211               	.LVL108:
+ 1212 0602 CA30      		cpi r28,10
+ 1213 0604 D105      		cpc r29,__zero_reg__
+ 1214 0606 01F4      		brne .L133
+ 1215               	.LBE7:
+ 739:main.c        ****       eeprom_update_word(EE_RCNT_OFFSET, eeprom_read_word(EE_RCNT_OFFSET) + 1);
+ 1216               		.loc 1 739 0
+ 1217 0608 8AE0      		ldi r24,lo8(10)
+ 1218 060a 90E0      		ldi r25,0
+ 1219 060c 00D0      		rcall __eerd_word_m48
+ 1220               	.LVL109:
+ 1221 060e BC01      		movw r22,r24
+ 1222 0610 6F5F      		subi r22,-1
+ 1223 0612 7F4F      		sbci r23,-1
+ 1224 0614 8AE0      		ldi r24,lo8(10)
+ 1225 0616 90E0      		ldi r25,0
+ 1226 0618 00D0      		rcall __eeupd_word_m48
+ 1227               	.LVL110:
+ 740:main.c        ****       Counter1 = eeprom_read_dword(EE_COUNTER_OFFSET);
+ 1228               		.loc 1 740 0
+ 1229 061a 8CE0      		ldi r24,lo8(12)
+ 1230 061c 90E0      		ldi r25,0
+ 1231 061e 00D0      		rcall __eerd_dword_m48
+ 1232               	.LVL111:
+ 1233 0620 6093 0000 		sts Counter1,r22
+ 1234 0624 7093 0000 		sts Counter1+1,r23
+ 1235 0628 8093 0000 		sts Counter1+2,r24
+ 1236 062c 9093 0000 		sts Counter1+3,r25
+ 741:main.c        ****       Counter2 = eeprom_read_dword(EE_COUNTER_OFFSET+4);
+ 1237               		.loc 1 741 0
+ 1238 0630 80E1      		ldi r24,lo8(16)
+ 1239 0632 90E0      		ldi r25,0
+ 1240 0634 00D0      		rcall __eerd_dword_m48
+ 1241               	.LVL112:
+ 1242 0636 6093 0000 		sts Counter2,r22
+ 1243 063a 7093 0000 		sts Counter2+1,r23
+ 1244 063e 8093 0000 		sts Counter2+2,r24
+ 1245 0642 9093 0000 		sts Counter2+3,r25
+ 742:main.c        ****       Counter3 = eeprom_read_dword(EE_COUNTER_OFFSET+8);
+ 1246               		.loc 1 742 0
+ 1247 0646 84E1      		ldi r24,lo8(20)
+ 1248 0648 90E0      		ldi r25,0
+ 1249 064a 00D0      		rcall __eerd_dword_m48
+ 1250               	.LVL113:
+ 1251 064c 6093 0000 		sts Counter3,r22
+ 1252 0650 7093 0000 		sts Counter3+1,r23
+ 1253 0654 8093 0000 		sts Counter3+2,r24
+ 1254 0658 9093 0000 		sts Counter3+3,r25
+ 743:main.c        ****       Counter4 = eeprom_read_dword(EE_COUNTER_OFFSET+16);
+ 1255               		.loc 1 743 0
+ 1256 065c 8CE1      		ldi r24,lo8(28)
+ 1257 065e 90E0      		ldi r25,0
+ 1258 0660 00D0      		rcall __eerd_dword_m48
+ 1259               	.LVL114:
+ 1260 0662 6093 0000 		sts Counter4,r22
+ 1261 0666 7093 0000 		sts Counter4+1,r23
+ 1262 066a 8093 0000 		sts Counter4+2,r24
+ 1263 066e 9093 0000 		sts Counter4+3,r25
+ 1264 0672 00C0      		rjmp .L138
+ 1265               	.LVL115:
+ 1266               	.L132:
+ 744:main.c        ****     } else {
+ 745:main.c        ****       //Init values
+ 746:main.c        ****       /* should cli(); here no sei(); yet enabled in main.. */
+ 747:main.c        ****       eeprom_write_word(EE_MAGIC_OFFSET, EE_MAGIC_NUMBER);
+ 1267               		.loc 1 747 0
+ 1268 0674 62EE      		ldi r22,lo8(-30)
+ 1269 0676 71EE      		ldi r23,lo8(-31)
+ 1270 0678 80E0      		ldi r24,0
+ 1271 067a 90E0      		ldi r25,0
+ 1272 067c 00D0      		rcall __eewr_word_m48
+ 1273               	.LVL116:
+ 1274 067e 00E0      		ldi r16,lo8(owid)
+ 1275 0680 10E0      		ldi r17,hi8(owid)
+ 748:main.c        ****       for (uint16_t i=EE_OWID_OFFSET;i<EE_OWID_OFFSET+8;i++)
+ 1276               		.loc 1 748 0
+ 1277 0682 C2E0      		ldi r28,lo8(2)
+ 1278 0684 D0E0      		ldi r29,0
+ 1279               	.LVL117:
+ 1280               	.L135:
+ 1281               	.LBB8:
+ 749:main.c        ****         eeprom_write_byte((uint8_t *) i,owid[i-EE_OWID_OFFSET]);
+ 1282               		.loc 1 749 0 discriminator 2
+ 1283 0686 F801      		movw r30,r16
+ 1284 0688 6191      		ld r22,Z+
+ 1285 068a 8F01      		movw r16,r30
+ 1286 068c CE01      		movw r24,r28
+ 1287 068e 00D0      		rcall __eewr_byte_m48
+ 1288               	.LVL118:
+ 748:main.c        ****       for (uint16_t i=EE_OWID_OFFSET;i<EE_OWID_OFFSET+8;i++)
+ 1289               		.loc 1 748 0 discriminator 2
+ 1290 0690 2196      		adiw r28,1
+ 1291               	.LVL119:
+ 1292 0692 CA30      		cpi r28,10
+ 1293 0694 D105      		cpc r29,__zero_reg__
+ 1294 0696 01F4      		brne .L135
+ 1295               	.LBE8:
+ 750:main.c        ****       eeprom_write_word(EE_RCNT_OFFSET, 1);
+ 1296               		.loc 1 750 0
+ 1297 0698 61E0      		ldi r22,lo8(1)
+ 1298 069a 70E0      		ldi r23,0
+ 1299 069c 8AE0      		ldi r24,lo8(10)
+ 1300 069e 90E0      		ldi r25,0
+ 1301 06a0 00D0      		rcall __eewr_word_m48
+ 1302               	.LVL120:
+ 751:main.c        ****       eeprom_write_dword(EE_COUNTER_OFFSET,0);
+ 1303               		.loc 1 751 0
+ 1304 06a2 40E0      		ldi r20,0
+ 1305 06a4 50E0      		ldi r21,0
+ 1306 06a6 BA01      		movw r22,r20
+ 1307 06a8 8CE0      		ldi r24,lo8(12)
+ 1308 06aa 90E0      		ldi r25,0
+ 1309 06ac 00D0      		rcall __eewr_dword_m48
+ 1310               	.LVL121:
+ 752:main.c        ****       eeprom_write_dword(EE_COUNTER_OFFSET+4,0);
+ 1311               		.loc 1 752 0
+ 1312 06ae 40E0      		ldi r20,0
+ 1313 06b0 50E0      		ldi r21,0
+ 1314 06b2 BA01      		movw r22,r20
+ 1315 06b4 80E1      		ldi r24,lo8(16)
+ 1316 06b6 90E0      		ldi r25,0
+ 1317 06b8 00D0      		rcall __eewr_dword_m48
+ 1318               	.LVL122:
+ 753:main.c        ****       eeprom_write_dword(EE_COUNTER_OFFSET+8,0);
+ 1319               		.loc 1 753 0
+ 1320 06ba 40E0      		ldi r20,0
+ 1321 06bc 50E0      		ldi r21,0
+ 1322 06be BA01      		movw r22,r20
+ 1323 06c0 84E1      		ldi r24,lo8(20)
+ 1324 06c2 90E0      		ldi r25,0
+ 1325 06c4 00D0      		rcall __eewr_dword_m48
+ 1326               	.LVL123:
+ 754:main.c        ****       eeprom_write_dword(EE_COUNTER_OFFSET+12,0);
+ 1327               		.loc 1 754 0
+ 1328 06c6 40E0      		ldi r20,0
+ 1329 06c8 50E0      		ldi r21,0
+ 1330 06ca BA01      		movw r22,r20
+ 1331 06cc 88E1      		ldi r24,lo8(24)
+ 1332 06ce 90E0      		ldi r25,0
+ 1333 06d0 00D0      		rcall __eewr_dword_m48
+ 1334               	.LVL124:
+ 755:main.c        ****       eeprom_write_byte((uint8_t *) EE_TYPE_OFFSET, EE_DEFTYPE);
+ 1335               		.loc 1 755 0
+ 1336 06d2 61E0      		ldi r22,lo8(1)
+ 1337 06d4 8CE2      		ldi r24,lo8(44)
+ 1338 06d6 90E0      		ldi r25,0
+ 1339 06d8 00D0      		rcall __eewr_byte_m48
+ 1340               	.LVL125:
+ 756:main.c        ****       eeprom_write_word(EE_VERSION_OFFSET, 0x0102);
+ 1341               		.loc 1 756 0
+ 1342 06da 62E0      		ldi r22,lo8(2)
+ 1343 06dc 71E0      		ldi r23,lo8(1)
+ 1344 06de 8DE2      		ldi r24,lo8(45)
+ 1345 06e0 90E0      		ldi r25,0
+ 1346               	/* epilogue start */
+ 757:main.c        ****     }
+ 758:main.c        **** }
+ 1347               		.loc 1 758 0
+ 1348 06e2 DF91      		pop r29
+ 1349 06e4 CF91      		pop r28
+ 1350               	.LVL126:
+ 1351 06e6 1F91      		pop r17
+ 1352 06e8 0F91      		pop r16
+ 756:main.c        ****       eeprom_write_word(EE_VERSION_OFFSET, 0x0102);
+ 1353               		.loc 1 756 0
+ 1354 06ea 00C0      		rjmp __eewr_word_m48
+ 1355               	.LVL127:
+ 1356               	.L138:
+ 1357               	/* epilogue start */
+ 1358               		.loc 1 758 0
+ 1359 06ec DF91      		pop r29
+ 1360 06ee CF91      		pop r28
+ 1361               	.LVL128:
+ 1362 06f0 1F91      		pop r17
+ 1363 06f2 0F91      		pop r16
+ 1364 06f4 0895      		ret
+ 1365               	.LFE11:
+ 1367               		.section	.text.startup,"ax",@progbits
+ 1368               	.global	main
+ 1370               	main:
+ 1371               	.LFB12:
+ 759:main.c        **** 
+ 760:main.c        **** int main(void) {
+ 1372               		.loc 1 760 0
+ 1373               	/* prologue: function */
+ 1374               	/* frame size = 0 */
+ 1375               	/* stack size = 0 */
+ 1376               	.L__stack_usage = 0
+ 761:main.c        ****     mode=OWM_SLEEP;
+ 1377               		.loc 1 761 0
+ 1378 0000 1092 0000 		sts mode,__zero_reg__
+ 762:main.c        ****     wmode=OWW_NO_WRITE;
+ 1379               		.loc 1 762 0
+ 1380 0004 82E0      		ldi r24,lo8(2)
+ 1381 0006 8093 0000 		sts wmode,r24
+ 763:main.c        ****     OW_DDR&=~OW_PINN;
+ 1382               		.loc 1 763 0
+ 1383 000a 5298      		cbi 0xa,2
+ 1384               	.LVL129:
+ 1385 000c 80E0      		ldi r24,0
+ 1386 000e 90E0      		ldi r25,0
+ 1387               	.LVL130:
+ 1388               	.L140:
+ 1389               	.LBB9:
+ 764:main.c        **** 
+ 765:main.c        ****     for(uint8_t i=0;i<sizeof(counterpack);i++) counterpack.bytes[i]=0;
+ 1390               		.loc 1 765 0 discriminator 2
+ 1391 0010 FC01      		movw r30,r24
+ 1392 0012 E050      		subi r30,lo8(-(counterpack))
+ 1393 0014 F040      		sbci r31,hi8(-(counterpack))
+ 1394 0016 1082      		st Z,__zero_reg__
+ 1395 0018 0196      		adiw r24,1
+ 1396 001a 8D30      		cpi r24,13
+ 1397 001c 9105      		cpc r25,__zero_reg__
+ 1398 001e 01F4      		brne .L140
+ 1399               	.LBE9:
+ 766:main.c        **** 
+ 767:main.c        ****     SET_FALLING;
+ 1400               		.loc 1 767 0
+ 1401 0020 8091 6900 		lds r24,105
+ 1402 0024 8260      		ori r24,lo8(2)
+ 1403 0026 8093 6900 		sts 105,r24
+ 1404 002a 8091 6900 		lds r24,105
+ 1405 002e 8E7F      		andi r24,lo8(-2)
+ 1406 0030 8093 6900 		sts 105,r24
+ 768:main.c        **** 
+ 769:main.c        ****     INIT_AVR
+ 1407               		.loc 1 769 0
+ 1408 0034 90E8      		ldi r25,lo8(-128)
+ 1409 0036 9093 6100 		sts 97,r25
+ 1410 003a 1092 6100 		sts 97,__zero_reg__
+ 1411 003e 1092 6E00 		sts 110,__zero_reg__
+ 1412 0042 C1E0      		ldi r28,lo8(1)
+ 1413 0044 CDBB      		out 0x1d,r28
+ 1414 0046 83E0      		ldi r24,lo8(3)
+ 1415 0048 85BD      		out 0x25,r24
+ 1416 004a 8AB1      		in r24,0xa
+ 1417 004c 8066      		ori r24,lo8(96)
+ 1418 004e 8AB9      		out 0xa,r24
+ 1419 0050 84B5      		in r24,0x24
+ 1420 0052 836A      		ori r24,lo8(-93)
+ 1421 0054 84BD      		out 0x24,r24
+ 1422 0056 97BD      		out 0x27,r25
+ 1423 0058 80EC      		ldi r24,lo8(-64)
+ 1424 005a 88BD      		out 0x28,r24
+ 1425 005c 84B1      		in r24,0x4
+ 1426 005e 8660      		ori r24,lo8(6)
+ 1427 0060 84B9      		out 0x4,r24
+ 1428 0062 8091 6F00 		lds r24,111
+ 1429 0066 8160      		ori r24,lo8(1)
+ 1430 0068 8093 6F00 		sts 111,r24
+ 1431 006c B09A      		sbi 0x16,0
+ 1432 006e 8091 8000 		lds r24,128
+ 1433 0072 816A      		ori r24,lo8(-95)
+ 1434 0074 8093 8000 		sts 128,r24
+ 1435 0078 8091 8100 		lds r24,129
+ 1436 007c 8B60      		ori r24,lo8(11)
+ 1437 007e 8093 8100 		sts 129,r24
+ 1438 0082 80E8      		ldi r24,lo8(-128)
+ 1439 0084 90E0      		ldi r25,0
+ 1440 0086 9093 8900 		sts 136+1,r25
+ 1441 008a 8093 8800 		sts 136,r24
+ 1442 008e 80EC      		ldi r24,lo8(-64)
+ 1443 0090 90E0      		ldi r25,0
+ 1444 0092 9093 8B00 		sts 138+1,r25
+ 1445 0096 8093 8A00 		sts 138,r24
+ 770:main.c        ****     PWRSAVE_AVR
+ 1446               		.loc 1 770 0
+ 1447 009a 85EC      		ldi r24,lo8(-59)
+ 1448 009c 8093 6400 		sts 100,r24
+ 1449 00a0 8FE3      		ldi r24,lo8(63)
+ 1450 00a2 8093 7E00 		sts 126,r24
+ 771:main.c        ****     DEBUG_INIT
+ 1451               		.loc 1 771 0
+ 1452 00a6 8CE0      		ldi r24,lo8(12)
+ 1453 00a8 90E0      		ldi r25,0
+ 1454 00aa 00D0      		rcall uart_init
+ 1455               	.LVL131:
+ 772:main.c        ****     LSL("Startup")
+ 1456               		.loc 1 772 0
+ 1457 00ac 80E0      		ldi r24,lo8(__c.1945)
+ 1458 00ae 90E0      		ldi r25,hi8(__c.1945)
+ 1459 00b0 00D0      		rcall uart_puts_p
+ 1460               	.LVL132:
+ 773:main.c        **** 
+ 774:main.c        ****     init_eeprom();
+ 1461               		.loc 1 774 0
+ 1462 00b2 00D0      		rcall init_eeprom
+ 1463               	.LVL133:
+ 775:main.c        **** 
+ 776:main.c        ****     DIS_TIMER;
+ 1464               		.loc 1 776 0
+ 1465 00b4 8091 6E00 		lds r24,110
+ 1466 00b8 8E7F      		andi r24,lo8(-2)
+ 1467 00ba 8093 6E00 		sts 110,r24
+ 777:main.c        ****     /* FIXME: read slave-id from eeprom here? */
+ 778:main.c        **** 
+ 779:main.c        ****     INIT_COUNTER_PINS
+ 1468               		.loc 1 779 0
+ 1469 00be C093 6800 		sts 104,r28
+ 1470 00c2 85B1      		in r24,0x5
+ 1471 00c4 8861      		ori r24,lo8(24)
+ 1472 00c6 85B9      		out 0x5,r24
+ 1473 00c8 8091 6B00 		lds r24,107
+ 1474 00cc 8861      		ori r24,lo8(24)
+ 1475 00ce 8093 6B00 		sts 107,r24
+ 1476 00d2 84B1      		in r24,0x4
+ 1477 00d4 877E      		andi r24,lo8(-25)
+ 1478 00d6 84B9      		out 0x4,r24
+ 1479 00d8 83B1      		in r24,0x3
+ 1480 00da 8093 0000 		sts istat,r24
+ 780:main.c        **** 
+ 781:main.c        ****     sleep_enable();
+ 1481               		.loc 1 781 0
+ 1482 00de 83B7      		in r24,0x33
+ 1483 00e0 8160      		ori r24,lo8(1)
+ 1484 00e2 83BF      		out 0x33,r24
+ 782:main.c        ****     sei();
+ 1485               		.loc 1 782 0
+ 1486               	/* #APP */
+ 1487               	 ;  782 "main.c" 1
+ 1488 00e4 7894      		sei
+ 1489               	 ;  0 "" 2
+ 783:main.c        ****     set_sleep_mode(SLEEP_MODE_IDLE);
+ 1490               		.loc 1 783 0
+ 1491               	/* #NOAPP */
+ 1492 00e6 83B7      		in r24,0x33
+ 1493 00e8 817F      		andi r24,lo8(-15)
+ 1494 00ea 83BF      		out 0x33,r24
+ 1495               	.L141:
+ 784:main.c        ****     //FIXME: somehow int0 doesn't wake up! maybe SET_FAILLING is missing or so.. PWR_SAVE should wo
+ 785:main.c        ****     //or set/change sleep_mode in OWINT?
+ 786:main.c        ****     uint32_t tlast;
+ 787:main.c        ****     while(1){
+ 788:main.c        ****         /* FIXME: Idle / sleep here? */
+ 789:main.c        ****         sleep_cpu();
+ 1496               		.loc 1 789 0 discriminator 1
+ 1497               	/* #APP */
+ 1498               	 ;  789 "main.c" 1
+ 1499 00ec 8895      		sleep
+ 1500               		
+ 1501               	 ;  0 "" 2
+ 1502               	.LVL134:
+ 1503               	/* #NOAPP */
+ 1504               	.LBB10:
+ 1505               	.LBB11:
+ 1506               		.file 2 "/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h"
+   1:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** /* Copyright (c) 2002, Marek Michalkiewicz
+   2:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    Copyright (c) 2004,2005,2007 Joerg Wunsch
+   3:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    Copyright (c) 2007  Florin-Viorel Petrov
+   4:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    All rights reserved.
+   5:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+   6:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    Redistribution and use in source and binary forms, with or without
+   7:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    modification, are permitted provided that the following conditions are met:
+   8:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+   9:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    * Redistributions of source code must retain the above copyright
+  10:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****      notice, this list of conditions and the following disclaimer.
+  11:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+  12:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    * Redistributions in binary form must reproduce the above copyright
+  13:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****      notice, this list of conditions and the following disclaimer in
+  14:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****      the documentation and/or other materials provided with the
+  15:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****      distribution.
+  16:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+  17:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    * Neither the name of the copyright holders nor the names of
+  18:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****      contributors may be used to endorse or promote products derived
+  19:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****      from this software without specific prior written permission.
+  20:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+  21:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  22:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****   AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  23:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  24:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****   ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+  25:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****   LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  26:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****   CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+  27:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****   SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+  28:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****   INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+  29:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****   CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  30:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  31:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****   POSSIBILITY OF SUCH DAMAGE. */
+  32:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+  33:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** /* $Id: delay.h.in 2251 2011-09-14 08:20:33Z joerg_wunsch $ */
+  34:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+  35:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** #ifndef _UTIL_DELAY_H_
+  36:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** #define _UTIL_DELAY_H_ 1
+  37:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+  38:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** #ifndef __HAS_DELAY_CYCLES
+  39:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** #define __HAS_DELAY_CYCLES 1
+  40:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** #endif
+  41:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+  42:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** #include <inttypes.h>
+  43:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** #include <util/delay_basic.h>
+  44:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** #include <math.h>
+  45:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+  46:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** /** \file */
+  47:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** /** \defgroup util_delay <util/delay.h>: Convenience functions for busy-wait delay loops
+  48:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     \code
+  49:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     #define F_CPU 1000000UL  // 1 MHz
+  50:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     //#define F_CPU 14.7456E6
+  51:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     #include <util/delay.h>
+  52:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     \endcode
+  53:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+  54:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     \note As an alternative method, it is possible to pass the
+  55:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     F_CPU macro down to the compiler from the Makefile.
+  56:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     Obviously, in that case, no \c \#define statement should be
+  57:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     used.
+  58:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+  59:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     The functions in this header file are wrappers around the basic
+  60:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     busy-wait functions from <util/delay_basic.h>.  They are meant as
+  61:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     convenience functions where actual time values can be specified
+  62:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     rather than a number of cycles to wait for.  The idea behind is
+  63:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     that compile-time constant expressions will be eliminated by
+  64:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     compiler optimization so floating-point expressions can be used
+  65:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     to calculate the number of delay cycles needed based on the CPU
+  66:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     frequency passed by the macro F_CPU.
+  67:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+  68:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     \note In order for these functions to work as intended, compiler
+  69:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     optimizations <em>must</em> be enabled, and the delay time
+  70:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     <em>must</em> be an expression that is a known constant at
+  71:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     compile-time.  If these requirements are not met, the resulting
+  72:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     delay will be much longer (and basically unpredictable), and
+  73:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     applications that otherwise do not use floating-point calculations
+  74:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     will experience severe code bloat by the floating-point library
+  75:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     routines linked into the application.
+  76:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+  77:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     The functions available allow the specification of microsecond, and
+  78:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     millisecond delays directly, using the application-supplied macro
+  79:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     F_CPU as the CPU clock frequency (in Hertz).
+  80:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+  81:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** */
+  82:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+  83:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** #if !defined(__DOXYGEN__)
+  84:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** static inline void _delay_us(double __us) __attribute__((always_inline));
+  85:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** static inline void _delay_ms(double __ms) __attribute__((always_inline));
+  86:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** #endif
+  87:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+  88:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** #ifndef F_CPU
+  89:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** /* prevent compiler error by supplying a default */
+  90:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** # warning "F_CPU not defined for <util/delay.h>"
+  91:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** # define F_CPU 1000000UL
+  92:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** #endif
+  93:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+  94:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** #ifndef __OPTIMIZE__
+  95:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** # warning "Compiler optimizations disabled; functions from <util/delay.h> won't work as designed"
+  96:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** #endif
+  97:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+  98:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** #if __HAS_DELAY_CYCLES && defined(__OPTIMIZE__) && \
+  99:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****   !defined(__DELAY_BACKWARD_COMPATIBLE__) &&	   \
+ 100:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****   __STDC_HOSTED__
+ 101:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** #  include <math.h>
+ 102:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** #endif
+ 103:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+ 104:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** /**
+ 105:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    \ingroup util_delay
+ 106:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+ 107:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    Perform a delay of \c __ms milliseconds, using _delay_loop_2().
+ 108:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+ 109:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    The macro F_CPU is supposed to be defined to a
+ 110:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    constant defining the CPU clock frequency (in Hertz).
+ 111:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+ 112:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    The maximal possible delay is 262.14 ms / F_CPU in MHz.
+ 113:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+ 114:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    When the user request delay which exceed the maximum possible one,
+ 115:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    _delay_ms() provides a decreased resolution functionality. In this
+ 116:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    mode _delay_ms() will work with a resolution of 1/10 ms, providing
+ 117:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    delays up to 6.5535 seconds (independent from CPU frequency).  The
+ 118:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    user will not be informed about decreased resolution.
+ 119:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+ 120:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    If the avr-gcc toolchain has __builtin_avr_delay_cycles(unsigned long)
+ 121:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    support, maximal possible delay is 4294967.295 ms/ F_CPU in MHz. For
+ 122:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    values greater than the maximal possible delay, overflows results in
+ 123:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    no delay i.e., 0ms.
+ 124:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+ 125:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    Conversion of __us into clock cycles may not always result in integer.
+ 126:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    By default, the clock cycles rounded up to next integer. This ensures that
+ 127:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    the user gets atleast __us microseconds of delay.
+ 128:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+ 129:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    Alternatively, user can define __DELAY_ROUND_DOWN__ and __DELAY_ROUND_CLOSEST__
+ 130:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    to round down and round to closest integer.
+ 131:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+ 132:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    Note: The new implementation of _delay_ms(double __ms) with 
+ 133:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     __builtin_avr_delay_cycles(unsigned long) support is not backward compatible. 
+ 134:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    User can define __DELAY_BACKWARD_COMPATIBLE__ to get a backward compatible delay.
+ 135:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    Also, the backward compatible
+ 136:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    algorithm will be chosen if the code is compiled in a <em>freestanding
+ 137:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    environment</em> (GCC option \c -ffreestanding), as the math functions
+ 138:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    required for rounding are not available to the compiler then.
+ 139:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+ 140:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****  */
+ 141:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** void
+ 142:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** _delay_ms(double __ms)
+ 143:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** {
+ 144:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 	uint16_t __ticks;
+ 145:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 	double __tmp ; 
+ 146:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** #if __HAS_DELAY_CYCLES && defined(__OPTIMIZE__) && \
+ 147:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****   !defined(__DELAY_BACKWARD_COMPATIBLE__) &&	   \
+ 148:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****   __STDC_HOSTED__
+ 149:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 	uint32_t __ticks_dc;
+ 150:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 	extern void __builtin_avr_delay_cycles(unsigned long);
+ 151:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 	__tmp = ((F_CPU) / 1e3) * __ms;
+ 152:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+ 153:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 	#if defined(__DELAY_ROUND_DOWN__)
+ 154:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 		__ticks_dc = (uint32_t)fabs(__tmp);
+ 155:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+ 156:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 	#elif defined(__DELAY_ROUND_CLOSEST__)
+ 157:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 		__ticks_dc = (uint32_t)(fabs(__tmp)+0.5);
+ 158:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+ 159:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 	#else
+ 160:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 		//round up by default
+ 161:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+ 162:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 	#endif
+ 163:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+ 164:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 	__builtin_avr_delay_cycles(__ticks_dc);
+ 1507               		.loc 2 164 0 discriminator 1
+ 1508 00ee 2FEF      		ldi r18,lo8(1599999)
+ 1509 00f0 89E6      		ldi r24,hi8(1599999)
+ 1510 00f2 98E1      		ldi r25,hlo8(1599999)
+ 1511 00f4 2150      		1: subi r18,1
+ 1512 00f6 8040      		sbci r24,0
+ 1513 00f8 9040      		sbci r25,0
+ 1514 00fa 01F4      		brne 1b
+ 1515 00fc 00C0      		rjmp .
+ 1516 00fe 0000      		nop
+ 1517               	.LBE11:
+ 1518               	.LBE10:
+ 790:main.c        **** 
+ 791:main.c        ****         /* some int debug
+ 792:main.c        ****         LL
+ 793:main.c        ****         LSL("Mode: ") LV(mode) LL
+ 794:main.c        ****         LSL("INT0: ") LV(EIMSK&(1<<INT0)) LL
+ 795:main.c        ****         LSL("INT0: ") LV(EICRA&(1<<ISC00)) LL
+ 796:main.c        ****         LSL("INT0: ") LV(EICRA&(1<<ISC01)) LL
+ 797:main.c        ****         LSL("Timer: ") LV((TIMSK0&(1<<TOIE0))) LL
+ 798:main.c        ****         */
+ 799:main.c        **** 
+ 800:main.c        ****         DLY(1000)
+ 801:main.c        ****         LV(uptime)
+ 1519               		.loc 1 801 0 discriminator 1
+ 1520 0100 6091 0000 		lds r22,uptime
+ 1521 0104 7091 0000 		lds r23,uptime+1
+ 1522 0108 8091 0000 		lds r24,uptime+2
+ 1523 010c 9091 0000 		lds r25,uptime+3
+ 1524 0110 2AE0      		ldi r18,lo8(10)
+ 1525 0112 30E0      		ldi r19,0
+ 1526 0114 40E0      		ldi r20,lo8(buffer)
+ 1527 0116 50E0      		ldi r21,hi8(buffer)
+ 1528 0118 00D0      		rcall ultoa
+ 1529               	.LVL135:
+ 1530 011a 00D0      		rcall uart_puts
+ 1531               	.LVL136:
+ 802:main.c        ****         LSL("\r\n");
+ 1532               		.loc 1 802 0 discriminator 1
+ 1533 011c 80E0      		ldi r24,lo8(__c.1948)
+ 1534 011e 90E0      		ldi r25,hi8(__c.1948)
+ 1535 0120 00D0      		rcall uart_puts_p
+ 1536               	.LVL137:
+ 1537 0122 00C0      		rjmp .L141
+ 1538               	.LFE12:
+ 1540               		.comm	srcount,1,1
+ 1541               		.comm	actbit,1,1
+ 1542               		.comm	wmode,1,1
+ 1543               		.comm	mode,1,1
+ 1544               		.comm	bytep,1,1
+ 1545               		.comm	bitp,1,1
+ 1546               	.global	owid
+ 1547               		.data
+ 1550               	owid:
+ 1551 0000 E1        		.byte	-31
+ 1552 0001 E1        		.byte	-31
+ 1553 0002 00        		.byte	0
+ 1554 0003 00        		.byte	0
+ 1555 0004 00        		.byte	0
+ 1556 0005 00        		.byte	0
+ 1557 0006 02        		.byte	2
+ 1558 0007 20        		.byte	32
+ 1559               		.comm	cbuf,1,1
+ 1560               		.comm	istat,1,1
+ 1561               		.comm	Counter4,4,1
+ 1562               		.comm	Counter3,4,1
+ 1563               		.comm	Counter2,4,1
+ 1564               		.comm	Counter1,4,1
+ 1565               		.comm	lastcps,1,1
+ 1566               		.comm	scrc,2,1
+ 1567               	.global	scratchpad
+ 1570               	scratchpad:
+ 1571 0008 50        		.byte	80
+ 1572 0009 05        		.byte	5
+ 1573 000a 00        		.byte	0
+ 1574 000b 00        		.byte	0
+ 1575 000c 7F        		.byte	127
+ 1576 000d FF        		.byte	-1
+ 1577 000e 00        		.byte	0
+ 1578 000f 10        		.byte	16
+ 1579 0010 00        		.byte	0
+ 1580               		.comm	counterpack,13,1
+ 1581               	.global	ovf_flag
+ 1582               		.section .bss
+ 1585               	ovf_flag:
+ 1586 0000 00        		.zero	1
+ 1587               	.global	uptime
+ 1590               	uptime:
+ 1591 0001 0000 0000 		.zero	4
+ 1592               		.comm	buffer,12,1
+ 1593               	.global	EE_LABEL_MAXLEN
+ 1594               		.section	.rodata
+ 1597               	EE_LABEL_MAXLEN:
+ 1598 0000 1F        		.byte	31
+ 1599               	.global	EE_LABEL_OFFSET
+ 1602               	EE_LABEL_OFFSET:
+ 1603 0001 32        		.byte	50
+ 1604               	.global	EE_VERSION_OFFSET
+ 1607               	EE_VERSION_OFFSET:
+ 1608 0002 2D        		.byte	45
+ 1609               	.global	EE_TYPE_OFFSET
+ 1612               	EE_TYPE_OFFSET:
+ 1613 0003 2C        		.byte	44
+ 1614               	.global	EE_COUNTER_OFFSET
+ 1617               	EE_COUNTER_OFFSET:
+ 1618 0004 0C        		.byte	12
+ 1619               	.global	EE_RCNT_OFFSET
+ 1622               	EE_RCNT_OFFSET:
+ 1623 0005 0A        		.byte	10
+ 1624               	.global	EE_OWID_OFFSET
+ 1627               	EE_OWID_OFFSET:
+ 1628 0006 02        		.byte	2
+ 1629               	.global	EE_MAGIC_OFFSET
+ 1632               	EE_MAGIC_OFFSET:
+ 1633 0007 00        		.zero	1
+ 1634               	.global	EE_DEFTYPE
+ 1637               	EE_DEFTYPE:
+ 1638 0008 01        		.byte	1
+ 1639               	.global	EE_MAGIC_NUMBER
+ 1642               	EE_MAGIC_NUMBER:
+ 1643 0009 E2E1      		.word	-7710
+ 1644               		.section	.progmem.data,"a",@progbits
+ 1647               	__c.1903:
+ 1648 0000 0D0A 4443 		.string	"\r\nDC:"
+ 1648      3A00 
+ 1651               	__c.1945:
+ 1652 0006 5374 6172 		.string	"Startup"
+ 1652      7475 7000 
+ 1655               	__c.1948:
+ 1656 000e 0D0A 00   		.string	"\r\n"
+ 1995               	.Letext0:
+ 1996               		.file 3 "/usr/lib/gcc/avr/4.7.2/../../../avr/include/stdint.h"
+ 1997               		.file 4 "common.h"
+ 1998               		.file 5 "uart.h"
+ 1999               		.file 6 "/usr/lib/gcc/avr/4.7.2/../../../avr/include/avr/eeprom.h"
+ 2000               		.file 7 "/usr/lib/gcc/avr/4.7.2/../../../avr/include/stdlib.h"
+DEFINED SYMBOLS
+                            *ABS*:00000000 main.c
+     /tmp/ccvikqH2.s:2      *ABS*:0000003e __SP_H__
+     /tmp/ccvikqH2.s:3      *ABS*:0000003d __SP_L__
+     /tmp/ccvikqH2.s:4      *ABS*:0000003f __SREG__
+     /tmp/ccvikqH2.s:5      *ABS*:00000000 __tmp_reg__
+     /tmp/ccvikqH2.s:6      *ABS*:00000001 __zero_reg__
+     /tmp/ccvikqH2.s:11     .text:00000000 __vector_13
+     /tmp/ccvikqH2.s:1585   .bss:00000000 ovf_flag
+     /tmp/ccvikqH2.s:1590   .bss:00000001 uptime
+     /tmp/ccvikqH2.s:71     .text:00000060 __vector_1
+                            *COM*:00000001 wmode
+                            *COM*:00000001 mode
+                            *COM*:00000001 srcount
+     /tmp/ccvikqH2.s:207    .text:000000ee __vector_16
+                            *COM*:00000001 bytep
+                            *COM*:00000001 bitp
+                            *COM*:00000001 actbit
+                            *COM*:00000002 scrc
+                            *COM*:00000001 cbuf
+     /tmp/ccvikqH2.s:1550   .data:00000000 owid
+     /tmp/ccvikqH2.s:1570   .data:00000008 scratchpad
+                            *COM*:0000000d counterpack
+     /tmp/ccvikqH2.s:1647   .progmem.data:00000000 __c.1903
+                            *COM*:00000004 Counter1
+                            *COM*:00000004 Counter2
+                            *COM*:00000004 Counter3
+                            *COM*:00000004 Counter4
+     /tmp/ccvikqH2.s:1093   .text:0000054a __vector_3
+                            *COM*:00000001 istat
+     /tmp/ccvikqH2.s:1172   .text:000005d8 init_eeprom
+     /tmp/ccvikqH2.s:1370   .text.startup:00000000 main
+     /tmp/ccvikqH2.s:1651   .progmem.data:00000006 __c.1945
+                            *COM*:0000000c buffer
+     /tmp/ccvikqH2.s:1655   .progmem.data:0000000e __c.1948
+                            *COM*:00000001 lastcps
+     /tmp/ccvikqH2.s:1597   .rodata:00000000 EE_LABEL_MAXLEN
+     /tmp/ccvikqH2.s:1602   .rodata:00000001 EE_LABEL_OFFSET
+     /tmp/ccvikqH2.s:1607   .rodata:00000002 EE_VERSION_OFFSET
+     /tmp/ccvikqH2.s:1612   .rodata:00000003 EE_TYPE_OFFSET
+     /tmp/ccvikqH2.s:1617   .rodata:00000004 EE_COUNTER_OFFSET
+     /tmp/ccvikqH2.s:1622   .rodata:00000005 EE_RCNT_OFFSET
+     /tmp/ccvikqH2.s:1627   .rodata:00000006 EE_OWID_OFFSET
+     /tmp/ccvikqH2.s:1632   .rodata:00000007 EE_MAGIC_OFFSET
+     /tmp/ccvikqH2.s:1637   .rodata:00000008 EE_DEFTYPE
+     /tmp/ccvikqH2.s:1642   .rodata:00000009 EE_MAGIC_NUMBER
+
+UNDEFINED SYMBOLS
+uart_puts_p
+__eerd_word_m48
+__eerd_byte_m48
+__eeupd_word_m48
+__eerd_dword_m48
+__eewr_word_m48
+__eewr_byte_m48
+__eewr_dword_m48
+uart_init
+ultoa
+uart_puts
+__do_copy_data
+__do_clear_bss

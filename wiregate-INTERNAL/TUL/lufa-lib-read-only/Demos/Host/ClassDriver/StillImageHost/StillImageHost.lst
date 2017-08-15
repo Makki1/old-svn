@@ -1,0 +1,672 @@
+   1               		.file	"StillImageHost.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__CCP__  = 0x34
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+  15               	.Ltext0:
+  16               		.section	.text.EVENT_USB_Host_DeviceEnumerationFailed,"ax",@progbits
+  17               	.global	EVENT_USB_Host_DeviceEnumerationFailed
+  19               	EVENT_USB_Host_DeviceEnumerationFailed:
+  20               	.LFB149:
+  21               	.LSM0:
+  22               	.LVL0:
+  23               	/* prologue: function */
+  24               	/* frame size = 0 */
+  25               	.LSM1:
+  26 0000 9091 0000 		lds r25,USB_HostState
+  27 0004 2DB7      		in r18,__SP_L__
+  28 0006 3EB7      		in r19,__SP_H__
+  29 0008 2850      		subi r18,lo8(-(-8))
+  30 000a 3040      		sbci r19,hi8(-(-8))
+  31 000c 0FB6      		in __tmp_reg__,__SREG__
+  32 000e F894      		cli
+  33 0010 3EBF      		out __SP_H__,r19
+  34 0012 0FBE      		out __SREG__,__tmp_reg__
+  35 0014 2DBF      		out __SP_L__,r18
+  36 0016 EDB7      		in r30,__SP_L__
+  37 0018 FEB7      		in r31,__SP_H__
+  38 001a 3196      		adiw r30,1
+  39 001c 20E0      		ldi r18,lo8(__c.4579)
+  40 001e 30E0      		ldi r19,hi8(__c.4579)
+  41 0020 ADB7      		in r26,__SP_L__
+  42 0022 BEB7      		in r27,__SP_H__
+  43 0024 1296      		adiw r26,1+1
+  44 0026 3C93      		st X,r19
+  45 0028 2E93      		st -X,r18
+  46 002a 1197      		sbiw r26,1
+  47 002c 8283      		std Z+2,r24
+  48 002e 1382      		std Z+3,__zero_reg__
+  49 0030 6483      		std Z+4,r22
+  50 0032 1582      		std Z+5,__zero_reg__
+  51 0034 9683      		std Z+6,r25
+  52 0036 1782      		std Z+7,__zero_reg__
+  53 0038 0E94 0000 		call printf_P
+  54               	.LVL1:
+  55               	.LBB50:
+  56               	.LBB51:
+  57               	.LSM2:
+  58 003c 8BB1      		in r24,43-32
+  59 003e 8F70      		andi r24,lo8(15)
+  60 0040 8069      		ori r24,lo8(-112)
+  61 0042 8BB9      		out 43-32,r24
+  62 0044 2DB7      		in r18,__SP_L__
+  63 0046 3EB7      		in r19,__SP_H__
+  64 0048 285F      		subi r18,lo8(-(8))
+  65 004a 3F4F      		sbci r19,hi8(-(8))
+  66 004c 0FB6      		in __tmp_reg__,__SREG__
+  67 004e F894      		cli
+  68 0050 3EBF      		out __SP_H__,r19
+  69 0052 0FBE      		out __SREG__,__tmp_reg__
+  70 0054 2DBF      		out __SP_L__,r18
+  71               	/* epilogue start */
+  72               	.LBE51:
+  73               	.LBE50:
+  74               	.LSM3:
+  75 0056 0895      		ret
+  76               	.LFE149:
+  78               		.section	.text.EVENT_USB_Host_HostError,"ax",@progbits
+  79               	.global	EVENT_USB_Host_HostError
+  81               	EVENT_USB_Host_HostError:
+  82               	.LFB148:
+  83               	.LSM4:
+  84               	.LVL2:
+  85 0000 1F93      		push r17
+  86               	/* prologue: function */
+  87               	/* frame size = 0 */
+  88 0002 182F      		mov r17,r24
+  89               	.LSM5:
+  90 0004 0E94 0000 		call USB_Disable
+  91               	.LVL3:
+  92               	.LSM6:
+  93 0008 00D0      		rcall .
+  94 000a 00D0      		rcall .
+  95 000c EDB7      		in r30,__SP_L__
+  96 000e FEB7      		in r31,__SP_H__
+  97 0010 3196      		adiw r30,1
+  98 0012 80E0      		ldi r24,lo8(__c.4571)
+  99 0014 90E0      		ldi r25,hi8(__c.4571)
+ 100 0016 ADB7      		in r26,__SP_L__
+ 101 0018 BEB7      		in r27,__SP_H__
+ 102 001a 1296      		adiw r26,1+1
+ 103 001c 9C93      		st X,r25
+ 104 001e 8E93      		st -X,r24
+ 105 0020 1197      		sbiw r26,1
+ 106 0022 1283      		std Z+2,r17
+ 107 0024 1382      		std Z+3,__zero_reg__
+ 108 0026 0E94 0000 		call printf_P
+ 109               	.LBB52:
+ 110               	.LBB53:
+ 111               	.LSM7:
+ 112 002a 8BB1      		in r24,43-32
+ 113 002c 8F70      		andi r24,lo8(15)
+ 114 002e 8069      		ori r24,lo8(-112)
+ 115 0030 8BB9      		out 43-32,r24
+ 116 0032 0F90      		pop __tmp_reg__
+ 117 0034 0F90      		pop __tmp_reg__
+ 118 0036 0F90      		pop __tmp_reg__
+ 119 0038 0F90      		pop __tmp_reg__
+ 120               	.L4:
+ 121 003a 00C0      		rjmp .L4
+ 122               	.LBE53:
+ 123               	.LBE52:
+ 124               	.LFE148:
+ 126               		.section	.text.EVENT_USB_Host_DeviceUnattached,"ax",@progbits
+ 127               	.global	EVENT_USB_Host_DeviceUnattached
+ 129               	EVENT_USB_Host_DeviceUnattached:
+ 130               	.LFB146:
+ 131               	.LSM8:
+ 132               	/* prologue: function */
+ 133               	/* frame size = 0 */
+ 134               	.LSM9:
+ 135 0000 80E0      		ldi r24,lo8(__c.4549)
+ 136 0002 90E0      		ldi r25,hi8(__c.4549)
+ 137 0004 0E94 0000 		call puts_P
+ 138               	.LBB54:
+ 139               	.LBB55:
+ 140               	.LSM10:
+ 141 0008 8BB1      		in r24,43-32
+ 142 000a 8F70      		andi r24,lo8(15)
+ 143 000c 8061      		ori r24,lo8(16)
+ 144 000e 8BB9      		out 43-32,r24
+ 145               	/* epilogue start */
+ 146               	.LBE55:
+ 147               	.LBE54:
+ 148               	.LSM11:
+ 149 0010 0895      		ret
+ 150               	.LFE146:
+ 152               		.section	.text.EVENT_USB_Host_DeviceAttached,"ax",@progbits
+ 153               	.global	EVENT_USB_Host_DeviceAttached
+ 155               	EVENT_USB_Host_DeviceAttached:
+ 156               	.LFB145:
+ 157               	.LSM12:
+ 158               	/* prologue: function */
+ 159               	/* frame size = 0 */
+ 160               	.LSM13:
+ 161 0000 80E0      		ldi r24,lo8(__c.4544)
+ 162 0002 90E0      		ldi r25,hi8(__c.4544)
+ 163 0004 0E94 0000 		call puts_P
+ 164               	.LBB56:
+ 165               	.LBB57:
+ 166               	.LSM14:
+ 167 0008 8BB1      		in r24,43-32
+ 168 000a 8F70      		andi r24,lo8(15)
+ 169 000c 806A      		ori r24,lo8(-96)
+ 170 000e 8BB9      		out 43-32,r24
+ 171               	/* epilogue start */
+ 172               	.LBE57:
+ 173               	.LBE56:
+ 174               	.LSM15:
+ 175 0010 0895      		ret
+ 176               	.LFE145:
+ 178               		.section	.text.EVENT_USB_Host_DeviceEnumerationComplete,"ax",@progbits
+ 179               	.global	EVENT_USB_Host_DeviceEnumerationComplete
+ 181               	EVENT_USB_Host_DeviceEnumerationComplete:
+ 182               	.LFB147:
+ 183               	.LSM16:
+ 184 0000 0F93      		push r16
+ 185 0002 1F93      		push r17
+ 186 0004 DF93      		push r29
+ 187 0006 CF93      		push r28
+ 188 0008 CDB7      		in r28,__SP_L__
+ 189 000a DEB7      		in r29,__SP_H__
+ 190 000c C250      		subi r28,lo8(-(-514))
+ 191 000e D240      		sbci r29,hi8(-(-514))
+ 192 0010 0FB6      		in __tmp_reg__,__SREG__
+ 193 0012 F894      		cli
+ 194 0014 DEBF      		out __SP_H__,r29
+ 195 0016 0FBE      		out __SREG__,__tmp_reg__
+ 196 0018 CDBF      		out __SP_L__,r28
+ 197               	/* prologue: function */
+ 198               	/* frame size = 514 */
+ 199               	.LBB58:
+ 200               	.LBB59:
+ 201               	.LSM17:
+ 202 001a 8BB1      		in r24,43-32
+ 203 001c 8F70      		andi r24,lo8(15)
+ 204 001e 806A      		ori r24,lo8(-96)
+ 205 0020 8BB9      		out 43-32,r24
+ 206               	.LBE59:
+ 207               	.LBE58:
+ 208               	.LSM18:
+ 209 0022 8E01      		movw r16,r28
+ 210 0024 0D5F      		subi r16,lo8(-(3))
+ 211 0026 1F4F      		sbci r17,hi8(-(3))
+ 212 0028 81E0      		ldi r24,lo8(1)
+ 213 002a BE01      		movw r22,r28
+ 214 002c 6F5F      		subi r22,lo8(-(1))
+ 215 002e 7F4F      		sbci r23,hi8(-(1))
+ 216 0030 A801      		movw r20,r16
+ 217 0032 20E0      		ldi r18,lo8(512)
+ 218 0034 32E0      		ldi r19,hi8(512)
+ 219 0036 0E94 0000 		call USB_Host_GetDeviceConfigDescriptor
+ 220 003a 8823      		tst r24
+ 221 003c 01F0      		breq .L11
+ 222               	.LSM19:
+ 223 003e 80E0      		ldi r24,lo8(__c.4556)
+ 224 0040 90E0      		ldi r25,hi8(__c.4556)
+ 225 0042 00C0      		rjmp .L17
+ 226               	.L11:
+ 227               	.LSM20:
+ 228 0044 6981      		ldd r22,Y+1
+ 229 0046 7A81      		ldd r23,Y+2
+ 230               	.LVL4:
+ 231 0048 80E0      		ldi r24,lo8(DigitalCamera_SI_Interface)
+ 232 004a 90E0      		ldi r25,hi8(DigitalCamera_SI_Interface)
+ 233 004c A801      		movw r20,r16
+ 234 004e 0E94 0000 		call SI_Host_ConfigurePipes
+ 235 0052 8823      		tst r24
+ 236 0054 01F0      		breq .L13
+ 237               	.LSM21:
+ 238 0056 80E0      		ldi r24,lo8(__c.4558)
+ 239 0058 90E0      		ldi r25,hi8(__c.4558)
+ 240 005a 00C0      		rjmp .L17
+ 241               	.L13:
+ 242               	.LSM22:
+ 243 005c 81E0      		ldi r24,lo8(1)
+ 244 005e 0E94 0000 		call USB_Host_SetDeviceConfiguration
+ 245 0062 8823      		tst r24
+ 246 0064 01F0      		breq .L14
+ 247               	.LSM23:
+ 248 0066 80E0      		ldi r24,lo8(__c.4560)
+ 249 0068 90E0      		ldi r25,hi8(__c.4560)
+ 250               	.L17:
+ 251 006a 0E94 0000 		call puts_P
+ 252               	.LBB60:
+ 253               	.LBB61:
+ 254               	.LSM24:
+ 255 006e 8BB1      		in r24,43-32
+ 256 0070 8F70      		andi r24,lo8(15)
+ 257 0072 8069      		ori r24,lo8(-112)
+ 258 0074 00C0      		rjmp .L16
+ 259               	.L14:
+ 260               	.LBE61:
+ 261               	.LBE60:
+ 262               	.LSM25:
+ 263 0076 80E0      		ldi r24,lo8(__c.4562)
+ 264 0078 90E0      		ldi r25,hi8(__c.4562)
+ 265 007a 0E94 0000 		call puts_P
+ 266               	.LBB62:
+ 267               	.LBB63:
+ 268               	.LSM26:
+ 269 007e 8BB1      		in r24,43-32
+ 270 0080 8F70      		andi r24,lo8(15)
+ 271 0082 8066      		ori r24,lo8(96)
+ 272               	.L16:
+ 273 0084 8BB9      		out 43-32,r24
+ 274               	/* epilogue start */
+ 275               	.LBE63:
+ 276               	.LBE62:
+ 277               	.LSM27:
+ 278 0086 CE5F      		subi r28,lo8(-(514))
+ 279 0088 DD4F      		sbci r29,hi8(-(514))
+ 280 008a 0FB6      		in __tmp_reg__,__SREG__
+ 281 008c F894      		cli
+ 282 008e DEBF      		out __SP_H__,r29
+ 283 0090 0FBE      		out __SREG__,__tmp_reg__
+ 284 0092 CDBF      		out __SP_L__,r28
+ 285 0094 CF91      		pop r28
+ 286 0096 DF91      		pop r29
+ 287 0098 1F91      		pop r17
+ 288 009a 0F91      		pop r16
+ 289 009c 0895      		ret
+ 290               	.LFE147:
+ 292               		.section	.text.StillImageHost_Task,"ax",@progbits
+ 293               	.global	StillImageHost_Task
+ 295               	StillImageHost_Task:
+ 296               	.LFB144:
+ 297               	.LSM28:
+ 298               	/* prologue: function */
+ 299               	/* frame size = 0 */
+ 300               	.LSM29:
+ 301 0000 8091 0000 		lds r24,USB_HostState
+ 302 0004 8B30      		cpi r24,lo8(11)
+ 303 0006 01F0      		breq .+2
+ 304 0008 00C0      		rjmp .L23
+ 305               	.LSM30:
+ 306 000a 80E0      		ldi r24,lo8(__c.4523)
+ 307 000c 90E0      		ldi r25,hi8(__c.4523)
+ 308 000e 0E94 0000 		call puts_P
+ 309               	.LSM31:
+ 310 0012 80E0      		ldi r24,lo8(DigitalCamera_SI_Interface)
+ 311 0014 90E0      		ldi r25,hi8(DigitalCamera_SI_Interface)
+ 312 0016 0E94 0000 		call SI_Host_OpenSession
+ 313 001a 8823      		tst r24
+ 314 001c 01F0      		breq .L20
+ 315               	.LSM32:
+ 316 001e 80E0      		ldi r24,lo8(__c.4525)
+ 317 0020 90E0      		ldi r25,hi8(__c.4525)
+ 318 0022 00C0      		rjmp .L24
+ 319               	.L20:
+ 320               	.LSM33:
+ 321 0024 80E0      		ldi r24,lo8(__c.4527)
+ 322 0026 90E0      		ldi r25,hi8(__c.4527)
+ 323 0028 0E94 0000 		call puts_P
+ 324               	.LSM34:
+ 325 002c 80E0      		ldi r24,lo8(DigitalCamera_SI_Interface)
+ 326 002e 90E0      		ldi r25,hi8(DigitalCamera_SI_Interface)
+ 327 0030 63E1      		ldi r22,lo8(4115)
+ 328 0032 70E1      		ldi r23,hi8(4115)
+ 329 0034 40E0      		ldi r20,lo8(0)
+ 330 0036 20E0      		ldi r18,lo8(0)
+ 331 0038 30E0      		ldi r19,hi8(0)
+ 332 003a 0E94 0000 		call SI_Host_SendCommand
+ 333               	.LSM35:
+ 334 003e 80E0      		ldi r24,lo8(DigitalCamera_SI_Interface)
+ 335 0040 90E0      		ldi r25,hi8(DigitalCamera_SI_Interface)
+ 336 0042 0E94 0000 		call SI_Host_ReceiveResponse
+ 337 0046 8823      		tst r24
+ 338 0048 01F0      		breq .L21
+ 339               	.LSM36:
+ 340 004a 80E0      		ldi r24,lo8(__c.4529)
+ 341 004c 90E0      		ldi r25,hi8(__c.4529)
+ 342 004e 00C0      		rjmp .L24
+ 343               	.L21:
+ 344               	.LSM37:
+ 345 0050 80E0      		ldi r24,lo8(__c.4531)
+ 346 0052 90E0      		ldi r25,hi8(__c.4531)
+ 347 0054 0E94 0000 		call puts_P
+ 348               	.LSM38:
+ 349 0058 80E0      		ldi r24,lo8(__c.4533)
+ 350 005a 90E0      		ldi r25,hi8(__c.4533)
+ 351 005c 0E94 0000 		call puts_P
+ 352               	.LSM39:
+ 353 0060 80E0      		ldi r24,lo8(DigitalCamera_SI_Interface)
+ 354 0062 90E0      		ldi r25,hi8(DigitalCamera_SI_Interface)
+ 355 0064 0E94 0000 		call SI_Host_CloseSession
+ 356 0068 8823      		tst r24
+ 357 006a 01F0      		breq .L22
+ 358               	.LSM40:
+ 359 006c 80E0      		ldi r24,lo8(__c.4535)
+ 360 006e 90E0      		ldi r25,hi8(__c.4535)
+ 361               	.L24:
+ 362 0070 0E94 0000 		call puts_P
+ 363               	.LSM41:
+ 364 0074 80E0      		ldi r24,lo8(0)
+ 365 0076 0E94 0000 		call USB_Host_SetDeviceConfiguration
+ 366 007a 0895      		ret
+ 367               	.L22:
+ 368               	.LBB64:
+ 369               	.LBB65:
+ 370               	.LSM42:
+ 371 007c 8BB1      		in r24,43-32
+ 372 007e 8F70      		andi r24,lo8(15)
+ 373 0080 8066      		ori r24,lo8(96)
+ 374 0082 8BB9      		out 43-32,r24
+ 375               	.LBE65:
+ 376               	.LBE64:
+ 377               	.LSM43:
+ 378 0084 80E0      		ldi r24,lo8(0)
+ 379 0086 0E94 0000 		call USB_Host_SetDeviceConfiguration
+ 380               	.L23:
+ 381 008a 0895      		ret
+ 382               	.LFE144:
+ 384               		.section	.text.SetupHardware,"ax",@progbits
+ 385               	.global	SetupHardware
+ 387               	SetupHardware:
+ 388               	.LFB143:
+ 389               	.LSM44:
+ 390               	/* prologue: function */
+ 391               	/* frame size = 0 */
+ 392               	.LSM45:
+ 393 0000 84B7      		in r24,84-32
+ 394 0002 877F      		andi r24,lo8(-9)
+ 395 0004 84BF      		out 84-32,r24
+ 396               	.LSM46:
+ 397 0006 28E1      		ldi r18,lo8(24)
+ 398               	/* #APP */
+ 399               	 ;  85 "StillImageHost.c" 1
+ 400 0008 0FB6      		in __tmp_reg__, __SREG__
+ 401 000a F894      		cli
+ 402 000c 2093 6000 		sts 96, r18
+ 403 0010 1092 6000 		sts 96, __zero_reg__
+ 404 0014 0FBE      		out __SREG__,__tmp_reg__
+ 405               		
+ 406               	 ;  0 "" 2
+ 407               	/* #NOAPP */
+ 408               	.LBB66:
+ 409               	.LBB67:
+ 410               	.LSM47:
+ 411 0016 90E0      		ldi r25,lo8(0)
+ 412 0018 80E8      		ldi r24,lo8(-128)
+ 413               	/* #APP */
+ 414               	 ;  1394 "/usr/lib/gcc/avr/4.3.5/../../../avr/include/avr/power.h" 1
+ 415 001a 0FB6      		in __tmp_reg__,__SREG__
+ 416 001c F894      		cli
+ 417 001e 8093 6100 		sts 97, r24
+ 418 0022 9093 6100 		sts 97, r25
+ 419 0026 0FBE      		out __SREG__, __tmp_reg__
+ 420               	 ;  0 "" 2
+ 421               	/* #NOAPP */
+ 422               	.LBE67:
+ 423               	.LBE66:
+ 424               	.LBB68:
+ 425               	.LBB69:
+ 426               	.LSM48:
+ 427 0028 83E3      		ldi r24,lo8(51)
+ 428 002a 90E0      		ldi r25,hi8(51)
+ 429 002c 9093 CD00 		sts (204)+1,r25
+ 430 0030 8093 CC00 		sts 204,r24
+ 431               	.LSM49:
+ 432 0034 86E0      		ldi r24,lo8(6)
+ 433 0036 8093 CA00 		sts 202,r24
+ 434               	.LSM50:
+ 435 003a 1092 C800 		sts 200,__zero_reg__
+ 436               	.LSM51:
+ 437 003e 2093 C900 		sts 201,r18
+ 438               	.LSM52:
+ 439 0042 539A      		sbi 42-32,3
+ 440               	.LSM53:
+ 441 0044 5A9A      		sbi 43-32,2
+ 442               	.LBE69:
+ 443               	.LBE68:
+ 444               	.LBB70:
+ 445               	.LBB71:
+ 446               	.LSM54:
+ 447 0046 8AB1      		in r24,42-32
+ 448 0048 806F      		ori r24,lo8(-16)
+ 449 004a 8AB9      		out 42-32,r24
+ 450               	.LSM55:
+ 451 004c 8BB1      		in r24,43-32
+ 452 004e 8F70      		andi r24,lo8(15)
+ 453 0050 8BB9      		out 43-32,r24
+ 454               	.LBE71:
+ 455               	.LBE70:
+ 456               	.LSM56:
+ 457 0052 0E94 0000 		call USB_Init
+ 458               	.LBB72:
+ 459               	.LBB73:
+ 460               	.LSM57:
+ 461 0056 E0E0      		ldi r30,lo8(USARTSerialStream)
+ 462 0058 F0E0      		ldi r31,hi8(USARTSerialStream)
+ 463 005a F093 0000 		sts (__iob)+1,r31
+ 464 005e E093 0000 		sts __iob,r30
+ 465               	.LSM58:
+ 466 0062 F093 0000 		sts (__iob+2)+1,r31
+ 467 0066 E093 0000 		sts __iob+2,r30
+ 468               	.LSM59:
+ 469 006a 8EE0      		ldi r24,lo8(14)
+ 470 006c DF01      		movw r26,r30
+ 471 006e 1D92      		st X+,__zero_reg__
+ 472 0070 8A95      	        dec r24
+ 473 0072 01F4      		brne .-6
+ 474 0074 83E0      		ldi r24,lo8(3)
+ 475 0076 8093 0000 		sts USARTSerialStream+3,r24
+ 476 007a 80E0      		ldi r24,lo8(gs(Serial_putchar))
+ 477 007c 90E0      		ldi r25,hi8(gs(Serial_putchar))
+ 478 007e 9093 0000 		sts (USARTSerialStream+8)+1,r25
+ 479 0082 8093 0000 		sts USARTSerialStream+8,r24
+ 480 0086 80E0      		ldi r24,lo8(gs(Serial_getchar))
+ 481 0088 90E0      		ldi r25,hi8(gs(Serial_getchar))
+ 482 008a 9093 0000 		sts (USARTSerialStream+10)+1,r25
+ 483 008e 8093 0000 		sts USARTSerialStream+10,r24
+ 484               	/* epilogue start */
+ 485               	.LBE73:
+ 486               	.LBE72:
+ 487               	.LSM60:
+ 488 0092 0895      		ret
+ 489               	.LFE143:
+ 491               		.section	.text.main,"ax",@progbits
+ 492               	.global	main
+ 494               	main:
+ 495               	.LFB142:
+ 496               	.LSM61:
+ 497               	/* prologue: function */
+ 498               	/* frame size = 0 */
+ 499               	.LSM62:
+ 500 0000 0E94 0000 		call SetupHardware
+ 501               	.LSM63:
+ 502 0004 80E0      		ldi r24,lo8(__c.4510)
+ 503 0006 90E0      		ldi r25,hi8(__c.4510)
+ 504 0008 0E94 0000 		call puts_P
+ 505               	.LBB74:
+ 506               	.LBB75:
+ 507               	.LSM64:
+ 508 000c 8BB1      		in r24,43-32
+ 509 000e 8F70      		andi r24,lo8(15)
+ 510 0010 8061      		ori r24,lo8(16)
+ 511 0012 8BB9      		out 43-32,r24
+ 512               	.LBE75:
+ 513               	.LBE74:
+ 514               	.LSM65:
+ 515               	/* #APP */
+ 516               	 ;  69 "StillImageHost.c" 1
+ 517 0014 7894      		sei
+ 518               	 ;  0 "" 2
+ 519               	/* #NOAPP */
+ 520               	.L28:
+ 521               	.LSM66:
+ 522 0016 0E94 0000 		call StillImageHost_Task
+ 523               	.LSM67:
+ 524 001a 0E94 0000 		call USB_USBTask
+ 525 001e 00C0      		rjmp .L28
+ 526               	.LFE142:
+ 528               	.global	DigitalCamera_SI_Interface
+ 529               		.data
+ 532               	DigitalCamera_SI_Interface:
+ 533 0000 01        		.byte	1
+ 534 0001 00        		.byte	0
+ 535 0002 02        		.byte	2
+ 536 0003 00        		.byte	0
+ 537 0004 03        		.byte	3
+ 538 0005 00        		.byte	0
+ 539 0006 0000 0000 		.skip 13,0
+ 539      0000 0000 
+ 539      0000 0000 
+ 539      00
+ 540               		.section	.progmem.data,"a",@progbits
+ 543               	__c.4579:
+ 544 0000 1B5B 3331 		.ascii	"\033[31mDev Enum Error\r\n"
+ 544      6D44 6576 
+ 544      2045 6E75 
+ 544      6D20 4572 
+ 544      726F 720D 
+ 545 0015 202D 2D20 		.string	" -- Error Code %d\r\n -- Sub Error Code %d\r\n -- In State %d\r\n\033[37m"
+ 545      4572 726F 
+ 545      7220 436F 
+ 545      6465 2025 
+ 545      640D 0A20 
+ 548               	__c.4571:
+ 549 0056 1B5B 3331 		.string	"\033[31mHost Mode Error\r\n -- Error Code %d\r\n\033[37m"
+ 549      6D48 6F73 
+ 549      7420 4D6F 
+ 549      6465 2045 
+ 549      7272 6F72 
+ 552               	__c.4562:
+ 553 0085 5374 696C 		.string	"Still Image Device Enumerated.\r\n"
+ 553      6C20 496D 
+ 553      6167 6520 
+ 553      4465 7669 
+ 553      6365 2045 
+ 556               	__c.4560:
+ 557 00a6 4572 726F 		.string	"Error Setting Device Configuration.\r\n"
+ 557      7220 5365 
+ 557      7474 696E 
+ 557      6720 4465 
+ 557      7669 6365 
+ 560               	__c.4558:
+ 561 00cc 4174 7461 		.string	"Attached Device Not a Valid Still Image Class Device.\r\n"
+ 561      6368 6564 
+ 561      2044 6576 
+ 561      6963 6520 
+ 561      4E6F 7420 
+ 564               	__c.4556:
+ 565 0104 4572 726F 		.string	"Error Retrieving Configuration Descriptor.\r\n"
+ 565      7220 5265 
+ 565      7472 6965 
+ 565      7669 6E67 
+ 565      2043 6F6E 
+ 568               	__c.4549:
+ 569 0131 0D0A 4465 		.string	"\r\nDevice Unattached.\r\n"
+ 569      7669 6365 
+ 569      2055 6E61 
+ 569      7474 6163 
+ 569      6865 642E 
+ 572               	__c.4544:
+ 573 0148 4465 7669 		.string	"Device Attached.\r\n"
+ 573      6365 2041 
+ 573      7474 6163 
+ 573      6865 642E 
+ 573      0D0A 00
+ 576               	__c.4535:
+ 577 015b 436F 756C 		.string	"Could not close PIMA session.\r\n"
+ 577      6420 6E6F 
+ 577      7420 636C 
+ 577      6F73 6520 
+ 577      5049 4D41 
+ 580               	__c.4533:
+ 581 017b 436C 6F73 		.string	"Closing Session...\r\n"
+ 581      696E 6720 
+ 581      5365 7373 
+ 581      696F 6E2E 
+ 581      2E2E 0D0A 
+ 584               	__c.4531:
+ 585 0190 4465 7669 		.string	"Device Off.\r\n"
+ 585      6365 204F 
+ 585      6666 2E0D 
+ 585      0A00 
+ 588               	__c.4529:
+ 589 019e 436F 756C 		.string	"Could not turn off device.\r\n"
+ 589      6420 6E6F 
+ 589      7420 7475 
+ 589      726E 206F 
+ 589      6666 2064 
+ 592               	__c.4527:
+ 593 01bb 5475 726E 		.string	"Turning off Device...\r\n"
+ 593      696E 6720 
+ 593      6F66 6620 
+ 593      4465 7669 
+ 593      6365 2E2E 
+ 596               	__c.4525:
+ 597 01d3 436F 756C 		.string	"Could not open PIMA session.\r\n"
+ 597      6420 6E6F 
+ 597      7420 6F70 
+ 597      656E 2050 
+ 597      494D 4120 
+ 600               	__c.4523:
+ 601 01f2 4F70 656E 		.string	"Opening Session...\r\n"
+ 601      696E 6720 
+ 601      5365 7373 
+ 601      696F 6E2E 
+ 601      2E2E 0D0A 
+ 604               	__c.4510:
+ 605 0207 1B5B 3336 		.string	"\033[36mStill Image Host Demo running.\r\n\033[37m"
+ 605      6D53 7469 
+ 605      6C6C 2049 
+ 605      6D61 6765 
+ 605      2048 6F73 
+ 686               	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 StillImageHost.c
+     /tmp/ccBkRAqh.s:2      *ABS*:0000003f __SREG__
+     /tmp/ccBkRAqh.s:3      *ABS*:0000003e __SP_H__
+     /tmp/ccBkRAqh.s:4      *ABS*:0000003d __SP_L__
+     /tmp/ccBkRAqh.s:5      *ABS*:00000034 __CCP__
+     /tmp/ccBkRAqh.s:6      *ABS*:00000000 __tmp_reg__
+     /tmp/ccBkRAqh.s:7      *ABS*:00000001 __zero_reg__
+     /tmp/ccBkRAqh.s:19     .text.EVENT_USB_Host_DeviceEnumerationFailed:00000000 EVENT_USB_Host_DeviceEnumerationFailed
+     /tmp/ccBkRAqh.s:543    .progmem.data:00000000 __c.4579
+     /tmp/ccBkRAqh.s:81     .text.EVENT_USB_Host_HostError:00000000 EVENT_USB_Host_HostError
+     /tmp/ccBkRAqh.s:548    .progmem.data:00000056 __c.4571
+     /tmp/ccBkRAqh.s:129    .text.EVENT_USB_Host_DeviceUnattached:00000000 EVENT_USB_Host_DeviceUnattached
+     /tmp/ccBkRAqh.s:568    .progmem.data:00000131 __c.4549
+     /tmp/ccBkRAqh.s:155    .text.EVENT_USB_Host_DeviceAttached:00000000 EVENT_USB_Host_DeviceAttached
+     /tmp/ccBkRAqh.s:572    .progmem.data:00000148 __c.4544
+     /tmp/ccBkRAqh.s:181    .text.EVENT_USB_Host_DeviceEnumerationComplete:00000000 EVENT_USB_Host_DeviceEnumerationComplete
+     /tmp/ccBkRAqh.s:564    .progmem.data:00000104 __c.4556
+     /tmp/ccBkRAqh.s:532    .data:00000000 DigitalCamera_SI_Interface
+     /tmp/ccBkRAqh.s:560    .progmem.data:000000cc __c.4558
+     /tmp/ccBkRAqh.s:556    .progmem.data:000000a6 __c.4560
+     /tmp/ccBkRAqh.s:552    .progmem.data:00000085 __c.4562
+     /tmp/ccBkRAqh.s:295    .text.StillImageHost_Task:00000000 StillImageHost_Task
+     /tmp/ccBkRAqh.s:600    .progmem.data:000001f2 __c.4523
+     /tmp/ccBkRAqh.s:596    .progmem.data:000001d3 __c.4525
+     /tmp/ccBkRAqh.s:592    .progmem.data:000001bb __c.4527
+     /tmp/ccBkRAqh.s:588    .progmem.data:0000019e __c.4529
+     /tmp/ccBkRAqh.s:584    .progmem.data:00000190 __c.4531
+     /tmp/ccBkRAqh.s:580    .progmem.data:0000017b __c.4533
+     /tmp/ccBkRAqh.s:576    .progmem.data:0000015b __c.4535
+     /tmp/ccBkRAqh.s:387    .text.SetupHardware:00000000 SetupHardware
+     /tmp/ccBkRAqh.s:494    .text.main:00000000 main
+     /tmp/ccBkRAqh.s:604    .progmem.data:00000207 __c.4510
+
+UNDEFINED SYMBOLS
+USB_HostState
+printf_P
+USB_Disable
+puts_P
+USB_Host_GetDeviceConfigDescriptor
+SI_Host_ConfigurePipes
+USB_Host_SetDeviceConfiguration
+SI_Host_OpenSession
+SI_Host_SendCommand
+SI_Host_ReceiveResponse
+SI_Host_CloseSession
+USB_Init
+USARTSerialStream
+__iob
+Serial_putchar
+Serial_getchar
+USB_USBTask
+__do_copy_data

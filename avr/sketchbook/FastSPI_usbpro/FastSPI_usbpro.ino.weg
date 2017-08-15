@@ -1,0 +1,218 @@
+/* Pixelcontroller - Clone of FastSPI_Stageprofi 2013-04-28
+   Implements Enttec USB Pro for OLA
+   Maybe shift this on an Atmega2560 or even Due and make many pixels
+   + 2-3 DMX-outputs?
+   
+   UNFINISGHED! only a barely template
+   
+   See enclosed README for concept, licenses, (C), Credits etc.
+
+   (C) 2013 Michael Markstaller / Elaborated Networks GmbH
+*/
+
+// uses FastSPI v20121014
+#include <FastSPI_LED.h>
+
+struct CRGB { unsigned char g; unsigned char b; unsigned char r; };
+struct CRGB *leds;
+
+#define DEBUG 1
+//Init always max. num_leds for smooth demo/grid is set by DMX
+#define MAX_LEDS 168
+
+enum { M_DMX, M_SPECTRUM, M_DEMO2 };
+byte gModeb[] = { 0, 0, 0, 0, 2, 20, 5, 4 }; //Defaults: DMX-mode/Demo (5), numleds, gridX, gridY
+
+enum { S_IDLE, S_START, S_SUCCESS, S_ERR }; 
+byte state = S_IDLE;
+
+#define MAX_MILLIS_TO_WAIT 1000  //serial timeout
+
+void setup()
+{
+  pinMode(3, OUTPUT);   // set the PWM-pins as output
+  pinMode(6, OUTPUT);   // set the PWM-pins as output
+  pinMode(9, OUTPUT);   // set the PWM-pins as output
+  //FIXME: unused pins low?
+  FastSPI_LED.setLeds(MAX_LEDS);
+  FastSPI_LED.setChipset(CFastSPI_LED::SPI_LPD6803);
+  FastSPI_LED.init();
+  FastSPI_LED.start();
+  leds = (struct CRGB*)FastSPI_LED.getRGBData();
+  // clear all
+  FastSPI_LED.show();
+  
+  // initialize the serial communication:
+  Serial.begin(115200);
+  while (!Serial) {
+    ; // wait for serial port to connect. Needed for Leonardo only
+  }
+}
+
+void loop() {
+  if (Serial.available() > 0) {
+    Serial.println();
+    Serial.print("Got/at:");
+    Serial.println(Serial.available());
+    Serial.println(millis()/1000);
+    char inB = Serial.read();
+    byte label,lenLSB,lenMSB;
+    int datalen;
+    char data[600];
+
+    if (state == S_IDLE && inB == 0x7E) {
+      state = S_START;
+      //optimistic
+      label = Serial.read();
+      lenLSB = Serial.read();
+      lenMSB = Serial.read();
+      datalen = (lenMSB << 8);
+      datalen |= lenLSB;
+      Serial.readBytes( data, datalen );
+      if (Serial.read() == 0xE7) {
+        state = S_SUCCESS;
+        Serial.println(F("Success :"));
+        Serial.println(label);
+        Serial.println(datalen);
+        //all fine, go ahead
+        // 7e 1 1 0 9 e7
+
+        state = S_IDLE;
+      } else {
+        Serial.println(F("Error after idle + 0x7E"));
+        Serial.println(label);
+        Serial.println(datalen);
+        //something went wrong, debug this
+        //state = S_ERR;
+      }
+    } else {
+      //dunno, drop it
+      Serial.print(F("Ignored start char: 0x"));
+      Serial.println(inB, HEX);
+      //clear inbuffer
+      while (Serial.available()) { Serial.read(); }
+      state = S_IDLE;
+    }
+  state = S_IDLE;
+  }
+  
+  analogWrite(3, gModeb[0]);
+  analogWrite(6, gModeb[1]);
+  analogWrite(9, gModeb[2]);
+  //TODO: PIN-out?
+  //FastSPI_LED.show(); // not required here..
+
+  //FIXME: maybe run demo when theres > 10sec no serial signal?
+  //FIXME: switch different demos, spectrum-analyzer
+  //box, line
+  if (gModeb[4] == 2) {
+    runDemo();
+  }
+  // clear state and alert this - just in case..
+  if (state != S_IDLE) {
+    state = S_IDLE;
+    Serial.print(F("Warning: state after loop: "));
+    Serial.println(state);
+  }
+}
+
+void runDemo() {
+  //TODO: add more demos
+
+  // one at a time
+  for(int j = 0; j < 4; j++) { 
+    for(int i = 0 ; i < gModeb[5]; i++ ) {
+      memset(leds, 0, MAX_LEDS * 3);
+      switch(j) { 
+        case 0: leds[i].r = 255; break;
+        case 1: leds[i].g = 255; break;
+        case 2: leds[i].b = 255; break;
+        case 3: 
+          leds[i].r = 255; 
+          leds[i].g = 255; 
+          leds[i].b = 255; 
+          break;
+      }
+      FastSPI_LED.show();
+      if (Serial.available())
+        break;
+      delay(50);
+    }
+  }
+
+  // growing/receeding bars
+  for(int j = 0; j < 3; j++) { 
+    memset(leds, 0, MAX_LEDS * 3);
+    for(int i = 0 ; i < gModeb[5]; i++ ) {
+      switch(j) { 
+        case 0: leds[i].r = 255; break;
+        case 1: leds[i].g = 255; break;
+        case 2: leds[i].b = 255; break;
+      }
+      FastSPI_LED.show();
+      if (Serial.available())
+        break;
+      delay(30);
+    }
+    for(int i = gModeb[5]-1 ; i >= 0; i-- ) {
+      switch(j) { 
+        case 0: leds[i].r = 0; break;
+        case 1: leds[i].g = 0; break;
+        case 2: leds[i].b = 0; break;
+      }
+      FastSPI_LED.show();
+      if (Serial.available())
+        break;
+      delay(30);
+    }
+  }
+  
+  // Fade in/fade out
+  for(int j = 0; j < 4; j++ ) { 
+    memset(leds, 0, MAX_LEDS * 3);
+    for(int k = 0; k < 256; k++) { 
+      for(int i = 0; i < gModeb[5]; i++ ) {
+        switch(j) {
+          case 0: leds[i].r = k; break;
+          case 1: leds[i].g = k; break;
+          case 2: leds[i].b = k; break;
+          case 3: 
+            leds[i].r = k; 
+            leds[i].g = k; 
+            leds[i].b = k; 
+            break;
+        }
+      }
+      FastSPI_LED.show();
+      delay(2); //3
+    }
+    for(int k = 255; k >= 0; k--) { 
+      for(int i = 0; i < gModeb[5]; i++ ) {
+        switch(j) { 
+          case 0: leds[i].r = k; break;
+          case 1: leds[i].g = k; break;
+          case 2: leds[i].b = k; break;
+          case 3: 
+            leds[i].r = k; 
+            leds[i].g = k; 
+            leds[i].b = k; 
+            break;
+        }
+      }
+      FastSPI_LED.show();
+      delay(2); //3
+    }
+    if (Serial.available())
+      break;
+  }
+
+} // end demo
+
+#ifdef DEBUG
+int freeRam () {
+  extern int __heap_start, *__brkval; 
+  int v; 
+  return (int) &v - (__brkval == 0 ? (int) &__heap_start : (int) __brkval); 
+}
+#endif
+

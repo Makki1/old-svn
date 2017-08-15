@@ -1,0 +1,18 @@
+SUBSYSTEMS=="usb", KERNEL=="ttyUSB*", \
+        ATTRS{idVendor}=="0403",ATTRS{idProduct}=="6001" \
+        SYMLINK+="usbserial-%s{serial}"
+# FT2232C 2-port
+SUBSYSTEMS=="usb", KERNEL=="ttyUSB*", \
+        ATTRS{idVendor}=="0403",ATTRS{idProduct}=="6010" \
+                                        SYMLINK+="usbserial-%s{serial}-%s{bInterfaceNumber}"
+SUBSYSTEMS=="usb", KERNEL=="ttyUSB*", \
+        ATTRS{idVendor}=="0403",ATTRS{idProduct}=="6010" \
+                                        SYMLINK+="ttyUSB-%b"
+# FT4232C 4-port
+SUBSYSTEMS=="usb", KERNEL=="ttyUSB*", \
+        ATTRS{idVendor}=="0403",ATTRS{idProduct}=="6011" \
+                                        SYMLINK+="usbserial-%s{serial}-%s{bInterfaceNumber}"
+SUBSYSTEMS=="usb", KERNEL=="ttyUSB*", \
+        ATTRS{idVendor}=="0403",ATTRS{idProduct}=="6011" \
+                                        SYMLINK+="ttyUSB-%b"
+

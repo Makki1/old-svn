@@ -1,0 +1,4 @@
+#! /bin/sh -e
+
+update-rc.d irserver defaults
+/etc/init.d/irserver restart

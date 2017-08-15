@@ -1,0 +1,568 @@
+   1               		.file	"V2Protocol.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__CCP__  = 0x34
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+  15               	.Ltext0:
+  16               		.section	.text.__vector_12,"ax",@progbits
+  17               	.global	__vector_12
+  19               	__vector_12:
+  20               	.LFB114:
+  21               	.LSM0:
+  22 0000 1F92      		push __zero_reg__
+  23 0002 0F92      		push r0
+  24 0004 0FB6      		in r0,__SREG__
+  25 0006 0F92      		push r0
+  26 0008 1124      		clr __zero_reg__
+  27 000a 8F93      		push r24
+  28               	/* prologue: Signal */
+  29               	/* frame size = 0 */
+  30               	.LSM1:
+  31 000c 81E0      		ldi r24,lo8(1)
+  32 000e 8ABD      		out 74-32,r24
+  33               	.LSM2:
+  34 0010 88E1      		ldi r24,lo8(24)
+  35               	/* #APP */
+  36               	 ;  50 "../AVRISP-MKII/Lib/V2Protocol.c" 1
+  37 0012 0FB6      		in __tmp_reg__, __SREG__
+  38 0014 F894      		cli
+  39 0016 8093 6000 		sts 96, r24
+  40 001a 1092 6000 		sts 96, __zero_reg__
+  41 001e 0FBE      		out __SREG__,__tmp_reg__
+  42               		
+  43               	 ;  0 "" 2
+  44               	/* epilogue start */
+  45               	.LSM3:
+  46               	/* #NOAPP */
+  47 0020 8F91      		pop r24
+  48 0022 0F90      		pop r0
+  49 0024 0FBE      		out __SREG__,r0
+  50 0026 0F90      		pop r0
+  51 0028 1F90      		pop __zero_reg__
+  52 002a 1895      		reti
+  53               	.LFE114:
+  55               		.data
+  56               	.LC0:
+  57 0000 4156 5249 		.string	"AVRISP_MK2"
+  57      5350 5F4D 
+  57      4B32 00
+  58               		.section	.text.V2Protocol_ProcessCommand,"ax",@progbits
+  59               	.global	V2Protocol_ProcessCommand
+  61               	V2Protocol_ProcessCommand:
+  62               	.LFB116:
+  63               	.LSM4:
+  64 0000 FF92      		push r15
+  65 0002 0F93      		push r16
+  66 0004 1F93      		push r17
+  67               	/* prologue: function */
+  68               	/* frame size = 0 */
+  69               	.LBB182:
+  70               	.LBB183:
+  71               	.LSM5:
+  72 0006 1091 F100 		lds r17,241
+  73               	.LVL0:
+  74               	.LBE183:
+  75               	.LBE182:
+  76               	.LSM6:
+  77 000a 1ABC      		out 74-32,__zero_reg__
+  78               	.LSM7:
+  79 000c 8EE0      		ldi r24,lo8(14)
+  80 000e 28E1      		ldi r18,lo8(24)
+  81 0010 30E0      		ldi r19,hi8(24)
+  82               	/* #APP */
+  83               	 ;  80 "../AVRISP-MKII/Lib/V2Protocol.c" 1
+  84 0012 0FB6      		in __tmp_reg__,__SREG__
+  85 0014 F894      		cli
+  86 0016 A895      		wdr
+  87 0018 2093 6000 		sts 96,r18
+  88 001c 0FBE      		out __SREG__,__tmp_reg__
+  89 001e 8093 6000 		sts 96,r24
+  90               		
+  91               	 ;  0 "" 2
+  92               	.LSM8:
+  93               	/* #NOAPP */
+  94 0022 8091 6000 		lds r24,96
+  95 0026 8064      		ori r24,lo8(64)
+  96 0028 8093 6000 		sts 96,r24
+  97               	.LSM9:
+  98 002c 1630      		cpi r17,lo8(6)
+  99 002e 01F4      		brne .+2
+ 100 0030 00C0      		rjmp .L7
+ 101 0032 1730      		cpi r17,lo8(7)
+ 102 0034 00F4      		brsh .L11
+ 103 0036 1130      		cpi r17,lo8(1)
+ 104 0038 01F0      		breq .L5
+ 105 003a 1130      		cpi r17,lo8(1)
+ 106 003c 00F4      		brsh .+2
+ 107 003e 00C0      		rjmp .L21
+ 108 0040 1430      		cpi r17,lo8(4)
+ 109 0042 00F0      		brlo .+2
+ 110 0044 00C0      		rjmp .L21
+ 111 0046 00C0      		rjmp .L27
+ 112               	.L11:
+ 113 0048 1035      		cpi r17,lo8(80)
+ 114 004a 01F4      		brne .+2
+ 115 004c 00C0      		rjmp .L9
+ 116 004e 1135      		cpi r17,lo8(81)
+ 117 0050 01F4      		brne .+2
+ 118 0052 00C0      		rjmp .L10
+ 119 0054 1A30      		cpi r17,lo8(10)
+ 120 0056 01F0      		breq .+2
+ 121 0058 00C0      		rjmp .L21
+ 122 005a 00C0      		rjmp .L28
+ 123               	.L5:
+ 124               	.LBB184:
+ 125               	.LBB185:
+ 126               	.LBB186:
+ 127               	.LBB187:
+ 128               	.LSM10:
+ 129 005c 8091 E800 		lds r24,232
+ 130 0060 8B77      		andi r24,lo8(123)
+ 131 0062 8093 E800 		sts 232,r24
+ 132               	.LBE187:
+ 133               	.LBE186:
+ 134               	.LBB188:
+ 135               	.LBB189:
+ 136               	.LSM11:
+ 137 0066 82E0      		ldi r24,lo8(2)
+ 138 0068 8093 E900 		sts 233,r24
+ 139               	.LBE189:
+ 140               	.LBE188:
+ 141               	.LBB190:
+ 142               	.LBB191:
+ 143               	.LSM12:
+ 144 006c 8091 EC00 		lds r24,236
+ 145 0070 8068      		ori r24,lo8(-128)
+ 146 0072 8093 EC00 		sts 236,r24
+ 147               	.LBE191:
+ 148               	.LBE190:
+ 149               	.LBB192:
+ 150               	.LBB193:
+ 151               	.LSM13:
+ 152 0076 1093 F100 		sts 241,r17
+ 153               	.LBE193:
+ 154               	.LBE192:
+ 155               	.LBB194:
+ 156               	.LBB195:
+ 157 007a 1092 F100 		sts 241,__zero_reg__
+ 158               	.LBE195:
+ 159               	.LBE194:
+ 160               	.LBB196:
+ 161               	.LBB197:
+ 162 007e 8AE0      		ldi r24,lo8(10)
+ 163 0080 8093 F100 		sts 241,r24
+ 164               	.LBE197:
+ 165               	.LBE196:
+ 166               	.LSM14:
+ 167 0084 80E0      		ldi r24,lo8(.LC0)
+ 168 0086 90E0      		ldi r25,hi8(.LC0)
+ 169 0088 6AE0      		ldi r22,lo8(10)
+ 170 008a 70E0      		ldi r23,hi8(10)
+ 171 008c 40E0      		ldi r20,lo8(0)
+ 172 008e 50E0      		ldi r21,hi8(0)
+ 173 0090 0E94 0000 		call Endpoint_Write_Stream_LE
+ 174 0094 00C0      		rjmp .L24
+ 175               	.L27:
+ 176               	.LBE185:
+ 177               	.LBE184:
+ 178               	.LBB198:
+ 179               	.LBB199:
+ 180               	.LBB204:
+ 181               	.LBB205:
+ 182               	.LSM15:
+ 183 0096 0091 F100 		lds r16,241
+ 184               	.LVL1:
+ 185               	.LBE205:
+ 186               	.LBE204:
+ 187               	.LSM16:
+ 188 009a 1230      		cpi r17,lo8(2)
+ 189 009c 01F0      		breq .L13
+ 190 009e FF24      		clr r15
+ 191               	.LVL2:
+ 192 00a0 00C0      		rjmp .L14
+ 193               	.LVL3:
+ 194               	.L13:
+ 195               	.LBB206:
+ 196               	.LBB207:
+ 197               	.LSM17:
+ 198 00a2 F090 F100 		lds r15,241
+ 199               	.LVL4:
+ 200               	.L14:
+ 201               	.LBE207:
+ 202               	.LBE206:
+ 203               	.LBB208:
+ 204               	.LBB209:
+ 205               	.LSM18:
+ 206 00a6 8091 E800 		lds r24,232
+ 207 00aa 8B77      		andi r24,lo8(123)
+ 208 00ac 8093 E800 		sts 232,r24
+ 209               	.LBE209:
+ 210               	.LBE208:
+ 211               	.LBB210:
+ 212               	.LBB211:
+ 213               	.LSM19:
+ 214 00b0 82E0      		ldi r24,lo8(2)
+ 215 00b2 8093 E900 		sts 233,r24
+ 216               	.LBE211:
+ 217               	.LBE210:
+ 218               	.LBB212:
+ 219               	.LBB213:
+ 220               	.LSM20:
+ 221 00b6 8091 EC00 		lds r24,236
+ 222 00ba 8068      		ori r24,lo8(-128)
+ 223 00bc 8093 EC00 		sts 236,r24
+ 224               	.LBE213:
+ 225               	.LBE212:
+ 226               	.LBB214:
+ 227               	.LBB215:
+ 228               	.LSM21:
+ 229 00c0 1093 F100 		sts 241,r17
+ 230               	.LBE215:
+ 231               	.LBE214:
+ 232               	.LBE199:
+ 233               	.LSM22:
+ 234 00c4 802F      		mov r24,r16
+ 235 00c6 0E94 0000 		call V2Params_GetParameterPrivileges
+ 236               	.LBB218:
+ 237               	.LSM23:
+ 238 00ca 1230      		cpi r17,lo8(2)
+ 239 00cc 01F4      		brne .L15
+ 240 00ce 81FF      		sbrs r24,1
+ 241 00d0 00C0      		rjmp .L16
+ 242               	.LVL5:
+ 243               	.LBB202:
+ 244               	.LBB203:
+ 245               	.LSM24:
+ 246 00d2 1092 F100 		sts 241,__zero_reg__
+ 247               	.LBE203:
+ 248               	.LBE202:
+ 249               	.LSM25:
+ 250 00d6 802F      		mov r24,r16
+ 251               	.LVL6:
+ 252 00d8 6F2D      		mov r22,r15
+ 253 00da 0E94 0000 		call V2Params_SetParameterValue
+ 254 00de 00C0      		rjmp .L24
+ 255               	.L15:
+ 256               	.LSM26:
+ 257 00e0 80FF      		sbrs r24,0
+ 258 00e2 00C0      		rjmp .L16
+ 259               	.LVL7:
+ 260               	.LBB200:
+ 261               	.LBB201:
+ 262               	.LSM27:
+ 263 00e4 1092 F100 		sts 241,__zero_reg__
+ 264               	.LBE201:
+ 265               	.LBE200:
+ 266               	.LBE218:
+ 267               	.LSM28:
+ 268 00e8 802F      		mov r24,r16
+ 269               	.LVL8:
+ 270 00ea 0E94 0000 		call V2Params_GetParameterValue
+ 271 00ee 00C0      		rjmp .L25
+ 272               	.LVL9:
+ 273               	.L16:
+ 274               	.LBB219:
+ 275               	.LBB216:
+ 276               	.LBB217:
+ 277               	.LSM29:
+ 278 00f0 80EC      		ldi r24,lo8(-64)
+ 279               	.LVL10:
+ 280 00f2 00C0      		rjmp .L25
+ 281               	.LVL11:
+ 282               	.L7:
+ 283               	.LBE217:
+ 284               	.LBE216:
+ 285               	.LBE219:
+ 286               	.LBE198:
+ 287               	.LBB220:
+ 288               	.LBB221:
+ 289               	.LSM30:
+ 290 00f4 80E0      		ldi r24,lo8(CurrentAddress)
+ 291 00f6 90E0      		ldi r25,hi8(CurrentAddress)
+ 292 00f8 64E0      		ldi r22,lo8(4)
+ 293 00fa 70E0      		ldi r23,hi8(4)
+ 294 00fc 40E0      		ldi r20,lo8(0)
+ 295 00fe 50E0      		ldi r21,hi8(0)
+ 296 0100 0E94 0000 		call Endpoint_Read_Stream_BE
+ 297               	.LBB222:
+ 298               	.LBB223:
+ 299               	.LSM31:
+ 300 0104 8091 E800 		lds r24,232
+ 301 0108 8B77      		andi r24,lo8(123)
+ 302 010a 8093 E800 		sts 232,r24
+ 303               	.LBE223:
+ 304               	.LBE222:
+ 305               	.LBB224:
+ 306               	.LBB225:
+ 307               	.LSM32:
+ 308 010e 82E0      		ldi r24,lo8(2)
+ 309 0110 8093 E900 		sts 233,r24
+ 310               	.LBE225:
+ 311               	.LBE224:
+ 312               	.LBB226:
+ 313               	.LBB227:
+ 314               	.LSM33:
+ 315 0114 8091 EC00 		lds r24,236
+ 316 0118 8068      		ori r24,lo8(-128)
+ 317 011a 8093 EC00 		sts 236,r24
+ 318               	.LBE227:
+ 319               	.LBE226:
+ 320               	.LSM34:
+ 321 011e 8091 0000 		lds r24,CurrentAddress
+ 322 0122 9091 0000 		lds r25,(CurrentAddress)+1
+ 323 0126 A091 0000 		lds r26,(CurrentAddress)+2
+ 324 012a B091 0000 		lds r27,(CurrentAddress)+3
+ 325 012e B7FF      		sbrs r27,7
+ 326 0130 00C0      		rjmp .L18
+ 327               	.LSM35:
+ 328 0132 81E0      		ldi r24,lo8(1)
+ 329 0134 8093 0000 		sts MustLoadExtendedAddress,r24
+ 330               	.L18:
+ 331               	.LBB228:
+ 332               	.LBB229:
+ 333               	.LSM36:
+ 334 0138 86E0      		ldi r24,lo8(6)
+ 335 013a 8093 F100 		sts 241,r24
+ 336 013e 00C0      		rjmp .L26
+ 337               	.L28:
+ 338               	.LBE229:
+ 339               	.LBE228:
+ 340               	.LBE221:
+ 341               	.LBE220:
+ 342               	.LBB230:
+ 343               	.LBB231:
+ 344               	.LBB232:
+ 345               	.LBB233:
+ 346               	.LSM37:
+ 347 0140 8091 E800 		lds r24,232
+ 348 0144 8B77      		andi r24,lo8(123)
+ 349 0146 8093 E800 		sts 232,r24
+ 350               	.LBE233:
+ 351               	.LBE232:
+ 352               	.LBB234:
+ 353               	.LBB235:
+ 354               	.LSM38:
+ 355 014a 82E0      		ldi r24,lo8(2)
+ 356 014c 8093 E900 		sts 233,r24
+ 357               	.LBE235:
+ 358               	.LBE234:
+ 359               	.LBB236:
+ 360               	.LBB237:
+ 361               	.LSM39:
+ 362 0150 8091 EC00 		lds r24,236
+ 363 0154 8068      		ori r24,lo8(-128)
+ 364 0156 8093 EC00 		sts 236,r24
+ 365               	.LBE237:
+ 366               	.LBE236:
+ 367               	.LBB238:
+ 368               	.LBB239:
+ 369               	.LSM40:
+ 370 015a 1093 F100 		sts 241,r17
+ 371               	.L26:
+ 372               	.LBE239:
+ 373               	.LBE238:
+ 374               	.LBB240:
+ 375               	.LBB241:
+ 376 015e 1092 F100 		sts 241,__zero_reg__
+ 377 0162 00C0      		rjmp .L24
+ 378               	.L10:
+ 379               	.LBE241:
+ 380               	.LBE240:
+ 381               	.LBE231:
+ 382               	.LBE230:
+ 383               	.LSM41:
+ 384 0164 0E94 0000 		call XPROGProtocol_SetMode
+ 385 0168 00C0      		rjmp .L12
+ 386               	.L9:
+ 387               	.LSM42:
+ 388 016a 0E94 0000 		call XPROGProtocol_Command
+ 389 016e 00C0      		rjmp .L12
+ 390               	.L19:
+ 391               	.LBB242:
+ 392               	.LBB243:
+ 393               	.LBB244:
+ 394               	.LBB245:
+ 395               	.LSM43:
+ 396 0170 8091 E800 		lds r24,232
+ 397 0174 8B77      		andi r24,lo8(123)
+ 398 0176 8093 E800 		sts 232,r24
+ 399               	.LBE245:
+ 400               	.LBE244:
+ 401               	.LSM44:
+ 402 017a 0E94 0000 		call Endpoint_WaitUntilReady
+ 403               	.L21:
+ 404               	.LBB246:
+ 405               	.LBB247:
+ 406               	.LSM45:
+ 407 017e 8091 F200 		lds r24,242
+ 408 0182 9091 F300 		lds r25,(242)+1
+ 409               	.LBE247:
+ 410               	.LBE246:
+ 411               	.LSM46:
+ 412 0186 8034      		cpi r24,64
+ 413 0188 9105      		cpc r25,__zero_reg__
+ 414 018a 01F0      		breq .L19
+ 415               	.LBB248:
+ 416               	.LBB249:
+ 417               	.LSM47:
+ 418 018c 8091 E800 		lds r24,232
+ 419 0190 8B77      		andi r24,lo8(123)
+ 420 0192 8093 E800 		sts 232,r24
+ 421               	.LBE249:
+ 422               	.LBE248:
+ 423               	.LBB250:
+ 424               	.LBB251:
+ 425               	.LSM48:
+ 426 0196 82E0      		ldi r24,lo8(2)
+ 427 0198 8093 E900 		sts 233,r24
+ 428               	.LBE251:
+ 429               	.LBE250:
+ 430               	.LBB252:
+ 431               	.LBB253:
+ 432               	.LSM49:
+ 433 019c 8091 EC00 		lds r24,236
+ 434 01a0 8068      		ori r24,lo8(-128)
+ 435 01a2 8093 EC00 		sts 236,r24
+ 436               	.LBE253:
+ 437               	.LBE252:
+ 438               	.LBB254:
+ 439               	.LBB255:
+ 440               	.LSM50:
+ 441 01a6 1093 F100 		sts 241,r17
+ 442               	.LBE255:
+ 443               	.LBE254:
+ 444               	.LBB256:
+ 445               	.LBB257:
+ 446 01aa 89EC      		ldi r24,lo8(-55)
+ 447               	.LVL12:
+ 448               	.L25:
+ 449 01ac 8093 F100 		sts 241,r24
+ 450               	.L24:
+ 451               	.LBE257:
+ 452               	.LBE256:
+ 453               	.LBB258:
+ 454               	.LBB259:
+ 455               	.LSM51:
+ 456 01b0 8091 E800 		lds r24,232
+ 457 01b4 8E77      		andi r24,lo8(126)
+ 458 01b6 8093 E800 		sts 232,r24
+ 459               	.L12:
+ 460               	.LBE259:
+ 461               	.LBE258:
+ 462               	.LBE243:
+ 463               	.LBE242:
+ 464               	.LSM52:
+ 465 01ba 88E1      		ldi r24,lo8(24)
+ 466               	/* #APP */
+ 467               	 ;  144 "../AVRISP-MKII/Lib/V2Protocol.c" 1
+ 468 01bc 0FB6      		in __tmp_reg__, __SREG__
+ 469 01be F894      		cli
+ 470 01c0 8093 6000 		sts 96, r24
+ 471 01c4 1092 6000 		sts 96, __zero_reg__
+ 472 01c8 0FBE      		out __SREG__,__tmp_reg__
+ 473               		
+ 474               	 ;  0 "" 2
+ 475               	.LSM53:
+ 476               	/* #NOAPP */
+ 477 01ca 0E94 0000 		call Endpoint_WaitUntilReady
+ 478               	.LBB260:
+ 479               	.LBB261:
+ 480               	.LSM54:
+ 481 01ce 82E0      		ldi r24,lo8(2)
+ 482 01d0 8093 E900 		sts 233,r24
+ 483               	.LBE261:
+ 484               	.LBE260:
+ 485               	.LBB262:
+ 486               	.LBB263:
+ 487               	.LSM55:
+ 488 01d4 8091 EC00 		lds r24,236
+ 489 01d8 8F77      		andi r24,lo8(127)
+ 490 01da 8093 EC00 		sts 236,r24
+ 491               	/* epilogue start */
+ 492               	.LBE263:
+ 493               	.LBE262:
+ 494               	.LSM56:
+ 495 01de 1F91      		pop r17
+ 496               	.LVL13:
+ 497 01e0 0F91      		pop r16
+ 498               	.LVL14:
+ 499 01e2 FF90      		pop r15
+ 500               	.LVL15:
+ 501 01e4 0895      		ret
+ 502               	.LFE116:
+ 504               		.section	.text.V2Protocol_Init,"ax",@progbits
+ 505               	.global	V2Protocol_Init
+ 507               	V2Protocol_Init:
+ 508               	.LFB115:
+ 509               	.LSM57:
+ 510               	/* prologue: function */
+ 511               	/* frame size = 0 */
+ 512               	.LBB264:
+ 513               	.LBB265:
+ 514               	.LSM58:
+ 515 0000 AAE7      		ldi r26,lo8(122)
+ 516 0002 B0E0      		ldi r27,hi8(122)
+ 517 0004 87EA      		ldi r24,lo8(-89)
+ 518 0006 8C93      		st X,r24
+ 519               	.LBE265:
+ 520               	.LBE264:
+ 521               	.LBB266:
+ 522               	.LBB267:
+ 523               	.LSM59:
+ 524 0008 8298      		cbi 48-32,2
+ 525               	.LSM60:
+ 526 000a EEE7      		ldi r30,lo8(126)
+ 527 000c F0E0      		ldi r31,hi8(126)
+ 528 000e 8081      		ld r24,Z
+ 529 0010 8460      		ori r24,lo8(4)
+ 530 0012 8083      		st Z,r24
+ 531               	.LBE267:
+ 532               	.LBE266:
+ 533               	.LBB268:
+ 534               	.LBB269:
+ 535               	.LSM61:
+ 536 0014 82E4      		ldi r24,lo8(66)
+ 537 0016 8093 7C00 		sts 124,r24
+ 538               	.LSM62:
+ 539 001a 8C91      		ld r24,X
+ 540 001c 8064      		ori r24,lo8(64)
+ 541 001e 8C93      		st X,r24
+ 542               	.LBE269:
+ 543               	.LBE268:
+ 544               	.LSM63:
+ 545 0020 0E94 0000 		call V2Params_LoadNonVolatileParamValues
+ 546               	/* epilogue start */
+ 547               	.LSM64:
+ 548 0024 0895      		ret
+ 549               	.LFE115:
+ 551               		.comm CurrentAddress,4,1
+ 552               		.comm MustLoadExtendedAddress,1,1
+ 593               	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 V2Protocol.c
+     /tmp/cci0eA9R.s:2      *ABS*:0000003f __SREG__
+     /tmp/cci0eA9R.s:3      *ABS*:0000003e __SP_H__
+     /tmp/cci0eA9R.s:4      *ABS*:0000003d __SP_L__
+     /tmp/cci0eA9R.s:5      *ABS*:00000034 __CCP__
+     /tmp/cci0eA9R.s:6      *ABS*:00000000 __tmp_reg__
+     /tmp/cci0eA9R.s:7      *ABS*:00000001 __zero_reg__
+     /tmp/cci0eA9R.s:19     .text.__vector_12:00000000 __vector_12
+     /tmp/cci0eA9R.s:61     .text.V2Protocol_ProcessCommand:00000000 V2Protocol_ProcessCommand
+                            *COM*:00000004 CurrentAddress
+                            *COM*:00000001 MustLoadExtendedAddress
+     /tmp/cci0eA9R.s:507    .text.V2Protocol_Init:00000000 V2Protocol_Init
+
+UNDEFINED SYMBOLS
+Endpoint_Write_Stream_LE
+V2Params_GetParameterPrivileges
+V2Params_SetParameterValue
+V2Params_GetParameterValue
+Endpoint_Read_Stream_BE
+XPROGProtocol_SetMode
+XPROGProtocol_Command
+Endpoint_WaitUntilReady
+V2Params_LoadNonVolatileParamValues
+__do_copy_data
+__do_clear_bss

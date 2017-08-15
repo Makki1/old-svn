@@ -1,0 +1,25 @@
+Notizen avrdude / flashing:
+
+- Initial geht der schnellste SCK-Mode nicht, weil der AVR noch auf 1MHz gefused ist
+-> "avrdude -B 10" anhängen !
+
+Chip-Info / Test:
+sudo avrdude -c avrisp2 -p attiny84 -P usb -n -v -B 10
+
+Fuses
+*** Default attiny84 ***
+avrdude: Device signature = 0x1e930c
+avrdude: safemode: lfuse reads as 62
+avrdude: safemode: hfuse reads as DF
+avrdude: safemode: efuse reads as FF
+
+(CLKDIV8 deaktivieren, EESAVE aktivieren)
+sudo avrdude -c avrisp2 -p attiny84 -P usb -U lfuse:w:0xe2:m -U hfuse:w:0xd7:m
+(ohne EESAVE):
+sudo avrdude -c avrisp2 -p attiny84 -P usb -U lfuse:w:0xe2:m -U hfuse:w:0xdf:m
+
+
+in owslave_E1_4count/:
+make program
+(avrdude -p attiny84 -P usb     -c avrisp2    -U flash:w:main.hex)
+

@@ -1,0 +1,121 @@
+   1               		.file	"clock.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__CCP__  = 0x34
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+  15               	.Ltext0:
+  16               		.section	.text.__vector_17,"ax",@progbits
+  17               	.global	__vector_17
+  19               	__vector_17:
+  20               	.LFB21:
+  21               	.LSM0:
+  22 0000 1F92      		push __zero_reg__
+  23 0002 0F92      		push r0
+  24 0004 0FB6      		in r0,__SREG__
+  25 0006 0F92      		push r0
+  26 0008 1124      		clr __zero_reg__
+  27 000a 8F93      		push r24
+  28 000c 9F93      		push r25
+  29               	/* prologue: Signal */
+  30               	/* frame size = 0 */
+  31               	.LSM1:
+  32 000e 8091 0000 		lds r24,clock_datetime
+  33 0012 9091 0000 		lds r25,(clock_datetime)+1
+  34 0016 0196      		adiw r24,1
+  35 0018 9093 0000 		sts (clock_datetime)+1,r25
+  36 001c 8093 0000 		sts clock_datetime,r24
+  37               	/* epilogue start */
+  38               	.LSM2:
+  39 0020 9F91      		pop r25
+  40 0022 8F91      		pop r24
+  41 0024 0F90      		pop r0
+  42 0026 0FBE      		out __SREG__,r0
+  43 0028 0F90      		pop r0
+  44 002a 1F90      		pop __zero_reg__
+  45 002c 1895      		reti
+  46               	.LFE21:
+  48               		.section	.text.clock_init,"ax",@progbits
+  49               	.global	clock_init
+  51               	clock_init:
+  52               	.LFB22:
+  53               	.LSM3:
+  54               	/* prologue: function */
+  55               	/* frame size = 0 */
+  56               	.LSM4:
+  57 0000 8DE4      		ldi r24,lo8(77)
+  58 0002 90E0      		ldi r25,hi8(77)
+  59 0004 9093 8900 		sts (136)+1,r25
+  60 0008 8093 8800 		sts 136,r24
+  61               	.LSM5:
+  62 000c 8DE0      		ldi r24,lo8(13)
+  63 000e 8093 8100 		sts 129,r24
+  64               	.LSM6:
+  65 0012 82E0      		ldi r24,lo8(2)
+  66 0014 8093 6F00 		sts 111,r24
+  67               	/* epilogue start */
+  68               	.LSM7:
+  69 0018 0895      		ret
+  70               	.LFE22:
+  72               		.section	.text.clock_time,"ax",@progbits
+  73               	.global	clock_time
+  75               	clock_time:
+  76               	.LFB23:
+  77               	.LSM8:
+  78               	/* prologue: function */
+  79               	/* frame size = 0 */
+  80               	.LBB6:
+  81               	.LBB7:
+  82               	.LSM9:
+  83               	.LSM10:
+  84               	/* #APP */
+  85               	 ;  421 "../../LUFA/Common/Common.h" 1
+  86 0000 F894      		cli
+  87               	 ;  0 "" 2
+  88               	.LSM11:
+  89               	/* #NOAPP */
+  90               	.LBE7:
+  91               	.LBE6:
+  92               	.LSM12:
+  93 0002 8091 0000 		lds r24,clock_datetime
+  94 0006 9091 0000 		lds r25,(clock_datetime)+1
+  95               	.LVL0:
+  96               	.LBB8:
+  97               	.LBB9:
+  98               	.LSM13:
+  99               	.LSM14:
+ 100               	/* #APP */
+ 101               	 ;  401 "../../LUFA/Common/Common.h" 1
+ 102 000a 7894      		sei
+ 103               	 ;  0 "" 2
+ 104               	.LSM15:
+ 105               	.LVL1:
+ 106               	/* epilogue start */
+ 107               	/* #NOAPP */
+ 108               	.LBE9:
+ 109               	.LBE8:
+ 110               	.LSM16:
+ 111 000c 0895      		ret
+ 112               	.LFE23:
+ 114               	.global	clock_datetime
+ 115               	.global	clock_datetime
+ 116               		.section .bss
+ 119               	clock_datetime:
+ 120 0000 0000      		.skip 2,0
+ 161               	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 clock.c
+     /tmp/ccDvLchK.s:2      *ABS*:0000003f __SREG__
+     /tmp/ccDvLchK.s:3      *ABS*:0000003e __SP_H__
+     /tmp/ccDvLchK.s:4      *ABS*:0000003d __SP_L__
+     /tmp/ccDvLchK.s:5      *ABS*:00000034 __CCP__
+     /tmp/ccDvLchK.s:6      *ABS*:00000000 __tmp_reg__
+     /tmp/ccDvLchK.s:7      *ABS*:00000001 __zero_reg__
+     /tmp/ccDvLchK.s:19     .text.__vector_17:00000000 __vector_17
+     /tmp/ccDvLchK.s:119    .bss:00000000 clock_datetime
+     /tmp/ccDvLchK.s:51     .text.clock_init:00000000 clock_init
+     /tmp/ccDvLchK.s:75     .text.clock_time:00000000 clock_time
+
+UNDEFINED SYMBOLS
+__do_clear_bss

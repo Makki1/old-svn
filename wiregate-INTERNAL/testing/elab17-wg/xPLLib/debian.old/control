@@ -1,0 +1,20 @@
+Source: xpllib
+Priority: extra
+Maintainer: Michael Markstaller <mm@elabnet.de>
+Build-Depends: debhelper (>= 5)
+Standards-Version: 3.7.2
+Section: libs
+
+Package: xpllib-dev
+Section: libdevel
+Architecture: any
+Depends: xpllibBROKEN (= ${Source-Version})
+Description: <insert up to 60 chars description>
+ <insert long description, indented with spaces>
+
+#Package: xpllibBROKEN
+#Section: libs
+#Architecture: any
+#Depends: ${shlibs:Depends}, ${misc:Depends}
+#Description: <insert up to 60 chars description>
+# <insert long description, indented with spaces>

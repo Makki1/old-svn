@@ -1,0 +1,295 @@
+   1               		.file	"LEDNotifier.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__CCP__  = 0x34
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+  15               	.Ltext0:
+  16               		.section	.text.__vector_21,"ax",@progbits
+  17               	.global	__vector_21
+  19               	__vector_21:
+  20               	.LFB104:
+  21               	.LSM0:
+  22 0000 1F92      		push __zero_reg__
+  23 0002 0F92      		push r0
+  24 0004 0FB6      		in r0,__SREG__
+  25 0006 0F92      		push r0
+  26 0008 1124      		clr __zero_reg__
+  27 000a 2F93      		push r18
+  28 000c 8F93      		push r24
+  29 000e 9F93      		push r25
+  30               	/* prologue: Signal */
+  31               	/* frame size = 0 */
+  32               	.LSM1:
+  33 0010 8091 0000 		lds r24,SoftPWM_Count
+  34 0014 8F5F      		subi r24,lo8(-(1))
+  35 0016 8093 0000 		sts SoftPWM_Count,r24
+  36 001a 8091 0000 		lds r24,SoftPWM_Count
+  37 001e 8F31      		cpi r24,lo8(31)
+  38 0020 01F4      		brne .L2
+  39               	.LSM2:
+  40 0022 1092 0000 		sts SoftPWM_Count,__zero_reg__
+  41               	.L2:
+  42               	.LSM3:
+  43 0026 9091 0000 		lds r25,SoftPWM_Count
+  44 002a 8091 0000 		lds r24,SoftPWM_Channel1_Duty
+  45 002e 9817      		cp r25,r24
+  46 0030 00F0      		brlo .L3
+  47 0032 28E1      		ldi r18,lo8(24)
+  48               	.LVL0:
+  49 0034 00C0      		rjmp .L4
+  50               	.LVL1:
+  51               	.L3:
+  52 0036 2CE1      		ldi r18,lo8(28)
+  53               	.LVL2:
+  54               	.L4:
+  55               	.LSM4:
+  56 0038 9091 0000 		lds r25,SoftPWM_Count
+  57 003c 8091 0000 		lds r24,SoftPWM_Channel2_Duty
+  58 0040 9817      		cp r25,r24
+  59 0042 00F0      		brlo .L5
+  60               	.LSM5:
+  61 0044 277F      		andi r18,lo8(-9)
+  62               	.L5:
+  63               	.LSM6:
+  64 0046 9091 0000 		lds r25,SoftPWM_Count
+  65 004a 8091 0000 		lds r24,SoftPWM_Channel3_Duty
+  66 004e 9817      		cp r25,r24
+  67 0050 00F0      		brlo .L6
+  68               	.LSM7:
+  69 0052 2F7E      		andi r18,lo8(-17)
+  70               	.L6:
+  71               	.LBB8:
+  72               	.LBB9:
+  73               	.LSM8:
+  74 0054 88B1      		in r24,40-32
+  75 0056 837E      		andi r24,lo8(-29)
+  76 0058 282B      		or r18,r24
+  77 005a 28B9      		out 40-32,r18
+  78               	/* epilogue start */
+  79               	.LBE9:
+  80               	.LBE8:
+  81               	.LSM9:
+  82 005c 9F91      		pop r25
+  83 005e 8F91      		pop r24
+  84 0060 2F91      		pop r18
+  85               	.LVL3:
+  86 0062 0F90      		pop r0
+  87 0064 0FBE      		out __SREG__,r0
+  88 0066 0F90      		pop r0
+  89 0068 1F90      		pop __zero_reg__
+  90 006a 1895      		reti
+  91               	.LFE104:
+  93               		.section	.text.EVENT_USB_Device_ControlRequest,"ax",@progbits
+  94               	.global	EVENT_USB_Device_ControlRequest
+  96               	EVENT_USB_Device_ControlRequest:
+  97               	.LFB108:
+  98               	.LSM10:
+  99               	/* prologue: function */
+ 100               	/* frame size = 0 */
+ 101               	.LSM11:
+ 102 0000 80E0      		ldi r24,lo8(VirtualSerial_CDC_Interface)
+ 103 0002 90E0      		ldi r25,hi8(VirtualSerial_CDC_Interface)
+ 104 0004 0E94 0000 		call CDC_Device_ProcessControlRequest
+ 105               	/* epilogue start */
+ 106               	.LSM12:
+ 107 0008 0895      		ret
+ 108               	.LFE108:
+ 110               		.section	.text.EVENT_USB_Device_ConfigurationChanged,"ax",@progbits
+ 111               	.global	EVENT_USB_Device_ConfigurationChanged
+ 113               	EVENT_USB_Device_ConfigurationChanged:
+ 114               	.LFB107:
+ 115               	.LSM13:
+ 116               	/* prologue: function */
+ 117               	/* frame size = 0 */
+ 118               	.LSM14:
+ 119 0000 80E0      		ldi r24,lo8(VirtualSerial_CDC_Interface)
+ 120 0002 90E0      		ldi r25,hi8(VirtualSerial_CDC_Interface)
+ 121 0004 0E94 0000 		call CDC_Device_ConfigureEndpoints
+ 122               	/* epilogue start */
+ 123               	.LSM15:
+ 124 0008 0895      		ret
+ 125               	.LFE107:
+ 127               		.section	.text.SetupHardware,"ax",@progbits
+ 128               	.global	SetupHardware
+ 130               	SetupHardware:
+ 131               	.LFB106:
+ 132               	.LSM16:
+ 133               	/* prologue: function */
+ 134               	/* frame size = 0 */
+ 135               	.LSM17:
+ 136 0000 84B7      		in r24,84-32
+ 137 0002 877F      		andi r24,lo8(-9)
+ 138 0004 84BF      		out 84-32,r24
+ 139               	.LSM18:
+ 140 0006 88E1      		ldi r24,lo8(24)
+ 141               	/* #APP */
+ 142               	 ;  141 "LEDNotifier.c" 1
+ 143 0008 0FB6      		in __tmp_reg__, __SREG__
+ 144 000a F894      		cli
+ 145 000c 8093 6000 		sts 96, r24
+ 146 0010 1092 6000 		sts 96, __zero_reg__
+ 147 0014 0FBE      		out __SREG__,__tmp_reg__
+ 148               		
+ 149               	 ;  0 "" 2
+ 150               	/* #NOAPP */
+ 151               	.LBB10:
+ 152               	.LBB11:
+ 153               	.LSM19:
+ 154 0016 90E0      		ldi r25,lo8(0)
+ 155 0018 80E8      		ldi r24,lo8(-128)
+ 156               	/* #APP */
+ 157               	 ;  1394 "/usr/lib/gcc/avr/4.3.5/../../../avr/include/avr/power.h" 1
+ 158 001a 0FB6      		in __tmp_reg__,__SREG__
+ 159 001c F894      		cli
+ 160 001e 8093 6100 		sts 97, r24
+ 161 0022 9093 6100 		sts 97, r25
+ 162 0026 0FBE      		out __SREG__, __tmp_reg__
+ 163               	 ;  0 "" 2
+ 164               	/* #NOAPP */
+ 165               	.LBE11:
+ 166               	.LBE10:
+ 167               	.LBB12:
+ 168               	.LBB13:
+ 169               	.LSM20:
+ 170 0028 87B1      		in r24,39-32
+ 171 002a 8C61      		ori r24,lo8(28)
+ 172 002c 87B9      		out 39-32,r24
+ 173               	.LBE13:
+ 174               	.LBE12:
+ 175               	.LSM21:
+ 176 002e 0E94 0000 		call USB_Init
+ 177               	.LSM22:
+ 178 0032 84E6      		ldi r24,lo8(100)
+ 179 0034 87BD      		out 71-32,r24
+ 180               	.LSM23:
+ 181 0036 92E0      		ldi r25,lo8(2)
+ 182 0038 94BD      		out 68-32,r25
+ 183               	.LSM24:
+ 184 003a 81E0      		ldi r24,lo8(1)
+ 185 003c 85BD      		out 69-32,r24
+ 186               	.LSM25:
+ 187 003e 9093 6E00 		sts 110,r25
+ 188               	/* epilogue start */
+ 189               	.LSM26:
+ 190 0042 0895      		ret
+ 191               	.LFE106:
+ 193               		.section	.text.main,"ax",@progbits
+ 194               	.global	main
+ 196               	main:
+ 197               	.LFB105:
+ 198               	.LSM27:
+ 199               	/* prologue: function */
+ 200               	/* frame size = 0 */
+ 201               	.LSM28:
+ 202 0000 0E94 0000 		call SetupHardware
+ 203               	.LSM29:
+ 204 0004 80E0      		ldi r24,lo8(VirtualSerial_CDC_Interface)
+ 205 0006 90E0      		ldi r25,hi8(VirtualSerial_CDC_Interface)
+ 206 0008 60E0      		ldi r22,lo8(USBSerialStream)
+ 207 000a 70E0      		ldi r23,hi8(USBSerialStream)
+ 208 000c 0E94 0000 		call CDC_Device_CreateBlockingStream
+ 209               	.LSM30:
+ 210               	/* #APP */
+ 211               	 ;  111 "LEDNotifier.c" 1
+ 212 0010 7894      		sei
+ 213               	 ;  0 "" 2
+ 214               	/* #NOAPP */
+ 215               	.L18:
+ 216               	.LBB14:
+ 217               	.LSM31:
+ 218 0012 80E0      		ldi r24,lo8(USBSerialStream)
+ 219 0014 90E0      		ldi r25,hi8(USBSerialStream)
+ 220 0016 0E94 0000 		call fgetc
+ 221               	.LSM32:
+ 222 001a 282F      		mov r18,r24
+ 223               	.LVL4:
+ 224 001c 207E      		andi r18,lo8(-32)
+ 225               	.LSM33:
+ 226 001e 8F71      		andi r24,lo8(31)
+ 227               	.LVL5:
+ 228               	.LSM34:
+ 229 0020 922F      		mov r25,r18
+ 230 0022 25FF      		sbrs r18,5
+ 231 0024 00C0      		rjmp .L15
+ 232               	.LVL6:
+ 233               	.LSM35:
+ 234 0026 8093 0000 		sts SoftPWM_Channel1_Duty,r24
+ 235               	.L15:
+ 236               	.LSM36:
+ 237 002a 96FF      		sbrs r25,6
+ 238 002c 00C0      		rjmp .L16
+ 239               	.LSM37:
+ 240 002e 8093 0000 		sts SoftPWM_Channel2_Duty,r24
+ 241               	.L16:
+ 242               	.LSM38:
+ 243 0032 27FF      		sbrs r18,7
+ 244 0034 00C0      		rjmp .L17
+ 245               	.LVL7:
+ 246               	.LSM39:
+ 247 0036 8093 0000 		sts SoftPWM_Channel3_Duty,r24
+ 248               	.L17:
+ 249               	.LSM40:
+ 250 003a 80E0      		ldi r24,lo8(VirtualSerial_CDC_Interface)
+ 251 003c 90E0      		ldi r25,hi8(VirtualSerial_CDC_Interface)
+ 252               	.LVL8:
+ 253 003e 0E94 0000 		call CDC_Device_USBTask
+ 254               	.LVL9:
+ 255               	.LSM41:
+ 256 0042 0E94 0000 		call USB_USBTask
+ 257 0046 00C0      		rjmp .L18
+ 258               	.LBE14:
+ 259               	.LFE105:
+ 261               	.global	VirtualSerial_CDC_Interface
+ 262               		.data
+ 265               	VirtualSerial_CDC_Interface:
+ 266 0000 00        		.byte	0
+ 267 0001 03        		.byte	3
+ 268 0002 1000      		.word	16
+ 269 0004 00        		.byte	0
+ 270 0005 04        		.byte	4
+ 271 0006 1000      		.word	16
+ 272 0008 00        		.byte	0
+ 273 0009 02        		.byte	2
+ 274 000a 0800      		.word	8
+ 275 000c 00        		.byte	0
+ 276 000d 0000 0000 		.skip 9,0
+ 276      0000 0000 
+ 276      00
+ 277               		.lcomm SoftPWM_Count,1
+ 278               		.lcomm SoftPWM_Channel1_Duty,1
+ 279               		.lcomm SoftPWM_Channel2_Duty,1
+ 280               		.lcomm SoftPWM_Channel3_Duty,1
+ 281               		.lcomm USBSerialStream,14
+ 338               	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 LEDNotifier.c
+     /tmp/ccT4WfYM.s:2      *ABS*:0000003f __SREG__
+     /tmp/ccT4WfYM.s:3      *ABS*:0000003e __SP_H__
+     /tmp/ccT4WfYM.s:4      *ABS*:0000003d __SP_L__
+     /tmp/ccT4WfYM.s:5      *ABS*:00000034 __CCP__
+     /tmp/ccT4WfYM.s:6      *ABS*:00000000 __tmp_reg__
+     /tmp/ccT4WfYM.s:7      *ABS*:00000001 __zero_reg__
+     /tmp/ccT4WfYM.s:19     .text.__vector_21:00000000 __vector_21
+                             .bss:00000000 SoftPWM_Count
+     /tmp/ccT4WfYM.s:277    .bss:00000001 SoftPWM_Channel1_Duty
+     /tmp/ccT4WfYM.s:278    .bss:00000002 SoftPWM_Channel2_Duty
+     /tmp/ccT4WfYM.s:279    .bss:00000003 SoftPWM_Channel3_Duty
+     /tmp/ccT4WfYM.s:96     .text.EVENT_USB_Device_ControlRequest:00000000 EVENT_USB_Device_ControlRequest
+     /tmp/ccT4WfYM.s:265    .data:00000000 VirtualSerial_CDC_Interface
+     /tmp/ccT4WfYM.s:113    .text.EVENT_USB_Device_ConfigurationChanged:00000000 EVENT_USB_Device_ConfigurationChanged
+     /tmp/ccT4WfYM.s:130    .text.SetupHardware:00000000 SetupHardware
+     /tmp/ccT4WfYM.s:196    .text.main:00000000 main
+     /tmp/ccT4WfYM.s:280    .bss:00000004 USBSerialStream
+
+UNDEFINED SYMBOLS
+CDC_Device_ProcessControlRequest
+CDC_Device_ConfigureEndpoints
+USB_Init
+CDC_Device_CreateBlockingStream
+fgetc
+CDC_Device_USBTask
+USB_USBTask
+__do_copy_data
+__do_clear_bss

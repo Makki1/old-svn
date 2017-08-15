@@ -1,0 +1,710 @@
+Archive member included because of file (symbol)
+
+/usr/lib/gcc/avr/4.7.2/avr5/libgcc.a(_exit.o)
+                              /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/crtm328p.o (exit)
+/usr/lib/gcc/avr/4.7.2/avr5/libgcc.a(_copy_data.o)
+                              main.o (__do_copy_data)
+/usr/lib/gcc/avr/4.7.2/avr5/libgcc.a(_clear_bss.o)
+                              main.o (__do_clear_bss)
+/usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eerd_byte_atmega328p.o)
+                              main.o (__eerd_byte_m328p)
+/usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eerd_dword_atmega328p.o)
+                              main.o (__eerd_dword_m328p)
+/usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eerd_word_atmega328p.o)
+                              main.o (__eerd_word_m328p)
+/usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eeupd_dword_atmega328p.o)
+                              main.o (__eeupd_dword_m328p)
+/usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eeupd_word_atmega328p.o)
+                              main.o (__eeupd_word_m328p)
+/usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eewr_byte_atmega328p.o)
+                              main.o (__eewr_byte_m328p)
+/usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eewr_word_atmega328p.o)
+                              main.o (__eewr_word_m328p)
+/usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eerd_block_atmega328p.o)
+                              /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eerd_dword_atmega328p.o) (__eerd_blraw_m328p)
+/usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eeupd_byte_atmega328p.o)
+                              /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eeupd_dword_atmega328p.o) (__eeupd_byte_m328p)
+
+Allocating common symbols
+Common symbol       size              file
+
+sleepmode           0x1               main.o
+scratchpad          0xb               main.o
+wmode               0x1               main.o
+actbit              0x1               main.o
+rmdata              0x28              main.o
+istat               0x1               main.o
+lastcps             0x1               main.o
+bitp                0x1               main.o
+srcount             0x1               main.o
+eflag               0x1               main.o
+mode                0x1               main.o
+serflag             0x1               main.o
+bytep               0x1               main.o
+cbuf                0x1               main.o
+page                0x1               main.o
+ewrite_flag         0x1               main.o
+scrc                0x2               main.o
+eewrite_buf         0x8               main.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+text             0x00000000         0x00020000         xr
+data             0x00800060         0x0000ffa0         rw !x
+eeprom           0x00810000         0x00010000         rw !x
+fuse             0x00820000         0x00000400         rw !x
+lock             0x00830000         0x00000400         rw !x
+signature        0x00840000         0x00000400         rw !x
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+Address of section .data set to 0x800100
+LOAD /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/crtm328p.o
+LOAD main.o
+LOAD uart.o
+LOAD /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libm.a
+LOAD /usr/lib/gcc/avr/4.7.2/avr5/libgcc.a
+LOAD /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a
+LOAD /usr/lib/gcc/avr/4.7.2/avr5/libgcc.a
+
+.hash
+ *(.hash)
+
+.dynsym
+ *(.dynsym)
+
+.dynstr
+ *(.dynstr)
+
+.gnu.version
+ *(.gnu.version)
+
+.gnu.version_d
+ *(.gnu.version_d)
+
+.gnu.version_r
+ *(.gnu.version_r)
+
+.rel.init
+ *(.rel.init)
+
+.rela.init
+ *(.rela.init)
+
+.rel.text
+ *(.rel.text)
+ *(.rel.text.*)
+ *(.rel.gnu.linkonce.t*)
+
+.rela.text
+ *(.rela.text)
+ *(.rela.text.*)
+ *(.rela.gnu.linkonce.t*)
+
+.rel.fini
+ *(.rel.fini)
+
+.rela.fini
+ *(.rela.fini)
+
+.rel.rodata
+ *(.rel.rodata)
+ *(.rel.rodata.*)
+ *(.rel.gnu.linkonce.r*)
+
+.rela.rodata
+ *(.rela.rodata)
+ *(.rela.rodata.*)
+ *(.rela.gnu.linkonce.r*)
+
+.rel.data
+ *(.rel.data)
+ *(.rel.data.*)
+ *(.rel.gnu.linkonce.d*)
+
+.rela.data
+ *(.rela.data)
+ *(.rela.data.*)
+ *(.rela.gnu.linkonce.d*)
+
+.rel.ctors
+ *(.rel.ctors)
+
+.rela.ctors
+ *(.rela.ctors)
+
+.rel.dtors
+ *(.rel.dtors)
+
+.rela.dtors
+ *(.rela.dtors)
+
+.rel.got
+ *(.rel.got)
+
+.rela.got
+ *(.rela.got)
+
+.rel.bss
+ *(.rel.bss)
+
+.rela.bss
+ *(.rela.bss)
+
+.rel.plt
+ *(.rel.plt)
+
+.rela.plt
+ *(.rela.plt)
+
+.text           0x00000000     0x1364
+ *(.vectors)
+ .vectors       0x00000000       0x68 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/crtm328p.o
+                0x00000000                __vectors
+                0x00000000                __vector_default
+ *(.vectors)
+ *(.progmem.gcc*)
+ *(.progmem*)
+                0x00000068                . = ALIGN (0x2)
+                0x00000068                __trampolines_start = .
+ *(.trampolines)
+ .trampolines   0x00000068        0x0 linker stubs
+ *(.trampolines*)
+                0x00000068                __trampolines_end = .
+ *(.jumptables)
+ *(.jumptables*)
+ *(.lowtext)
+ *(.lowtext*)
+                0x00000068                __ctors_start = .
+ *(.ctors)
+                0x00000068                __ctors_end = .
+                0x00000068                __dtors_start = .
+ *(.dtors)
+                0x00000068                __dtors_end = .
+ SORT(*)(.ctors)
+ SORT(*)(.dtors)
+ *(.init0)
+ .init0         0x00000068        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/crtm328p.o
+                0x00000068                __init
+ *(.init0)
+ *(.init1)
+ *(.init1)
+ *(.init2)
+ .init2         0x00000068        0xc /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/crtm328p.o
+ *(.init2)
+ *(.init3)
+ *(.init3)
+ *(.init4)
+ .init4         0x00000074       0x16 /usr/lib/gcc/avr/4.7.2/avr5/libgcc.a(_copy_data.o)
+                0x00000074                __do_copy_data
+ .init4         0x0000008a       0x10 /usr/lib/gcc/avr/4.7.2/avr5/libgcc.a(_clear_bss.o)
+                0x0000008a                __do_clear_bss
+ *(.init4)
+ *(.init5)
+ *(.init5)
+ *(.init6)
+ *(.init6)
+ *(.init7)
+ *(.init7)
+ *(.init8)
+ *(.init8)
+ *(.init9)
+ .init9         0x0000009a        0x8 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/crtm328p.o
+ *(.init9)
+ *(.text)
+ .text          0x000000a2        0x4 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/crtm328p.o
+                0x000000a2                __vector_22
+                0x000000a2                __vector_24
+                0x000000a2                __vector_12
+                0x000000a2                __bad_interrupt
+                0x000000a2                __vector_3
+                0x000000a2                __vector_23
+                0x000000a2                __vector_25
+                0x000000a2                __vector_11
+                0x000000a2                __vector_13
+                0x000000a2                __vector_17
+                0x000000a2                __vector_7
+                0x000000a2                __vector_5
+                0x000000a2                __vector_4
+                0x000000a2                __vector_9
+                0x000000a2                __vector_2
+                0x000000a2                __vector_21
+                0x000000a2                __vector_15
+                0x000000a2                __vector_8
+                0x000000a2                __vector_14
+                0x000000a2                __vector_10
+                0x000000a2                __vector_20
+ .text          0x000000a6      0xeb4 main.o
+                0x000000a6                __vector_1
+                0x0000015e                __vector_16
+                0x0000075c                init_eeprom
+                0x00000830                hex2dec
+                0x00000850                processSerial
+                0x00000f10                __vector_6
+ .text          0x00000f5a      0x174 uart.o
+                0x00000f5a                __vector_18
+                0x00000fb6                __vector_19
+                0x0000100a                uart_init
+                0x0000103c                uart_getc
+                0x00001070                uart_putc
+                0x0000109a                uart_puts
+                0x000010b2                uart_puts_p
+ .text          0x000010ce        0x0 /usr/lib/gcc/avr/4.7.2/avr5/libgcc.a(_exit.o)
+ .text          0x000010ce        0x0 /usr/lib/gcc/avr/4.7.2/avr5/libgcc.a(_copy_data.o)
+ .text          0x000010ce        0x0 /usr/lib/gcc/avr/4.7.2/avr5/libgcc.a(_clear_bss.o)
+ .text          0x000010ce        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eerd_byte_atmega328p.o)
+ .text          0x000010ce        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eerd_dword_atmega328p.o)
+ .text          0x000010ce        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eerd_word_atmega328p.o)
+ .text          0x000010ce        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eeupd_dword_atmega328p.o)
+ .text          0x000010ce        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eeupd_word_atmega328p.o)
+ .text          0x000010ce        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eewr_byte_atmega328p.o)
+ .text          0x000010ce        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eewr_word_atmega328p.o)
+ .text          0x000010ce        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eerd_block_atmega328p.o)
+ .text          0x000010ce        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eeupd_byte_atmega328p.o)
+                0x000010ce                . = ALIGN (0x2)
+ *(.text.*)
+ .text.startup  0x000010ce      0x1dc main.o
+                0x000010ce                main
+ .text.libgcc.mul
+                0x000012aa        0x0 /usr/lib/gcc/avr/4.7.2/avr5/libgcc.a(_exit.o)
+ .text.libgcc.div
+                0x000012aa        0x0 /usr/lib/gcc/avr/4.7.2/avr5/libgcc.a(_exit.o)
+ .text.libgcc   0x000012aa        0x0 /usr/lib/gcc/avr/4.7.2/avr5/libgcc.a(_exit.o)
+ .text.libgcc.prologue
+                0x000012aa        0x0 /usr/lib/gcc/avr/4.7.2/avr5/libgcc.a(_exit.o)
+ .text.libgcc.builtins
+                0x000012aa        0x0 /usr/lib/gcc/avr/4.7.2/avr5/libgcc.a(_exit.o)
+ .text.libgcc.fmul
+                0x000012aa        0x0 /usr/lib/gcc/avr/4.7.2/avr5/libgcc.a(_exit.o)
+ .text.libgcc.mul
+                0x000012aa        0x0 /usr/lib/gcc/avr/4.7.2/avr5/libgcc.a(_copy_data.o)
+ .text.libgcc.div
+                0x000012aa        0x0 /usr/lib/gcc/avr/4.7.2/avr5/libgcc.a(_copy_data.o)
+ .text.libgcc   0x000012aa        0x0 /usr/lib/gcc/avr/4.7.2/avr5/libgcc.a(_copy_data.o)
+ .text.libgcc.prologue
+                0x000012aa        0x0 /usr/lib/gcc/avr/4.7.2/avr5/libgcc.a(_copy_data.o)
+ .text.libgcc.builtins
+                0x000012aa        0x0 /usr/lib/gcc/avr/4.7.2/avr5/libgcc.a(_copy_data.o)
+ .text.libgcc.fmul
+                0x000012aa        0x0 /usr/lib/gcc/avr/4.7.2/avr5/libgcc.a(_copy_data.o)
+ .text.libgcc.mul
+                0x000012aa        0x0 /usr/lib/gcc/avr/4.7.2/avr5/libgcc.a(_clear_bss.o)
+ .text.libgcc.div
+                0x000012aa        0x0 /usr/lib/gcc/avr/4.7.2/avr5/libgcc.a(_clear_bss.o)
+ .text.libgcc   0x000012aa        0x0 /usr/lib/gcc/avr/4.7.2/avr5/libgcc.a(_clear_bss.o)
+ .text.libgcc.prologue
+                0x000012aa        0x0 /usr/lib/gcc/avr/4.7.2/avr5/libgcc.a(_clear_bss.o)
+ .text.libgcc.builtins
+                0x000012aa        0x0 /usr/lib/gcc/avr/4.7.2/avr5/libgcc.a(_clear_bss.o)
+ .text.libgcc.fmul
+                0x000012aa        0x0 /usr/lib/gcc/avr/4.7.2/avr5/libgcc.a(_clear_bss.o)
+ .text.avr-libc
+                0x000012aa       0x10 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eerd_byte_atmega328p.o)
+                0x000012aa                __eerd_byte_m328p
+ .text.avr-libc
+                0x000012ba        0xc /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eerd_dword_atmega328p.o)
+                0x000012ba                __eerd_float_m328p
+                0x000012ba                __eerd_dword_m328p
+ .text.avr-libc
+                0x000012c6        0xc /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eerd_word_atmega328p.o)
+                0x000012c6                __eerd_word_m328p
+ .text.avr-libc
+                0x000012d2       0x18 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eeupd_dword_atmega328p.o)
+                0x000012d2                __eeupd_dword_m328p
+                0x000012d2                __eeupd_float_m328p
+ .text.avr-libc
+                0x000012ea        0xc /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eeupd_word_atmega328p.o)
+                0x000012ea                __eeupd_word_m328p
+ .text.avr-libc
+                0x000012f6       0x1c /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eewr_byte_atmega328p.o)
+                0x000012f6                __eewr_byte_m328p
+                0x000012f8                __eewr_r18_m328p
+ .text.avr-libc
+                0x00001312        0xa /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eewr_word_atmega328p.o)
+                0x00001312                __eewr_word_m328p
+ .text.avr-libc
+                0x0000131c       0x20 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eerd_block_atmega328p.o)
+                0x0000131c                __eerd_block_m328p
+                0x00001320                __eerd_blraw_m328p
+ .text.avr-libc
+                0x0000133c       0x24 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eeupd_byte_atmega328p.o)
+                0x0000133c                __eeupd_byte_m328p
+                0x0000133e                __eeupd_r18_m328p
+                0x00001360                . = ALIGN (0x2)
+ *(.fini9)
+ .fini9         0x00001360        0x0 /usr/lib/gcc/avr/4.7.2/avr5/libgcc.a(_exit.o)
+                0x00001360                exit
+                0x00001360                _exit
+ *(.fini9)
+ *(.fini8)
+ *(.fini8)
+ *(.fini7)
+ *(.fini7)
+ *(.fini6)
+ *(.fini6)
+ *(.fini5)
+ *(.fini5)
+ *(.fini4)
+ *(.fini4)
+ *(.fini3)
+ *(.fini3)
+ *(.fini2)
+ *(.fini2)
+ *(.fini1)
+ *(.fini1)
+ *(.fini0)
+ .fini0         0x00001360        0x4 /usr/lib/gcc/avr/4.7.2/avr5/libgcc.a(_exit.o)
+ *(.fini0)
+                0x00001364                _etext = .
+
+.data           0x00800100       0x3e load address 0x00001364
+                0x00800100                PROVIDE (__data_start, .)
+ *(.data)
+ .data          0x00800100        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/crtm328p.o
+ .data          0x00800100        0xd main.o
+                0x00800100                rcnt
+                0x00800102                stype
+                0x00800103                version
+                0x00800105                owid
+ .data          0x0080010d        0x0 uart.o
+ .data          0x0080010d        0x0 /usr/lib/gcc/avr/4.7.2/avr5/libgcc.a(_exit.o)
+ .data          0x0080010d        0x0 /usr/lib/gcc/avr/4.7.2/avr5/libgcc.a(_copy_data.o)
+ .data          0x0080010d        0x0 /usr/lib/gcc/avr/4.7.2/avr5/libgcc.a(_clear_bss.o)
+ .data          0x0080010d        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eerd_byte_atmega328p.o)
+ .data          0x0080010d        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eerd_dword_atmega328p.o)
+ .data          0x0080010d        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eerd_word_atmega328p.o)
+ .data          0x0080010d        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eeupd_dword_atmega328p.o)
+ .data          0x0080010d        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eeupd_word_atmega328p.o)
+ .data          0x0080010d        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eewr_byte_atmega328p.o)
+ .data          0x0080010d        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eewr_word_atmega328p.o)
+ .data          0x0080010d        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eerd_block_atmega328p.o)
+ .data          0x0080010d        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eeupd_byte_atmega328p.o)
+ *(.data*)
+ *(.rodata)
+ .rodata        0x0080010d       0x30 main.o
+                0x00800132                EE_LABEL_MAXLEN
+                0x00800133                EE_LABEL_OFFSET
+                0x00800134                EE_VERSION_OFFSET
+                0x00800135                EE_TYPE_OFFSET
+                0x00800136                EE_COUNTER_OFFSET
+                0x00800137                EE_RCNT_OFFSET
+                0x00800138                EE_OWID_OFFSET
+                0x00800139                EE_MAGIC_OFFSET
+                0x0080013a                EE_DEFTYPE
+                0x0080013b                EE_MAGIC_NUMBER
+ *(.rodata*)
+ *(.gnu.linkonce.d*)
+                0x0080013e                . = ALIGN (0x2)
+ *fill*         0x0080013d        0x1 00
+                0x0080013e                _edata = .
+                0x0080013e                PROVIDE (__data_end, .)
+
+.bss            0x0080013e       0x97
+                0x0080013e                PROVIDE (__bss_start, .)
+ *(.bss)
+ .bss           0x0080013e        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/crtm328p.o
+ .bss           0x0080013e        0x7 main.o
+                0x0080013e                crcerrcnt
+                0x0080013f                nackmsg
+                0x00800140                recv_state
+                0x00800141                uptime
+ .bss           0x00800145       0x45 uart.o
+ .bss           0x0080018a        0x0 /usr/lib/gcc/avr/4.7.2/avr5/libgcc.a(_exit.o)
+ .bss           0x0080018a        0x0 /usr/lib/gcc/avr/4.7.2/avr5/libgcc.a(_copy_data.o)
+ .bss           0x0080018a        0x0 /usr/lib/gcc/avr/4.7.2/avr5/libgcc.a(_clear_bss.o)
+ .bss           0x0080018a        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eerd_byte_atmega328p.o)
+ .bss           0x0080018a        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eerd_dword_atmega328p.o)
+ .bss           0x0080018a        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eerd_word_atmega328p.o)
+ .bss           0x0080018a        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eeupd_dword_atmega328p.o)
+ .bss           0x0080018a        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eeupd_word_atmega328p.o)
+ .bss           0x0080018a        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eewr_byte_atmega328p.o)
+ .bss           0x0080018a        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eewr_word_atmega328p.o)
+ .bss           0x0080018a        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eerd_block_atmega328p.o)
+ .bss           0x0080018a        0x0 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eeupd_byte_atmega328p.o)
+ *(.bss*)
+ *(COMMON)
+ COMMON         0x0080018a       0x4b main.o
+                0x0080018a                sleepmode
+                0x0080018b                scratchpad
+                0x00800196                wmode
+                0x00800197                actbit
+                0x00800198                rmdata
+                0x008001c0                istat
+                0x008001c1                lastcps
+                0x008001c2                bitp
+                0x008001c3                srcount
+                0x008001c4                eflag
+                0x008001c5                mode
+                0x008001c6                serflag
+                0x008001c7                bytep
+                0x008001c8                cbuf
+                0x008001c9                page
+                0x008001ca                ewrite_flag
+                0x008001cb                scrc
+                0x008001cd                eewrite_buf
+                0x008001d5                PROVIDE (__bss_end, .)
+                0x00001364                __data_load_start = LOADADDR (.data)
+                0x000013a2                __data_load_end = (__data_load_start + SIZEOF (.data))
+
+.noinit         0x008001d5        0x0
+                0x008001d5                PROVIDE (__noinit_start, .)
+ *(.noinit*)
+                0x008001d5                PROVIDE (__noinit_end, .)
+                0x008001d5                _end = .
+                0x008001d5                PROVIDE (__heap_start, .)
+
+.eeprom         0x00810000        0x0
+ *(.eeprom*)
+                0x00810000                __eeprom_end = .
+
+.fuse
+ *(.fuse)
+ *(.lfuse)
+ *(.hfuse)
+ *(.efuse)
+
+.lock
+ *(.lock*)
+
+.signature
+ *(.signature*)
+
+.stab           0x00000000      0xc90
+ *(.stab)
+ .stab          0x00000000      0x6cc /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/crtm328p.o
+ .stab          0x000006cc       0x90 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eerd_byte_atmega328p.o)
+                                 0x9c (size before relaxing)
+ .stab          0x0000075c       0x78 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eerd_dword_atmega328p.o)
+                                 0x84 (size before relaxing)
+ .stab          0x000007d4       0x6c /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eerd_word_atmega328p.o)
+                                 0x78 (size before relaxing)
+ .stab          0x00000840       0x9c /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eeupd_dword_atmega328p.o)
+                                 0xa8 (size before relaxing)
+ .stab          0x000008dc       0x60 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eeupd_word_atmega328p.o)
+                                 0x6c (size before relaxing)
+ .stab          0x0000093c       0xe4 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eewr_byte_atmega328p.o)
+                                 0xf0 (size before relaxing)
+ .stab          0x00000a20       0x54 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eewr_word_atmega328p.o)
+                                 0x60 (size before relaxing)
+ .stab          0x00000a74      0x108 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eerd_block_atmega328p.o)
+                                0x114 (size before relaxing)
+ .stab          0x00000b7c      0x114 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eeupd_byte_atmega328p.o)
+                                0x120 (size before relaxing)
+
+.stabstr        0x00000000      0x201
+ *(.stabstr)
+ .stabstr       0x00000000      0x201 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/crtm328p.o
+
+.stab.excl
+ *(.stab.excl)
+
+.stab.exclstr
+ *(.stab.exclstr)
+
+.stab.index
+ *(.stab.index)
+
+.stab.indexstr
+ *(.stab.indexstr)
+
+.comment        0x00000000       0x11
+ *(.comment)
+ .comment       0x00000000       0x11 main.o
+                                 0x12 (size before relaxing)
+ .comment       0x00000000       0x12 uart.o
+
+.debug
+ *(.debug)
+
+.line
+ *(.line)
+
+.debug_srcinfo
+ *(.debug_srcinfo)
+
+.debug_sfnames
+ *(.debug_sfnames)
+
+.debug_aranges  0x00000000       0x48
+ *(.debug_aranges)
+ .debug_aranges
+                0x00000000       0x28 main.o
+ .debug_aranges
+                0x00000028       0x20 uart.o
+
+.debug_pubnames
+ *(.debug_pubnames)
+
+.debug_info     0x00000000     0x162e
+ *(.debug_info)
+ .debug_info    0x00000000     0x133a main.o
+ .debug_info    0x0000133a      0x2f4 uart.o
+ *(.gnu.linkonce.wi.*)
+
+.debug_abbrev   0x00000000      0x455
+ *(.debug_abbrev)
+ .debug_abbrev  0x00000000      0x31b main.o
+ .debug_abbrev  0x0000031b      0x13a uart.o
+
+.debug_line     0x00000000      0x4cc
+ *(.debug_line)
+ .debug_line    0x00000000      0x409 main.o
+ .debug_line    0x00000409       0xc3 uart.o
+
+.debug_frame    0x00000000      0x28c
+ *(.debug_frame)
+ .debug_frame   0x00000000      0x1ac main.o
+ .debug_frame   0x000001ac       0xe0 uart.o
+
+.debug_str      0x00000000      0x507
+ *(.debug_str)
+ .debug_str     0x00000000      0x43a main.o
+                                0x4a2 (size before relaxing)
+ .debug_str     0x0000043a       0xcd uart.o
+                                0x1bc (size before relaxing)
+
+.debug_loc      0x00000000      0xec2
+ *(.debug_loc)
+ .debug_loc     0x00000000      0xbdd main.o
+ .debug_loc     0x00000bdd      0x2e5 uart.o
+
+.debug_macinfo
+ *(.debug_macinfo)
+OUTPUT(main.elf elf32-avr)
+LOAD linker stubs
+
+.debug_ranges   0x00000000       0x18
+ .debug_ranges  0x00000000       0x18 main.o
+
+Cross Reference Table
+
+Symbol                                            File
+EE_COUNTER_OFFSET                                 main.o
+EE_DEFTYPE                                        main.o
+EE_LABEL_MAXLEN                                   main.o
+EE_LABEL_OFFSET                                   main.o
+EE_MAGIC_NUMBER                                   main.o
+EE_MAGIC_OFFSET                                   main.o
+EE_OWID_OFFSET                                    main.o
+EE_RCNT_OFFSET                                    main.o
+EE_TYPE_OFFSET                                    main.o
+EE_VERSION_OFFSET                                 main.o
+__bad_interrupt                                   /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/crtm328p.o
+__bss_end                                         /usr/lib/gcc/avr/4.7.2/avr5/libgcc.a(_clear_bss.o)
+__bss_start                                       /usr/lib/gcc/avr/4.7.2/avr5/libgcc.a(_clear_bss.o)
+__data_end                                        /usr/lib/gcc/avr/4.7.2/avr5/libgcc.a(_copy_data.o)
+__data_load_start                                 /usr/lib/gcc/avr/4.7.2/avr5/libgcc.a(_copy_data.o)
+__data_start                                      /usr/lib/gcc/avr/4.7.2/avr5/libgcc.a(_copy_data.o)
+__do_clear_bss                                    /usr/lib/gcc/avr/4.7.2/avr5/libgcc.a(_clear_bss.o)
+                                                  uart.o
+                                                  main.o
+__do_copy_data                                    /usr/lib/gcc/avr/4.7.2/avr5/libgcc.a(_copy_data.o)
+                                                  main.o
+__eerd_block_m328p                                /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eerd_block_atmega328p.o)
+__eerd_blraw_m328p                                /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eerd_block_atmega328p.o)
+                                                  /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eerd_word_atmega328p.o)
+                                                  /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eerd_dword_atmega328p.o)
+__eerd_byte_m328p                                 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eerd_byte_atmega328p.o)
+                                                  main.o
+__eerd_dword_m328p                                /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eerd_dword_atmega328p.o)
+                                                  main.o
+__eerd_float_m328p                                /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eerd_dword_atmega328p.o)
+__eerd_word_m328p                                 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eerd_word_atmega328p.o)
+                                                  main.o
+__eeupd_byte_m328p                                /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eeupd_byte_atmega328p.o)
+                                                  /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eeupd_word_atmega328p.o)
+                                                  /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eeupd_dword_atmega328p.o)
+__eeupd_dword_m328p                               /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eeupd_dword_atmega328p.o)
+                                                  main.o
+__eeupd_float_m328p                               /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eeupd_dword_atmega328p.o)
+__eeupd_r18_m328p                                 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eeupd_byte_atmega328p.o)
+                                                  /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eeupd_word_atmega328p.o)
+                                                  /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eeupd_dword_atmega328p.o)
+__eeupd_word_m328p                                /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eeupd_word_atmega328p.o)
+                                                  main.o
+__eewr_byte_m328p                                 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eewr_byte_atmega328p.o)
+                                                  /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eewr_word_atmega328p.o)
+                                                  main.o
+__eewr_r18_m328p                                  /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eewr_byte_atmega328p.o)
+                                                  /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eewr_word_atmega328p.o)
+__eewr_word_m328p                                 /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/libc.a(eewr_word_atmega328p.o)
+                                                  main.o
+__heap_end                                        /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/crtm328p.o
+__init                                            /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/crtm328p.o
+__stack                                           /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/crtm328p.o
+__vector_1                                        main.o
+                                                  /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/crtm328p.o
+__vector_10                                       /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/crtm328p.o
+__vector_11                                       /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/crtm328p.o
+__vector_12                                       /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/crtm328p.o
+__vector_13                                       /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/crtm328p.o
+__vector_14                                       /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/crtm328p.o
+__vector_15                                       /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/crtm328p.o
+__vector_16                                       main.o
+                                                  /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/crtm328p.o
+__vector_17                                       /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/crtm328p.o
+__vector_18                                       uart.o
+                                                  /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/crtm328p.o
+__vector_19                                       uart.o
+                                                  /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/crtm328p.o
+__vector_2                                        /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/crtm328p.o
+__vector_20                                       /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/crtm328p.o
+__vector_21                                       /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/crtm328p.o
+__vector_22                                       /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/crtm328p.o
+__vector_23                                       /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/crtm328p.o
+__vector_24                                       /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/crtm328p.o
+__vector_25                                       /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/crtm328p.o
+__vector_3                                        /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/crtm328p.o
+__vector_4                                        /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/crtm328p.o
+__vector_5                                        /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/crtm328p.o
+__vector_6                                        main.o
+                                                  /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/crtm328p.o
+__vector_7                                        /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/crtm328p.o
+__vector_8                                        /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/crtm328p.o
+__vector_9                                        /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/crtm328p.o
+__vector_default                                  /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/crtm328p.o
+__vectors                                         /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/crtm328p.o
+_exit                                             /usr/lib/gcc/avr/4.7.2/avr5/libgcc.a(_exit.o)
+actbit                                            main.o
+bitp                                              main.o
+bytep                                             main.o
+cbuf                                              main.o
+crcerrcnt                                         main.o
+eewrite_buf                                       main.o
+eflag                                             main.o
+ewrite_flag                                       main.o
+exit                                              /usr/lib/gcc/avr/4.7.2/avr5/libgcc.a(_exit.o)
+                                                  /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/crtm328p.o
+hex2dec                                           main.o
+init_eeprom                                       main.o
+istat                                             main.o
+lastcps                                           main.o
+main                                              main.o
+                                                  /usr/lib/gcc/avr/4.7.2/../../../avr/lib/avr5/crtm328p.o
+mode                                              main.o
+nackmsg                                           main.o
+owid                                              main.o
+page                                              main.o
+processSerial                                     main.o
+rcnt                                              main.o
+recv_state                                        main.o
+rmdata                                            main.o
+scratchpad                                        main.o
+scrc                                              main.o
+serflag                                           main.o
+sleepmode                                         main.o
+srcount                                           main.o
+stype                                             main.o
+uart_getc                                         uart.o
+                                                  main.o
+uart_init                                         uart.o
+                                                  main.o
+uart_putc                                         uart.o
+                                                  main.o
+uart_puts                                         uart.o
+uart_puts_p                                       uart.o
+uptime                                            main.o
+version                                           main.o
+wmode                                             main.o

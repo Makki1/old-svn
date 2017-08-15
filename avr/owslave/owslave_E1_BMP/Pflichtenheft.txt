@@ -1,0 +1,8 @@
+NMEA 0183
+- Output: strong driver für bis zu 4 listener (je 2mA@5V?)
+- Output: RS422 (A=TX, B = GND?) -> "ISO Driver" (Transe?)
+- Input Opto-isolated max 2mA? CNY17?->
+
+- Input-Voltage 7-32V - optimized!
+LM2940? -> 15 uH
+- Oder 78L12 + 78L05? erheblich einfacher, günstiger?

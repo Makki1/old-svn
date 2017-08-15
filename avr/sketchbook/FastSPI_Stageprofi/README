@@ -1,0 +1,121 @@
+Finally 2013-04-28
+- it works but not fine with OLA; if - only via socat - the implementation of stageprofi is different from the docs likely.
+-> further on with arduino-rgb-mixer 
+
+*** Notes ***
+- Demo-programs run to end until next command is accepted, this might confuse OLA waiting for "G"?
+- The ASCII-Interface is whacky, don't expect this to work 24/7
+- Duemilanove with FTDI restarts on opening/closing serial-port!
+
+
+ OLD README (DMX not USB-Stageprofi)
+ 
+/*Arduino sketch for driving LPD6803 controlled RGB LEDs with DMX
+ * 
+  - 4 leftover PWM-PINs which could be connected to a driver like ULN2803 (4* 2*500mA), NPN or FETs (IRLIZ44N, RFP30N06LE, ...)
+  -> only 3 implemented now (3,6,9)
+  - 3 (2,7,8 + 4/5 without spectrum) free pins for other stuff? "misuse" pixel #168 to toggle outputs, button to save EEPRom, i2c for selector/display etc.pp.
+  - Note, because the BLIP library uses the arduino's hardware SPI support, you MUST use the SPI 
+  pins on your hardware - e.g. pins 11 and 13 on a Arduino pro mini, uno, 2009 or such. 
+  - Each LED-Pixel holds a 15 bit RGB value. Means we have 5 bit per color=0-31, not very smooth..
+  - There is no fading yet, this needs to be done by the DMX-signal. It can also be used without DMX/RS485-shield
+  using the builtin usb/serialport (maybe).
+  - currently hardcoded to 168 LPD pixels (=504 channels) and 4 (Hardware!) PWM-channels @XXX Hz
+  - spectrum analyzer requires a spectrum-analyzer shield for sure..
+  - switched to Arduino Duemilanove (FTDI instead of Atmega8-usb) later as it works better with OLA emulating a Enttec with RDM
+  - the code is somewhat shared with DMX/USB-RDM version which might be confusing ;)
+  - there are some quirks in which might prevent running on anything else than an atmega328..
+  
+  DMX-Channels (1-based!=1-512) used:
+  
+  1: First pixel red 
+  2: " " green
+  3: " " blue
+  ...
+  504: Pixel 168 blue
+  
+  505: PWM Red/Pin3
+  506: PWM Green/Pin6
+  507: PWM Blue/Pin9
+  508: PWM (White/Pin10) / out1
+  509: DMX-Mode/Demo-programs
+  510: Res. / numleds
+  511: Res. / X
+  512: Res. / Y
+  6-8: reserved (see demo programs)
+  
+  Modes (ch509): 
+    0: DMX, 
+    1: Spectrum analyzer (use ch 510-512 to setup number & X/Y Grid)
+    2: Demo-Loop (you *must* set ch510-512! default: 20/5/4)
+    
+  PIN-assignment (Arduino 2009/uno):
+  GND -> Pixel GND
+  PIN 0&1: RX/TX (TTL->RS485)
+  PIN 2: DMX Rx-indicator LED
+  PIN 3: PWM 1/Red
+  PIN 4: (optional) spectrum analyzer strobe
+  PIN 5: PWM/(optional) spectrum analyzer RESET
+  PIN 6: PWM 2/Green
+  PIN 7: Free/Debug: main-loop (used for 
+  PIN 8: Free
+  PIN 9: PWM 3/Blue
+  PIN10: SPI SS / PWM 4/white (unsued/may be only used as output-pin!?)
+  PIN11: SPI MOSI (Pixel data)
+  PIN12: SPI MISO (unused but shouldnt be touched most likely, as we use HW SPI)
+  PIN13: SPI CLK (Pixel clock)
+  AN0/1: (optional) spectrum analyzer left/right
+  AN2:   Free
+  AN3:   Free
+  AN4:   I2C/TWI SDA (Portexpander)
+  AN5:   I2C/TWI SCL (Portexpander)
+  5V:    can be used to supply *regulated* 5V to the board instead of ext. power 7-12V  
+
+
+  *** Demo-Programs ***:  
+  ch5:2 = runDemo
+  more: FIXME..
+
+  
+  (C)2011-2013 Michael Markstaller / Elaborated Networks GmbH
+  GPLv3
+  
+  
+  License Notes:
+  Heavyly based on the following code
+  0) many examples/snipplets on the net, all of them are checked to be either free or GPL
+  1) Bliptronics.com
+    Ben Moyes 2009
+    Use this as you wish, but please give credit, or at least buy some of my LEDs!
+    Modified Jul 2011 by Ben Moyes and Andrew Tobolov to show off updated BLIP_LEDS_SPI_LPD6803 Library
+
+  2) http://arduino.cc/playground/DMX/Ardmx which is based on:
+   DMX512 reception library v1.3
+  * written by hendrik hoelscher, www.hoelscher-hi.de
+  3) FastSPI_LED
+
+ ***************************************************************************
+ This program is free software; you can redistribute it and/or 
+ modify it under the terms of the GNU General Public License 
+ as published by the Free Software Foundation; either version2 of 
+ the License, or (at your option) any later version. 
+
+ This program is distributed in the hope that it will be useful, 
+ but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ General Public License for more details. 
+
+ If you have no copy of the GNU General Public License, write to the 
+ Free Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. 
+ For other license models, please contact the author.
+  
+*/
+
+
+*** Remarks ***
+Pixelcontroller Stageprofi / NanoDMX-USB clone up and running, codebase: Apr 28 2013
+Variant / Pixels:LPD6803 / 168
+RAM free:1268
+getCycletarget: 89285
+
+

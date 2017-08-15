@@ -1,0 +1,12 @@
+# Defaults for xplhub initscript
+# sourced by /etc/init.d/xplhub
+# installed at /etc/default/xplhub by the maintainer scripts
+
+#
+# This is a POSIX shell fragment
+#
+
+# Additional options that are passed to the daemon(s).
+#  -interface x -- Use interface named x (i.e. eth0) as network interface
+#  -ip x -- Bind to specified IP address for xPL
+DAEMON_ARGS=""

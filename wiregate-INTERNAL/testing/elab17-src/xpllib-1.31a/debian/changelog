@@ -1,0 +1,5 @@
+xpllib (1.31a-1) unstable; urgency=low
+
+  * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+
+ -- Michael Markstaller / Elaborated Networks GmbH for WireGate <devel@wiregate.de>  Fri, 16 Oct 2009 16:00:07 +0200

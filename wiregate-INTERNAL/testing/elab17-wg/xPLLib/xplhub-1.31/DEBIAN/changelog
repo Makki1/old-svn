@@ -1,0 +1,9 @@
+xplhub (1.31-6) stable; urgency=low
+
+  * lously adapted from xpllib 1.31a
+  * patched ISO-Date display
+  * patched xplhub for pidfile
+  * renamed xPL_Hub to xplhub
+
+ -- Michael Markstaller <mm@elabnet.de>  17 Jul 2009 22:24:53 +0200
+

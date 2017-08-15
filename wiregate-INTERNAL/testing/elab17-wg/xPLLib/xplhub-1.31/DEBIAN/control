@@ -1,0 +1,8 @@
+Package: xplhub
+Version: 1.31-6
+Section: net
+Priority: required
+Architecture: all
+Maintainer: Michael Markstaller <devel@wiregate.de>
+Depends: libc6
+Description: xPLHub - Linux based xPL hub with supervisory functions

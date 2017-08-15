@@ -1,0 +1,23 @@
+markstaller@v3750mm:~/devel/owfs-cvs/owfs/module/owlib$ cvs diff
+? src/c/ow_e1.c
+? src/include/ow_e1.h
+cvs diff: Diffing .
+cvs diff: Diffing src
+cvs diff: Diffing src/c
+Index: src/c/Makefile.am
+===================================================================
+RCS file: /cvsroot/owfs/owfs/module/owlib/src/c/Makefile.am,v
+retrieving revision 1.181
+diff -r1.181 Makefile.am
+86a87
+>                ow_e1.c            \
+cvs diff: Diffing src/include
+Index: src/include/Makefile.am
+===================================================================
+RCS file: /cvsroot/owfs/owfs/module/owlib/src/include/Makefile.am,v
+retrieving revision 1.92
+diff -r1.92 Makefile.am
+61a62
+>         ow_e1.h            \
+cvs diff: Diffing src/man
+

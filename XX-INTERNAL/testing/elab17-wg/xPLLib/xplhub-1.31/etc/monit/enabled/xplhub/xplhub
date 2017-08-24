@@ -1,0 +1,7 @@
+check process xplhub with pidfile /var/run/xplhub.pid
+    start program = "/etc/init.d/xplhub start"
+    stop program  = "/etc/init.d/xplhub stop"
+    if cpu > 60% for 5 cycles then alert
+    if totalmem > 50.0 MB for 5 cycles then alert
+    if loadavg(5min) greater than 10 for 8 cycles then alert
+    if children > 100 then alert

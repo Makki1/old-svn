@@ -1,0 +1,783 @@
+   1               		.file	"PrinterHost.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__CCP__  = 0x34
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+  15               	.Ltext0:
+  16               		.section	.text.EVENT_USB_Host_DeviceEnumerationFailed,"ax",@progbits
+  17               	.global	EVENT_USB_Host_DeviceEnumerationFailed
+  19               	EVENT_USB_Host_DeviceEnumerationFailed:
+  20               	.LFB149:
+  21               	.LSM0:
+  22               	.LVL0:
+  23               	/* prologue: function */
+  24               	/* frame size = 0 */
+  25               	.LSM1:
+  26 0000 9091 0000 		lds r25,USB_HostState
+  27 0004 2DB7      		in r18,__SP_L__
+  28 0006 3EB7      		in r19,__SP_H__
+  29 0008 2850      		subi r18,lo8(-(-8))
+  30 000a 3040      		sbci r19,hi8(-(-8))
+  31 000c 0FB6      		in __tmp_reg__,__SREG__
+  32 000e F894      		cli
+  33 0010 3EBF      		out __SP_H__,r19
+  34 0012 0FBE      		out __SREG__,__tmp_reg__
+  35 0014 2DBF      		out __SP_L__,r18
+  36 0016 EDB7      		in r30,__SP_L__
+  37 0018 FEB7      		in r31,__SP_H__
+  38 001a 3196      		adiw r30,1
+  39 001c 20E0      		ldi r18,lo8(__c.4582)
+  40 001e 30E0      		ldi r19,hi8(__c.4582)
+  41 0020 ADB7      		in r26,__SP_L__
+  42 0022 BEB7      		in r27,__SP_H__
+  43 0024 1296      		adiw r26,1+1
+  44 0026 3C93      		st X,r19
+  45 0028 2E93      		st -X,r18
+  46 002a 1197      		sbiw r26,1
+  47 002c 8283      		std Z+2,r24
+  48 002e 1382      		std Z+3,__zero_reg__
+  49 0030 6483      		std Z+4,r22
+  50 0032 1582      		std Z+5,__zero_reg__
+  51 0034 9683      		std Z+6,r25
+  52 0036 1782      		std Z+7,__zero_reg__
+  53 0038 0E94 0000 		call printf_P
+  54               	.LVL1:
+  55               	.LBB56:
+  56               	.LBB57:
+  57               	.LSM2:
+  58 003c 8BB1      		in r24,43-32
+  59 003e 8F70      		andi r24,lo8(15)
+  60 0040 8069      		ori r24,lo8(-112)
+  61 0042 8BB9      		out 43-32,r24
+  62 0044 2DB7      		in r18,__SP_L__
+  63 0046 3EB7      		in r19,__SP_H__
+  64 0048 285F      		subi r18,lo8(-(8))
+  65 004a 3F4F      		sbci r19,hi8(-(8))
+  66 004c 0FB6      		in __tmp_reg__,__SREG__
+  67 004e F894      		cli
+  68 0050 3EBF      		out __SP_H__,r19
+  69 0052 0FBE      		out __SREG__,__tmp_reg__
+  70 0054 2DBF      		out __SP_L__,r18
+  71               	/* epilogue start */
+  72               	.LBE57:
+  73               	.LBE56:
+  74               	.LSM3:
+  75 0056 0895      		ret
+  76               	.LFE149:
+  78               		.section	.text.EVENT_USB_Host_HostError,"ax",@progbits
+  79               	.global	EVENT_USB_Host_HostError
+  81               	EVENT_USB_Host_HostError:
+  82               	.LFB148:
+  83               	.LSM4:
+  84               	.LVL2:
+  85 0000 1F93      		push r17
+  86               	/* prologue: function */
+  87               	/* frame size = 0 */
+  88 0002 182F      		mov r17,r24
+  89               	.LSM5:
+  90 0004 0E94 0000 		call USB_Disable
+  91               	.LVL3:
+  92               	.LSM6:
+  93 0008 00D0      		rcall .
+  94 000a 00D0      		rcall .
+  95 000c EDB7      		in r30,__SP_L__
+  96 000e FEB7      		in r31,__SP_H__
+  97 0010 3196      		adiw r30,1
+  98 0012 80E0      		ldi r24,lo8(__c.4574)
+  99 0014 90E0      		ldi r25,hi8(__c.4574)
+ 100 0016 ADB7      		in r26,__SP_L__
+ 101 0018 BEB7      		in r27,__SP_H__
+ 102 001a 1296      		adiw r26,1+1
+ 103 001c 9C93      		st X,r25
+ 104 001e 8E93      		st -X,r24
+ 105 0020 1197      		sbiw r26,1
+ 106 0022 1283      		std Z+2,r17
+ 107 0024 1382      		std Z+3,__zero_reg__
+ 108 0026 0E94 0000 		call printf_P
+ 109               	.LBB58:
+ 110               	.LBB59:
+ 111               	.LSM7:
+ 112 002a 8BB1      		in r24,43-32
+ 113 002c 8F70      		andi r24,lo8(15)
+ 114 002e 8069      		ori r24,lo8(-112)
+ 115 0030 8BB9      		out 43-32,r24
+ 116 0032 0F90      		pop __tmp_reg__
+ 117 0034 0F90      		pop __tmp_reg__
+ 118 0036 0F90      		pop __tmp_reg__
+ 119 0038 0F90      		pop __tmp_reg__
+ 120               	.L4:
+ 121 003a 00C0      		rjmp .L4
+ 122               	.LBE59:
+ 123               	.LBE58:
+ 124               	.LFE148:
+ 126               		.section	.text.EVENT_USB_Host_DeviceUnattached,"ax",@progbits
+ 127               	.global	EVENT_USB_Host_DeviceUnattached
+ 129               	EVENT_USB_Host_DeviceUnattached:
+ 130               	.LFB146:
+ 131               	.LSM8:
+ 132               	/* prologue: function */
+ 133               	/* frame size = 0 */
+ 134               	.LSM9:
+ 135 0000 80E0      		ldi r24,lo8(__c.4549)
+ 136 0002 90E0      		ldi r25,hi8(__c.4549)
+ 137 0004 0E94 0000 		call puts_P
+ 138               	.LBB60:
+ 139               	.LBB61:
+ 140               	.LSM10:
+ 141 0008 8BB1      		in r24,43-32
+ 142 000a 8F70      		andi r24,lo8(15)
+ 143 000c 8061      		ori r24,lo8(16)
+ 144 000e 8BB9      		out 43-32,r24
+ 145               	/* epilogue start */
+ 146               	.LBE61:
+ 147               	.LBE60:
+ 148               	.LSM11:
+ 149 0010 0895      		ret
+ 150               	.LFE146:
+ 152               		.section	.text.EVENT_USB_Host_DeviceAttached,"ax",@progbits
+ 153               	.global	EVENT_USB_Host_DeviceAttached
+ 155               	EVENT_USB_Host_DeviceAttached:
+ 156               	.LFB145:
+ 157               	.LSM12:
+ 158               	/* prologue: function */
+ 159               	/* frame size = 0 */
+ 160               	.LSM13:
+ 161 0000 80E0      		ldi r24,lo8(__c.4544)
+ 162 0002 90E0      		ldi r25,hi8(__c.4544)
+ 163 0004 0E94 0000 		call puts_P
+ 164               	.LBB62:
+ 165               	.LBB63:
+ 166               	.LSM14:
+ 167 0008 8BB1      		in r24,43-32
+ 168 000a 8F70      		andi r24,lo8(15)
+ 169 000c 806A      		ori r24,lo8(-96)
+ 170 000e 8BB9      		out 43-32,r24
+ 171               	/* epilogue start */
+ 172               	.LBE63:
+ 173               	.LBE62:
+ 174               	.LSM15:
+ 175 0010 0895      		ret
+ 176               	.LFE145:
+ 178               		.section	.text.EVENT_USB_Host_DeviceEnumerationComplete,"ax",@progbits
+ 179               	.global	EVENT_USB_Host_DeviceEnumerationComplete
+ 181               	EVENT_USB_Host_DeviceEnumerationComplete:
+ 182               	.LFB147:
+ 183               	.LSM16:
+ 184 0000 0F93      		push r16
+ 185 0002 1F93      		push r17
+ 186 0004 DF93      		push r29
+ 187 0006 CF93      		push r28
+ 188 0008 CDB7      		in r28,__SP_L__
+ 189 000a DEB7      		in r29,__SP_H__
+ 190 000c C250      		subi r28,lo8(-(-514))
+ 191 000e D240      		sbci r29,hi8(-(-514))
+ 192 0010 0FB6      		in __tmp_reg__,__SREG__
+ 193 0012 F894      		cli
+ 194 0014 DEBF      		out __SP_H__,r29
+ 195 0016 0FBE      		out __SREG__,__tmp_reg__
+ 196 0018 CDBF      		out __SP_L__,r28
+ 197               	/* prologue: function */
+ 198               	/* frame size = 514 */
+ 199               	.LBB64:
+ 200               	.LBB65:
+ 201               	.LSM17:
+ 202 001a 8BB1      		in r24,43-32
+ 203 001c 8F70      		andi r24,lo8(15)
+ 204 001e 806A      		ori r24,lo8(-96)
+ 205 0020 8BB9      		out 43-32,r24
+ 206               	.LBE65:
+ 207               	.LBE64:
+ 208               	.LSM18:
+ 209 0022 8E01      		movw r16,r28
+ 210 0024 0D5F      		subi r16,lo8(-(3))
+ 211 0026 1F4F      		sbci r17,hi8(-(3))
+ 212 0028 81E0      		ldi r24,lo8(1)
+ 213 002a BE01      		movw r22,r28
+ 214 002c 6F5F      		subi r22,lo8(-(1))
+ 215 002e 7F4F      		sbci r23,hi8(-(1))
+ 216 0030 A801      		movw r20,r16
+ 217 0032 20E0      		ldi r18,lo8(512)
+ 218 0034 32E0      		ldi r19,hi8(512)
+ 219 0036 0E94 0000 		call USB_Host_GetDeviceConfigDescriptor
+ 220 003a 8823      		tst r24
+ 221 003c 01F0      		breq .L11
+ 222               	.LSM19:
+ 223 003e 80E0      		ldi r24,lo8(__c.4556)
+ 224 0040 90E0      		ldi r25,hi8(__c.4556)
+ 225 0042 00C0      		rjmp .L18
+ 226               	.L11:
+ 227               	.LSM20:
+ 228 0044 6981      		ldd r22,Y+1
+ 229 0046 7A81      		ldd r23,Y+2
+ 230               	.LVL4:
+ 231 0048 80E0      		ldi r24,lo8(Printer_PRNT_Interface)
+ 232 004a 90E0      		ldi r25,hi8(Printer_PRNT_Interface)
+ 233 004c A801      		movw r20,r16
+ 234 004e 0E94 0000 		call PRNT_Host_ConfigurePipes
+ 235 0052 8823      		tst r24
+ 236 0054 01F0      		breq .L13
+ 237               	.LSM21:
+ 238 0056 80E0      		ldi r24,lo8(__c.4558)
+ 239 0058 90E0      		ldi r25,hi8(__c.4558)
+ 240 005a 00C0      		rjmp .L18
+ 241               	.L13:
+ 242               	.LSM22:
+ 243 005c 81E0      		ldi r24,lo8(1)
+ 244 005e 0E94 0000 		call USB_Host_SetDeviceConfiguration
+ 245 0062 8823      		tst r24
+ 246 0064 01F0      		breq .L14
+ 247               	.LSM23:
+ 248 0066 80E0      		ldi r24,lo8(__c.4560)
+ 249 0068 90E0      		ldi r25,hi8(__c.4560)
+ 250               	.L18:
+ 251 006a 0E94 0000 		call puts_P
+ 252               	.LBB66:
+ 253               	.LBB67:
+ 254               	.LSM24:
+ 255 006e 8BB1      		in r24,43-32
+ 256 0070 8F70      		andi r24,lo8(15)
+ 257 0072 8069      		ori r24,lo8(-112)
+ 258 0074 00C0      		rjmp .L17
+ 259               	.L14:
+ 260               	.LBE67:
+ 261               	.LBE66:
+ 262               	.LSM25:
+ 263 0076 80E0      		ldi r24,lo8(Printer_PRNT_Interface)
+ 264 0078 90E0      		ldi r25,hi8(Printer_PRNT_Interface)
+ 265 007a 0E94 0000 		call PRNT_Host_SetBidirectionalMode
+ 266 007e 8823      		tst r24
+ 267 0080 01F0      		breq .L15
+ 268               	.LSM26:
+ 269 0082 80E0      		ldi r24,lo8(__c.4562)
+ 270 0084 90E0      		ldi r25,hi8(__c.4562)
+ 271 0086 0E94 0000 		call puts_P
+ 272               	.LBB68:
+ 273               	.LBB69:
+ 274               	.LSM27:
+ 275 008a 8BB1      		in r24,43-32
+ 276 008c 8F70      		andi r24,lo8(15)
+ 277 008e 8069      		ori r24,lo8(-112)
+ 278 0090 8BB9      		out 43-32,r24
+ 279               	.LBE69:
+ 280               	.LBE68:
+ 281               	.LSM28:
+ 282 0092 80E0      		ldi r24,lo8(0)
+ 283 0094 0E94 0000 		call USB_Host_SetDeviceConfiguration
+ 284 0098 00C0      		rjmp .L16
+ 285               	.L15:
+ 286               	.LSM29:
+ 287 009a 80E0      		ldi r24,lo8(__c.4564)
+ 288 009c 90E0      		ldi r25,hi8(__c.4564)
+ 289 009e 0E94 0000 		call puts_P
+ 290               	.LBB70:
+ 291               	.LBB71:
+ 292               	.LSM30:
+ 293 00a2 8BB1      		in r24,43-32
+ 294 00a4 8F70      		andi r24,lo8(15)
+ 295 00a6 8066      		ori r24,lo8(96)
+ 296               	.L17:
+ 297 00a8 8BB9      		out 43-32,r24
+ 298               	.L16:
+ 299               	/* epilogue start */
+ 300               	.LBE71:
+ 301               	.LBE70:
+ 302               	.LSM31:
+ 303 00aa CE5F      		subi r28,lo8(-(514))
+ 304 00ac DD4F      		sbci r29,hi8(-(514))
+ 305 00ae 0FB6      		in __tmp_reg__,__SREG__
+ 306 00b0 F894      		cli
+ 307 00b2 DEBF      		out __SP_H__,r29
+ 308 00b4 0FBE      		out __SREG__,__tmp_reg__
+ 309 00b6 CDBF      		out __SP_L__,r28
+ 310 00b8 CF91      		pop r28
+ 311 00ba DF91      		pop r29
+ 312 00bc 1F91      		pop r17
+ 313 00be 0F91      		pop r16
+ 314 00c0 0895      		ret
+ 315               	.LFE147:
+ 317               		.data
+ 318               	.LC0:
+ 319 0000 1B25 2D31 		.string	"\033%-12345X\033ELUFA PCL Test Page\033E\033%-12345X"
+ 319      3233 3435 
+ 319      581B 454C 
+ 319      5546 4120 
+ 319      5043 4C20 
+ 320               		.section	.text.PrinterHost_Task,"ax",@progbits
+ 321               	.global	PrinterHost_Task
+ 323               	PrinterHost_Task:
+ 324               	.LFB144:
+ 325               	.LSM32:
+ 326 0000 EF92      		push r14
+ 327 0002 FF92      		push r15
+ 328 0004 0F93      		push r16
+ 329 0006 1F93      		push r17
+ 330 0008 DF93      		push r29
+ 331 000a CF93      		push r28
+ 332 000c CDB7      		in r28,__SP_L__
+ 333 000e DEB7      		in r29,__SP_H__
+ 334 0010 C555      		subi r28,lo8(-(-341))
+ 335 0012 D140      		sbci r29,hi8(-(-341))
+ 336 0014 0FB6      		in __tmp_reg__,__SREG__
+ 337 0016 F894      		cli
+ 338 0018 DEBF      		out __SP_H__,r29
+ 339 001a 0FBE      		out __SREG__,__tmp_reg__
+ 340 001c CDBF      		out __SP_L__,r28
+ 341               	/* prologue: function */
+ 342               	/* frame size = 341 */
+ 343               	.LSM33:
+ 344 001e 8091 0000 		lds r24,USB_HostState
+ 345 0022 8B30      		cpi r24,lo8(11)
+ 346 0024 01F0      		breq .+2
+ 347 0026 00C0      		rjmp .L24
+ 348               	.LBB72:
+ 349               	.LBB73:
+ 350               	.LSM34:
+ 351 0028 8BB1      		in r24,43-32
+ 352 002a 8F70      		andi r24,lo8(15)
+ 353 002c 8062      		ori r24,lo8(32)
+ 354 002e 8BB9      		out 43-32,r24
+ 355               	.LBE73:
+ 356               	.LBE72:
+ 357               	.LSM35:
+ 358 0030 80E0      		ldi r24,lo8(__c.4523)
+ 359 0032 90E0      		ldi r25,hi8(__c.4523)
+ 360 0034 0E94 0000 		call puts_P
+ 361               	.LSM36:
+ 362 0038 8E01      		movw r16,r28
+ 363 003a 065D      		subi r16,lo8(-(42))
+ 364 003c 1F4F      		sbci r17,hi8(-(42))
+ 365 003e 80E0      		ldi r24,lo8(Printer_PRNT_Interface)
+ 366 0040 90E0      		ldi r25,hi8(Printer_PRNT_Interface)
+ 367 0042 B801      		movw r22,r16
+ 368 0044 4CE2      		ldi r20,lo8(300)
+ 369 0046 51E0      		ldi r21,hi8(300)
+ 370 0048 0E94 0000 		call PRNT_Host_GetDeviceID
+ 371 004c 8823      		tst r24
+ 372 004e 01F0      		breq .L21
+ 373               	.LSM37:
+ 374 0050 80E0      		ldi r24,lo8(__c.4526)
+ 375 0052 90E0      		ldi r25,hi8(__c.4526)
+ 376 0054 00C0      		rjmp .L27
+ 377               	.L21:
+ 378               	.LSM38:
+ 379 0056 00D0      		rcall .
+ 380 0058 00D0      		rcall .
+ 381 005a 80E0      		ldi r24,lo8(__c.4528)
+ 382 005c 90E0      		ldi r25,hi8(__c.4528)
+ 383 005e EDB7      		in r30,__SP_L__
+ 384 0060 FEB7      		in r31,__SP_H__
+ 385 0062 9283      		std Z+2,r25
+ 386 0064 8183      		std Z+1,r24
+ 387 0066 1483      		std Z+4,r17
+ 388 0068 0383      		std Z+3,r16
+ 389 006a 0E94 0000 		call printf_P
+ 390               	.LSM39:
+ 391 006e DE01      		movw r26,r28
+ 392 0070 1196      		adiw r26,1
+ 393 0072 E0E0      		ldi r30,lo8(.LC0)
+ 394 0074 F0E0      		ldi r31,hi8(.LC0)
+ 395 0076 89E2      		ldi r24,lo8(41)
+ 396               	.L22:
+ 397 0078 0190      		ld r0,Z+
+ 398 007a 0D92      		st X+,r0
+ 399 007c 8150      		subi r24,lo8(-(-1))
+ 400 007e 01F4      		brne .L22
+ 401               	.LSM40:
+ 402 0080 7E01      		movw r14,r28
+ 403 0082 0894      		sec
+ 404 0084 E11C      		adc r14,__zero_reg__
+ 405 0086 F11C      		adc r15,__zero_reg__
+ 406 0088 F701      		movw r30,r14
+ 407 008a 0190      		ld __tmp_reg__,Z+
+ 408 008c 0020      		tst __tmp_reg__
+ 409 008e 01F4      		brne .-6
+ 410 0090 8F01      		movw r16,r30
+ 411               	.LVL5:
+ 412 0092 0150      		subi r16,lo8(-(-1))
+ 413 0094 1040      		sbci r17,hi8(-(-1))
+ 414 0096 0E19      		sub r16,r14
+ 415 0098 1F09      		sbc r17,r15
+ 416               	.LSM41:
+ 417 009a 80E0      		ldi r24,lo8(__c.4532)
+ 418 009c 90E0      		ldi r25,hi8(__c.4532)
+ 419 009e EDB7      		in r30,__SP_L__
+ 420 00a0 FEB7      		in r31,__SP_H__
+ 421 00a2 9283      		std Z+2,r25
+ 422 00a4 8183      		std Z+1,r24
+ 423 00a6 1483      		std Z+4,r17
+ 424 00a8 0383      		std Z+3,r16
+ 425 00aa 0E94 0000 		call printf_P
+ 426               	.LSM42:
+ 427 00ae 0F90      		pop __tmp_reg__
+ 428 00b0 0F90      		pop __tmp_reg__
+ 429 00b2 0F90      		pop __tmp_reg__
+ 430 00b4 0F90      		pop __tmp_reg__
+ 431 00b6 80E0      		ldi r24,lo8(Printer_PRNT_Interface)
+ 432 00b8 90E0      		ldi r25,hi8(Printer_PRNT_Interface)
+ 433 00ba B701      		movw r22,r14
+ 434 00bc A801      		movw r20,r16
+ 435 00be 0E94 0000 		call PRNT_Host_SendData
+ 436 00c2 8823      		tst r24
+ 437 00c4 01F0      		breq .L23
+ 438               	.LSM43:
+ 439 00c6 80E0      		ldi r24,lo8(__c.4534)
+ 440 00c8 90E0      		ldi r25,hi8(__c.4534)
+ 441               	.L27:
+ 442 00ca 0E94 0000 		call puts_P
+ 443               	.LBB74:
+ 444               	.LBB75:
+ 445               	.LSM44:
+ 446 00ce 8BB1      		in r24,43-32
+ 447 00d0 8F70      		andi r24,lo8(15)
+ 448 00d2 8069      		ori r24,lo8(-112)
+ 449 00d4 00C0      		rjmp .L26
+ 450               	.L23:
+ 451               	.LBE75:
+ 452               	.LBE74:
+ 453               	.LSM45:
+ 454 00d6 80E0      		ldi r24,lo8(__c.4536)
+ 455 00d8 90E0      		ldi r25,hi8(__c.4536)
+ 456 00da 0E94 0000 		call puts_P
+ 457               	.LBB76:
+ 458               	.LBB77:
+ 459               	.LSM46:
+ 460 00de 8BB1      		in r24,43-32
+ 461 00e0 8F70      		andi r24,lo8(15)
+ 462 00e2 8066      		ori r24,lo8(96)
+ 463               	.L26:
+ 464 00e4 8BB9      		out 43-32,r24
+ 465               	.LBE77:
+ 466               	.LBE76:
+ 467               	.LSM47:
+ 468 00e6 80E0      		ldi r24,lo8(0)
+ 469 00e8 0E94 0000 		call USB_Host_SetDeviceConfiguration
+ 470               	.L24:
+ 471               	/* epilogue start */
+ 472               	.LSM48:
+ 473 00ec CB5A      		subi r28,lo8(-(341))
+ 474 00ee DE4F      		sbci r29,hi8(-(341))
+ 475 00f0 0FB6      		in __tmp_reg__,__SREG__
+ 476 00f2 F894      		cli
+ 477 00f4 DEBF      		out __SP_H__,r29
+ 478 00f6 0FBE      		out __SREG__,__tmp_reg__
+ 479 00f8 CDBF      		out __SP_L__,r28
+ 480 00fa CF91      		pop r28
+ 481 00fc DF91      		pop r29
+ 482 00fe 1F91      		pop r17
+ 483 0100 0F91      		pop r16
+ 484               	.LVL6:
+ 485 0102 FF90      		pop r15
+ 486 0104 EF90      		pop r14
+ 487 0106 0895      		ret
+ 488               	.LFE144:
+ 490               		.section	.text.SetupHardware,"ax",@progbits
+ 491               	.global	SetupHardware
+ 493               	SetupHardware:
+ 494               	.LFB143:
+ 495               	.LSM49:
+ 496               	/* prologue: function */
+ 497               	/* frame size = 0 */
+ 498               	.LSM50:
+ 499 0000 84B7      		in r24,84-32
+ 500 0002 877F      		andi r24,lo8(-9)
+ 501 0004 84BF      		out 84-32,r24
+ 502               	.LSM51:
+ 503 0006 28E1      		ldi r18,lo8(24)
+ 504               	/* #APP */
+ 505               	 ;  82 "PrinterHost.c" 1
+ 506 0008 0FB6      		in __tmp_reg__, __SREG__
+ 507 000a F894      		cli
+ 508 000c 2093 6000 		sts 96, r18
+ 509 0010 1092 6000 		sts 96, __zero_reg__
+ 510 0014 0FBE      		out __SREG__,__tmp_reg__
+ 511               		
+ 512               	 ;  0 "" 2
+ 513               	/* #NOAPP */
+ 514               	.LBB78:
+ 515               	.LBB79:
+ 516               	.LSM52:
+ 517 0016 90E0      		ldi r25,lo8(0)
+ 518 0018 80E8      		ldi r24,lo8(-128)
+ 519               	/* #APP */
+ 520               	 ;  1394 "/usr/lib/gcc/avr/4.3.5/../../../avr/include/avr/power.h" 1
+ 521 001a 0FB6      		in __tmp_reg__,__SREG__
+ 522 001c F894      		cli
+ 523 001e 8093 6100 		sts 97, r24
+ 524 0022 9093 6100 		sts 97, r25
+ 525 0026 0FBE      		out __SREG__, __tmp_reg__
+ 526               	 ;  0 "" 2
+ 527               	/* #NOAPP */
+ 528               	.LBE79:
+ 529               	.LBE78:
+ 530               	.LBB80:
+ 531               	.LBB81:
+ 532               	.LSM53:
+ 533 0028 83E3      		ldi r24,lo8(51)
+ 534 002a 90E0      		ldi r25,hi8(51)
+ 535 002c 9093 CD00 		sts (204)+1,r25
+ 536 0030 8093 CC00 		sts 204,r24
+ 537               	.LSM54:
+ 538 0034 86E0      		ldi r24,lo8(6)
+ 539 0036 8093 CA00 		sts 202,r24
+ 540               	.LSM55:
+ 541 003a 1092 C800 		sts 200,__zero_reg__
+ 542               	.LSM56:
+ 543 003e 2093 C900 		sts 201,r18
+ 544               	.LSM57:
+ 545 0042 539A      		sbi 42-32,3
+ 546               	.LSM58:
+ 547 0044 5A9A      		sbi 43-32,2
+ 548               	.LBE81:
+ 549               	.LBE80:
+ 550               	.LBB82:
+ 551               	.LBB83:
+ 552               	.LSM59:
+ 553 0046 8AB1      		in r24,42-32
+ 554 0048 806F      		ori r24,lo8(-16)
+ 555 004a 8AB9      		out 42-32,r24
+ 556               	.LSM60:
+ 557 004c 8BB1      		in r24,43-32
+ 558 004e 8F70      		andi r24,lo8(15)
+ 559 0050 8BB9      		out 43-32,r24
+ 560               	.LBE83:
+ 561               	.LBE82:
+ 562               	.LSM61:
+ 563 0052 0E94 0000 		call USB_Init
+ 564               	.LBB84:
+ 565               	.LBB85:
+ 566               	.LSM62:
+ 567 0056 E0E0      		ldi r30,lo8(USARTSerialStream)
+ 568 0058 F0E0      		ldi r31,hi8(USARTSerialStream)
+ 569 005a F093 0000 		sts (__iob)+1,r31
+ 570 005e E093 0000 		sts __iob,r30
+ 571               	.LSM63:
+ 572 0062 F093 0000 		sts (__iob+2)+1,r31
+ 573 0066 E093 0000 		sts __iob+2,r30
+ 574               	.LSM64:
+ 575 006a 8EE0      		ldi r24,lo8(14)
+ 576 006c DF01      		movw r26,r30
+ 577 006e 1D92      		st X+,__zero_reg__
+ 578 0070 8A95      	        dec r24
+ 579 0072 01F4      		brne .-6
+ 580 0074 83E0      		ldi r24,lo8(3)
+ 581 0076 8093 0000 		sts USARTSerialStream+3,r24
+ 582 007a 80E0      		ldi r24,lo8(gs(Serial_putchar))
+ 583 007c 90E0      		ldi r25,hi8(gs(Serial_putchar))
+ 584 007e 9093 0000 		sts (USARTSerialStream+8)+1,r25
+ 585 0082 8093 0000 		sts USARTSerialStream+8,r24
+ 586 0086 80E0      		ldi r24,lo8(gs(Serial_getchar))
+ 587 0088 90E0      		ldi r25,hi8(gs(Serial_getchar))
+ 588 008a 9093 0000 		sts (USARTSerialStream+10)+1,r25
+ 589 008e 8093 0000 		sts USARTSerialStream+10,r24
+ 590               	/* epilogue start */
+ 591               	.LBE85:
+ 592               	.LBE84:
+ 593               	.LSM65:
+ 594 0092 0895      		ret
+ 595               	.LFE143:
+ 597               		.section	.text.main,"ax",@progbits
+ 598               	.global	main
+ 600               	main:
+ 601               	.LFB142:
+ 602               	.LSM66:
+ 603               	/* prologue: function */
+ 604               	/* frame size = 0 */
+ 605               	.LSM67:
+ 606 0000 0E94 0000 		call SetupHardware
+ 607               	.LSM68:
+ 608 0004 80E0      		ldi r24,lo8(__c.4510)
+ 609 0006 90E0      		ldi r25,hi8(__c.4510)
+ 610 0008 0E94 0000 		call puts_P
+ 611               	.LBB86:
+ 612               	.LBB87:
+ 613               	.LSM69:
+ 614 000c 8BB1      		in r24,43-32
+ 615 000e 8F70      		andi r24,lo8(15)
+ 616 0010 8061      		ori r24,lo8(16)
+ 617 0012 8BB9      		out 43-32,r24
+ 618               	.LBE87:
+ 619               	.LBE86:
+ 620               	.LSM70:
+ 621               	/* #APP */
+ 622               	 ;  66 "PrinterHost.c" 1
+ 623 0014 7894      		sei
+ 624               	 ;  0 "" 2
+ 625               	/* #NOAPP */
+ 626               	.L31:
+ 627               	.LSM71:
+ 628 0016 0E94 0000 		call PrinterHost_Task
+ 629               	.LSM72:
+ 630 001a 80E0      		ldi r24,lo8(Printer_PRNT_Interface)
+ 631 001c 90E0      		ldi r25,hi8(Printer_PRNT_Interface)
+ 632 001e 0E94 0000 		call PRNT_Host_USBTask
+ 633               	.LSM73:
+ 634 0022 0E94 0000 		call USB_USBTask
+ 635 0026 00C0      		rjmp .L31
+ 636               	.LFE142:
+ 638               	.global	Printer_PRNT_Interface
+ 639               		.data
+ 642               	Printer_PRNT_Interface:
+ 643 0029 01        		.byte	1
+ 644 002a 00        		.byte	0
+ 645 002b 02        		.byte	2
+ 646 002c 00        		.byte	0
+ 647 002d 0000 0000 		.skip 7,0
+ 647      0000 00
+ 648               		.section	.progmem.data,"a",@progbits
+ 651               	__c.4582:
+ 652 0000 1B5B 3331 		.ascii	"\033[31mDev Enum Error\r\n"
+ 652      6D44 6576 
+ 652      2045 6E75 
+ 652      6D20 4572 
+ 652      726F 720D 
+ 653 0015 202D 2D20 		.string	" -- Error Code %d\r\n -- Sub Error Code %d\r\n -- In State %d\r\n\033[37m"
+ 653      4572 726F 
+ 653      7220 436F 
+ 653      6465 2025 
+ 653      640D 0A20 
+ 656               	__c.4574:
+ 657 0056 1B5B 3331 		.string	"\033[31mHost Mode Error\r\n -- Error Code %d\r\n\033[37m"
+ 657      6D48 6F73 
+ 657      7420 4D6F 
+ 657      6465 2045 
+ 657      7272 6F72 
+ 660               	__c.4564:
+ 661 0085 5072 696E 		.string	"Printer Device Enumerated.\r\n"
+ 661      7465 7220 
+ 661      4465 7669 
+ 661      6365 2045 
+ 661      6E75 6D65 
+ 664               	__c.4562:
+ 665 00a2 4572 726F 		.string	"Error Setting Bidirectional Mode.\r\n"
+ 665      7220 5365 
+ 665      7474 696E 
+ 665      6720 4269 
+ 665      6469 7265 
+ 668               	__c.4560:
+ 669 00c6 4572 726F 		.string	"Error Setting Device Configuration.\r\n"
+ 669      7220 5365 
+ 669      7474 696E 
+ 669      6720 4465 
+ 669      7669 6365 
+ 672               	__c.4558:
+ 673 00ec 4174 7461 		.string	"Attached Device Not a Valid Printer Class Device.\r\n"
+ 673      6368 6564 
+ 673      2044 6576 
+ 673      6963 6520 
+ 673      4E6F 7420 
+ 676               	__c.4556:
+ 677 0120 4572 726F 		.string	"Error Retrieving Configuration Descriptor.\r\n"
+ 677      7220 5265 
+ 677      7472 6965 
+ 677      7669 6E67 
+ 677      2043 6F6E 
+ 680               	__c.4549:
+ 681 014d 0D0A 4465 		.string	"\r\nDevice Unattached.\r\n"
+ 681      7669 6365 
+ 681      2055 6E61 
+ 681      7474 6163 
+ 681      6865 642E 
+ 684               	__c.4544:
+ 685 0164 4465 7669 		.string	"Device Attached.\r\n"
+ 685      6365 2041 
+ 685      7474 6163 
+ 685      6865 642E 
+ 685      0D0A 00
+ 688               	__c.4536:
+ 689 0177 5465 7374 		.string	"Test Page Sent.\r\n"
+ 689      2050 6167 
+ 689      6520 5365 
+ 689      6E74 2E0D 
+ 689      0A00 
+ 692               	__c.4534:
+ 693 0189 4572 726F 		.string	"Error Sending Page Data.\r\n"
+ 693      7220 5365 
+ 693      6E64 696E 
+ 693      6720 5061 
+ 693      6765 2044 
+ 696               	__c.4532:
+ 697 01a4 5365 6E64 		.string	"Sending Test Page (%d bytes)...\r\n"
+ 697      696E 6720 
+ 697      5465 7374 
+ 697      2050 6167 
+ 697      6520 2825 
+ 700               	__c.4528:
+ 701 01c6 4465 7669 		.string	"Device ID: %s.\r\n"
+ 701      6365 2049 
+ 701      443A 2025 
+ 701      732E 0D0A 
+ 701      00
+ 704               	__c.4526:
+ 705 01d7 4572 726F 		.string	"Error Getting Device ID.\r\n"
+ 705      7220 4765 
+ 705      7474 696E 
+ 705      6720 4465 
+ 705      7669 6365 
+ 708               	__c.4523:
+ 709 01f2 5265 7472 		.string	"Retrieving Device ID...\r\n"
+ 709      6965 7669 
+ 709      6E67 2044 
+ 709      6576 6963 
+ 709      6520 4944 
+ 712               	__c.4510:
+ 713 020c 1B5B 3336 		.string	"\033[36mPrinter Host Demo running.\r\n\033[37m"
+ 713      6D50 7269 
+ 713      6E74 6572 
+ 713      2048 6F73 
+ 713      7420 4465 
+ 794               	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 PrinterHost.c
+     /tmp/ccItKtAV.s:2      *ABS*:0000003f __SREG__
+     /tmp/ccItKtAV.s:3      *ABS*:0000003e __SP_H__
+     /tmp/ccItKtAV.s:4      *ABS*:0000003d __SP_L__
+     /tmp/ccItKtAV.s:5      *ABS*:00000034 __CCP__
+     /tmp/ccItKtAV.s:6      *ABS*:00000000 __tmp_reg__
+     /tmp/ccItKtAV.s:7      *ABS*:00000001 __zero_reg__
+     /tmp/ccItKtAV.s:19     .text.EVENT_USB_Host_DeviceEnumerationFailed:00000000 EVENT_USB_Host_DeviceEnumerationFailed
+     /tmp/ccItKtAV.s:651    .progmem.data:00000000 __c.4582
+     /tmp/ccItKtAV.s:81     .text.EVENT_USB_Host_HostError:00000000 EVENT_USB_Host_HostError
+     /tmp/ccItKtAV.s:656    .progmem.data:00000056 __c.4574
+     /tmp/ccItKtAV.s:129    .text.EVENT_USB_Host_DeviceUnattached:00000000 EVENT_USB_Host_DeviceUnattached
+     /tmp/ccItKtAV.s:680    .progmem.data:0000014d __c.4549
+     /tmp/ccItKtAV.s:155    .text.EVENT_USB_Host_DeviceAttached:00000000 EVENT_USB_Host_DeviceAttached
+     /tmp/ccItKtAV.s:684    .progmem.data:00000164 __c.4544
+     /tmp/ccItKtAV.s:181    .text.EVENT_USB_Host_DeviceEnumerationComplete:00000000 EVENT_USB_Host_DeviceEnumerationComplete
+     /tmp/ccItKtAV.s:676    .progmem.data:00000120 __c.4556
+     /tmp/ccItKtAV.s:642    .data:00000029 Printer_PRNT_Interface
+     /tmp/ccItKtAV.s:672    .progmem.data:000000ec __c.4558
+     /tmp/ccItKtAV.s:668    .progmem.data:000000c6 __c.4560
+     /tmp/ccItKtAV.s:664    .progmem.data:000000a2 __c.4562
+     /tmp/ccItKtAV.s:660    .progmem.data:00000085 __c.4564
+     /tmp/ccItKtAV.s:323    .text.PrinterHost_Task:00000000 PrinterHost_Task
+     /tmp/ccItKtAV.s:708    .progmem.data:000001f2 __c.4523
+     /tmp/ccItKtAV.s:704    .progmem.data:000001d7 __c.4526
+     /tmp/ccItKtAV.s:700    .progmem.data:000001c6 __c.4528
+     /tmp/ccItKtAV.s:696    .progmem.data:000001a4 __c.4532
+     /tmp/ccItKtAV.s:692    .progmem.data:00000189 __c.4534
+     /tmp/ccItKtAV.s:688    .progmem.data:00000177 __c.4536
+     /tmp/ccItKtAV.s:493    .text.SetupHardware:00000000 SetupHardware
+     /tmp/ccItKtAV.s:600    .text.main:00000000 main
+     /tmp/ccItKtAV.s:712    .progmem.data:0000020c __c.4510
+
+UNDEFINED SYMBOLS
+USB_HostState
+printf_P
+USB_Disable
+puts_P
+USB_Host_GetDeviceConfigDescriptor
+PRNT_Host_ConfigurePipes
+USB_Host_SetDeviceConfiguration
+PRNT_Host_SetBidirectionalMode
+PRNT_Host_GetDeviceID
+PRNT_Host_SendData
+USB_Init
+USARTSerialStream
+__iob
+Serial_putchar
+Serial_getchar
+PRNT_Host_USBTask
+USB_USBTask
+__do_copy_data

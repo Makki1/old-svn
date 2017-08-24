@@ -1,0 +1,10 @@
+irserver for Debian
+-------------------
+
+lousy package put together from source, only partially Debianzed.
+
+Quickstart Guide: 
+- example-files for remotes are located under /usr/share/irserver/remotes
+- copy/edit accordingly to /etc/irserver/remotes or create new ones with irclient
+
+ -- Michael Markstaller / Elaborated Networks GmbH for WireGate <devel@wiregate.de>  Mon, 31 Aug 2009 16:17:14 +0200

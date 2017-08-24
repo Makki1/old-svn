@@ -1,0 +1,5 @@
+irclient (6.01.01-1) stable; urgency=low
+
+  * Initial packaging for Debian lenny
+
+ -- Michael Markstaller / Elaborated Networks GmbH for WireGate <devel@wiregate.de>  Mon, 31 Aug 2009 16:17:14 +0200

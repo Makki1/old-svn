@@ -1,0 +1,801 @@
+   1               		.file	"MIDIToneGenerator.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__CCP__  = 0x34
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+  15               	.Ltext0:
+  16               		.section	.text.__vector_21,"ax",@progbits
+  17               	.global	__vector_21
+  19               	__vector_21:
+  20               	.LFB114:
+  21               	.LSM0:
+  22 0000 1F92      		push __zero_reg__
+  23 0002 0F92      		push r0
+  24 0004 0FB6      		in r0,__SREG__
+  25 0006 0F92      		push r0
+  26 0008 0BB6      		in r0,91-32
+  27 000a 0F92      		push r0
+  28 000c 1124      		clr __zero_reg__
+  29 000e 2F93      		push r18
+  30 0010 3F93      		push r19
+  31 0012 4F93      		push r20
+  32 0014 5F93      		push r21
+  33 0016 6F93      		push r22
+  34 0018 7F93      		push r23
+  35 001a 8F93      		push r24
+  36 001c 9F93      		push r25
+  37 001e AF93      		push r26
+  38 0020 BF93      		push r27
+  39 0022 CF93      		push r28
+  40 0024 DF93      		push r29
+  41 0026 EF93      		push r30
+  42 0028 FF93      		push r31
+  43               	/* prologue: Signal */
+  44               	/* frame size = 0 */
+  45               	.LSM1:
+  46 002a C0E0      		ldi r28,lo8(NoteData+1)
+  47 002c D0E0      		ldi r29,hi8(NoteData+1)
+  48 002e 60E0      		ldi r22,lo8(0)
+  49 0030 70E0      		ldi r23,hi8(0)
+  50               	.LVL0:
+  51               	.L3:
+  52               	.LBB26:
+  53               	.LSM2:
+  54 0032 8881      		ld r24,Y
+  55 0034 8823      		tst r24
+  56 0036 01F0      		breq .L2
+  57               	.LBB27:
+  58               	.LSM3:
+  59 0038 2D81      		ldd r18,Y+5
+  60 003a 3E81      		ldd r19,Y+6
+  61 003c 4F81      		ldd r20,Y+7
+  62 003e 5885      		ldd r21,Y+8
+  63 0040 E885      		ldd r30,Y+8
+  64 0042 F0E0      		ldi r31,lo8(0)
+  65 0044 E050      		subi r30,lo8(-(SineTable))
+  66 0046 F040      		sbci r31,hi8(-(SineTable))
+  67 0048 8081      		ld r24,Z
+  68 004a 680F      		add r22,r24
+  69 004c 711D      		adc r23,__zero_reg__
+  70               	.LSM4:
+  71 004e 8981      		ldd r24,Y+1
+  72 0050 9A81      		ldd r25,Y+2
+  73 0052 AB81      		ldd r26,Y+3
+  74 0054 BC81      		ldd r27,Y+4
+  75 0056 820F      		add r24,r18
+  76 0058 931F      		adc r25,r19
+  77 005a A41F      		adc r26,r20
+  78 005c B51F      		adc r27,r21
+  79 005e 8D83      		std Y+5,r24
+  80 0060 9E83      		std Y+6,r25
+  81 0062 AF83      		std Y+7,r26
+  82 0064 B887      		std Y+8,r27
+  83               	.L2:
+  84 0066 2A96      		adiw r28,10
+  85               	.LBE27:
+  86               	.LSM5:
+  87 0068 80E0      		ldi r24,hi8(NoteData+31)
+  88 006a C030      		cpi r28,lo8(NoteData+31)
+  89 006c D807      		cpc r29,r24
+  90 006e 01F4      		brne .L3
+  91               	.LBE26:
+  92               	.LSM6:
+  93 0070 CB01      		movw r24,r22
+  94 0072 6F3F      		cpi r22,255
+  95 0074 7105      		cpc r23,__zero_reg__
+  96               	.LVL1:
+  97 0076 01F0      		breq .L4
+  98 0078 00F0      		brlo .L4
+  99 007a 8FEF      		ldi r24,lo8(255)
+ 100 007c 90E0      		ldi r25,hi8(255)
+ 101               	.L4:
+ 102 007e 9093 9900 		sts (152)+1,r25
+ 103 0082 8093 9800 		sts 152,r24
+ 104               	/* epilogue start */
+ 105               	.LSM7:
+ 106 0086 FF91      		pop r31
+ 107 0088 EF91      		pop r30
+ 108 008a DF91      		pop r29
+ 109 008c CF91      		pop r28
+ 110 008e BF91      		pop r27
+ 111 0090 AF91      		pop r26
+ 112 0092 9F91      		pop r25
+ 113 0094 8F91      		pop r24
+ 114 0096 7F91      		pop r23
+ 115 0098 6F91      		pop r22
+ 116 009a 5F91      		pop r21
+ 117 009c 4F91      		pop r20
+ 118 009e 3F91      		pop r19
+ 119 00a0 2F91      		pop r18
+ 120 00a2 0F90      		pop r0
+ 121 00a4 0BBE      		out 91-32,r0
+ 122 00a6 0F90      		pop r0
+ 123 00a8 0FBE      		out __SREG__,r0
+ 124 00aa 0F90      		pop r0
+ 125 00ac 1F90      		pop __zero_reg__
+ 126 00ae 1895      		reti
+ 127               	.LFE114:
+ 129               		.section	.text.EVENT_USB_Device_Connect,"ax",@progbits
+ 130               	.global	EVENT_USB_Device_Connect
+ 132               	EVENT_USB_Device_Connect:
+ 133               	.LFB116:
+ 134               	.LSM8:
+ 135               	/* prologue: function */
+ 136               	/* frame size = 0 */
+ 137               	.LBB28:
+ 138               	.LBB29:
+ 139               	.LSM9:
+ 140 0000 8BB1      		in r24,43-32
+ 141 0002 8F70      		andi r24,lo8(15)
+ 142 0004 806A      		ori r24,lo8(-96)
+ 143 0006 8BB9      		out 43-32,r24
+ 144               	.LBE29:
+ 145               	.LBE28:
+ 146               	.LSM10:
+ 147 0008 3E9A      		sbi 39-32,6
+ 148               	/* epilogue start */
+ 149               	.LSM11:
+ 150 000a 0895      		ret
+ 151               	.LFE116:
+ 153               		.section	.text.EVENT_USB_Device_Disconnect,"ax",@progbits
+ 154               	.global	EVENT_USB_Device_Disconnect
+ 156               	EVENT_USB_Device_Disconnect:
+ 157               	.LFB117:
+ 158               	.LSM12:
+ 159               	/* prologue: function */
+ 160               	/* frame size = 0 */
+ 161               	.LBB30:
+ 162               	.LBB31:
+ 163               	.LSM13:
+ 164 0000 8BB1      		in r24,43-32
+ 165 0002 8F70      		andi r24,lo8(15)
+ 166 0004 8061      		ori r24,lo8(16)
+ 167 0006 8BB9      		out 43-32,r24
+ 168               	.LBE31:
+ 169               	.LBE30:
+ 170               	.LBB32:
+ 171               	.LSM14:
+ 172 0008 1092 0000 		sts NoteData+1,__zero_reg__
+ 173 000c 1092 0000 		sts NoteData+11,__zero_reg__
+ 174 0010 1092 0000 		sts NoteData+21,__zero_reg__
+ 175               	.LBE32:
+ 176               	.LSM15:
+ 177 0014 3E98      		cbi 39-32,6
+ 178               	/* epilogue start */
+ 179               	.LSM16:
+ 180 0016 0895      		ret
+ 181               	.LFE117:
+ 183               		.section	.text.EVENT_USB_Device_ControlRequest,"ax",@progbits
+ 184               	.global	EVENT_USB_Device_ControlRequest
+ 186               	EVENT_USB_Device_ControlRequest:
+ 187               	.LFB119:
+ 188               	.LSM17:
+ 189               	/* prologue: function */
+ 190               	/* frame size = 0 */
+ 191               	/* epilogue start */
+ 192               	.LSM18:
+ 193 0000 0895      		ret
+ 194               	.LFE119:
+ 196               		.section	.text.EVENT_USB_Device_ConfigurationChanged,"ax",@progbits
+ 197               	.global	EVENT_USB_Device_ConfigurationChanged
+ 199               	EVENT_USB_Device_ConfigurationChanged:
+ 200               	.LFB118:
+ 201               	.LSM19:
+ 202               	/* prologue: function */
+ 203               	/* frame size = 0 */
+ 204               	.LSM20:
+ 205 0000 80E0      		ldi r24,lo8(Keyboard_MIDI_Interface)
+ 206 0002 90E0      		ldi r25,hi8(Keyboard_MIDI_Interface)
+ 207 0004 0E94 0000 		call MIDI_Device_ConfigureEndpoints
+ 208               	.LSM21:
+ 209 0008 80FD      		sbrc r24,0
+ 210 000a 00C0      		rjmp .L14
+ 211 000c 90E9      		ldi r25,lo8(-112)
+ 212 000e 00C0      		rjmp .L15
+ 213               	.L14:
+ 214 0010 90E6      		ldi r25,lo8(96)
+ 215               	.L15:
+ 216               	.LBB33:
+ 217               	.LBB34:
+ 218               	.LSM22:
+ 219 0012 8BB1      		in r24,43-32
+ 220 0014 8F70      		andi r24,lo8(15)
+ 221 0016 982B      		or r25,r24
+ 222 0018 9BB9      		out 43-32,r25
+ 223               	/* epilogue start */
+ 224               	.LBE34:
+ 225               	.LBE33:
+ 226               	.LSM23:
+ 227 001a 0895      		ret
+ 228               	.LFE118:
+ 230               		.section	.text.SetupHardware,"ax",@progbits
+ 231               	.global	SetupHardware
+ 233               	SetupHardware:
+ 234               	.LFB115:
+ 235               	.LSM24:
+ 236               	/* prologue: function */
+ 237               	/* frame size = 0 */
+ 238               	.LSM25:
+ 239 0000 84B7      		in r24,84-32
+ 240 0002 877F      		andi r24,lo8(-9)
+ 241 0004 84BF      		out 84-32,r24
+ 242               	.LSM26:
+ 243 0006 88E1      		ldi r24,lo8(24)
+ 244               	/* #APP */
+ 245               	 ;  186 "MIDIToneGenerator.c" 1
+ 246 0008 0FB6      		in __tmp_reg__, __SREG__
+ 247 000a F894      		cli
+ 248 000c 8093 6000 		sts 96, r24
+ 249 0010 1092 6000 		sts 96, __zero_reg__
+ 250 0014 0FBE      		out __SREG__,__tmp_reg__
+ 251               		
+ 252               	 ;  0 "" 2
+ 253               	/* #NOAPP */
+ 254               	.LBB35:
+ 255               	.LBB36:
+ 256               	.LSM27:
+ 257 0016 90E0      		ldi r25,lo8(0)
+ 258 0018 80E8      		ldi r24,lo8(-128)
+ 259               	/* #APP */
+ 260               	 ;  1394 "/usr/lib/gcc/avr/4.3.5/../../../avr/include/avr/power.h" 1
+ 261 001a 0FB6      		in __tmp_reg__,__SREG__
+ 262 001c F894      		cli
+ 263 001e 8093 6100 		sts 97, r24
+ 264 0022 9093 6100 		sts 97, r25
+ 265 0026 0FBE      		out __SREG__, __tmp_reg__
+ 266               	 ;  0 "" 2
+ 267               	/* #NOAPP */
+ 268               	.LBE36:
+ 269               	.LBE35:
+ 270               	.LBB37:
+ 271               	.LBB38:
+ 272               	.LSM28:
+ 273 0028 8AB1      		in r24,42-32
+ 274 002a 806F      		ori r24,lo8(-16)
+ 275 002c 8AB9      		out 42-32,r24
+ 276               	.LSM29:
+ 277 002e 8BB1      		in r24,43-32
+ 278 0030 8F70      		andi r24,lo8(15)
+ 279 0032 8BB9      		out 43-32,r24
+ 280               	.LBE38:
+ 281               	.LBE37:
+ 282               	.LSM30:
+ 283 0034 0E94 0000 		call USB_Init
+ 284               	.LSM31:
+ 285 0038 92E0      		ldi r25,lo8(2)
+ 286 003a 9093 6E00 		sts 110,r25
+ 287               	.LSM32:
+ 288 003e 80E4      		ldi r24,lo8(64)
+ 289 0040 87BD      		out 71-32,r24
+ 290               	.LSM33:
+ 291 0042 94BD      		out 68-32,r25
+ 292               	.LSM34:
+ 293 0044 95BD      		out 69-32,r25
+ 294               	.LSM35:
+ 295 0046 3E9A      		sbi 39-32,6
+ 296               	.LSM36:
+ 297 0048 82EC      		ldi r24,lo8(-62)
+ 298 004a 8093 9000 		sts 144,r24
+ 299               	.LSM37:
+ 300 004e 89E0      		ldi r24,lo8(9)
+ 301 0050 8093 9100 		sts 145,r24
+ 302               	/* epilogue start */
+ 303               	.LSM38:
+ 304 0054 0895      		ret
+ 305               	.LFE115:
+ 307               		.section	.text.main,"ax",@progbits
+ 308               	.global	main
+ 310               	main:
+ 311               	.LFB113:
+ 312               	.LSM39:
+ 313 0000 DF92      		push r13
+ 314 0002 EF92      		push r14
+ 315 0004 FF92      		push r15
+ 316 0006 0F93      		push r16
+ 317 0008 1F93      		push r17
+ 318 000a DF93      		push r29
+ 319 000c CF93      		push r28
+ 320 000e 00D0      		rcall .
+ 321 0010 00D0      		rcall .
+ 322 0012 CDB7      		in r28,__SP_L__
+ 323 0014 DEB7      		in r29,__SP_H__
+ 324               	/* prologue: function */
+ 325               	/* frame size = 4 */
+ 326               	.LSM40:
+ 327 0016 0E94 0000 		call SetupHardware
+ 328               	.LBB39:
+ 329               	.LBB40:
+ 330               	.LSM41:
+ 331 001a 8BB1      		in r24,43-32
+ 332 001c 8F70      		andi r24,lo8(15)
+ 333 001e 8061      		ori r24,lo8(16)
+ 334 0020 8BB9      		out 43-32,r24
+ 335               	.LBE40:
+ 336               	.LBE39:
+ 337               	.LSM42:
+ 338               	/* #APP */
+ 339               	 ;  92 "MIDIToneGenerator.c" 1
+ 340 0022 7894      		sei
+ 341               	 ;  0 "" 2
+ 342               	/* #NOAPP */
+ 343               	.LBB41:
+ 344               	.LSM43:
+ 345 0024 7E01      		movw r14,r28
+ 346 0026 0894      		sec
+ 347 0028 E11C      		adc r14,__zero_reg__
+ 348 002a F11C      		adc r15,__zero_reg__
+ 349               	.LBB42:
+ 350               	.LBB43:
+ 351               	.LSM44:
+ 352 002c 8AE0      		ldi r24,lo8(10)
+ 353 002e D82E      		mov r13,r24
+ 354               	.LVL2:
+ 355               	.L29:
+ 356               	.LBE43:
+ 357               	.LBE42:
+ 358               	.LSM45:
+ 359 0030 80E0      		ldi r24,lo8(Keyboard_MIDI_Interface)
+ 360 0032 90E0      		ldi r25,hi8(Keyboard_MIDI_Interface)
+ 361 0034 B701      		movw r22,r14
+ 362 0036 0E94 0000 		call MIDI_Device_ReceiveEventPacket
+ 363 003a 8823      		tst r24
+ 364 003c 01F4      		brne .+2
+ 365 003e 00C0      		rjmp .L20
+ 366               	.LSM46:
+ 367 0040 8981      		ldd r24,Y+1
+ 368 0042 8F70      		andi r24,lo8(15)
+ 369 0044 8930      		cpi r24,lo8(9)
+ 370 0046 01F0      		breq .+2
+ 371 0048 00C0      		rjmp .L21
+ 372 004a 8A81      		ldd r24,Y+2
+ 373 004c 90E0      		ldi r25,lo8(0)
+ 374 004e 8F70      		andi r24,lo8(15)
+ 375 0050 9070      		andi r25,hi8(15)
+ 376 0052 892B      		or r24,r25
+ 377 0054 01F0      		breq .+2
+ 378 0056 00C0      		rjmp .L20
+ 379 0058 E0E0      		ldi r30,lo8(NoteData)
+ 380 005a F0E0      		ldi r31,hi8(NoteData)
+ 381 005c 8F01      		movw r16,r30
+ 382 005e 20E0      		ldi r18,lo8(0)
+ 383               	.LVL3:
+ 384               	.L25:
+ 385               	.LBB47:
+ 386               	.LBB44:
+ 387               	.LSM47:
+ 388 0060 8181      		ldd r24,Z+1
+ 389 0062 8823      		tst r24
+ 390 0064 01F4      		brne .L22
+ 391               	.LSM48:
+ 392 0066 2D9D      		mul r18,r13
+ 393 0068 8001      		movw r16,r0
+ 394 006a 1124      		clr r1
+ 395 006c 0050      		subi r16,lo8(-(NoteData))
+ 396 006e 1040      		sbci r17,hi8(-(NoteData))
+ 397 0070 00C0      		rjmp .L23
+ 398               	.L22:
+ 399               	.LSM49:
+ 400 0072 9081      		ld r25,Z
+ 401 0074 D801      		movw r26,r16
+ 402 0076 8C91      		ld r24,X
+ 403 0078 9817      		cp r25,r24
+ 404 007a 00F0      		brlo .L24
+ 405 007c 8F01      		movw r16,r30
+ 406               	.L24:
+ 407               	.LSM50:
+ 408 007e 9F5F      		subi r25,lo8(-(1))
+ 409 0080 9083      		st Z,r25
+ 410               	.LSM51:
+ 411 0082 2F5F      		subi r18,lo8(-(1))
+ 412 0084 3A96      		adiw r30,10
+ 413 0086 2330      		cpi r18,lo8(3)
+ 414 0088 01F4      		brne .L25
+ 415               	.L23:
+ 416               	.LBE44:
+ 417               	.LSM52:
+ 418 008a 6B81      		ldd r22,Y+3
+ 419 008c F801      		movw r30,r16
+ 420 008e 6183      		std Z+1,r22
+ 421               	.LSM53:
+ 422 0090 70E0      		ldi r23,lo8(0)
+ 423 0092 6551      		subi r22,lo8(-(-21))
+ 424 0094 7040      		sbci r23,hi8(-(-21))
+ 425 0096 8827      		clr r24
+ 426 0098 77FD      		sbrc r23,7
+ 427 009a 8095      		com r24
+ 428 009c 982F      		mov r25,r24
+ 429 009e 26EB      		ldi r18,lo8(19723958)
+ 430 00a0 36EF      		ldi r19,hi8(19723958)
+ 431 00a2 4CE2      		ldi r20,hlo8(19723958)
+ 432 00a4 51E0      		ldi r21,hhi8(19723958)
+ 433               	.LVL4:
+ 434 00a6 0E94 0000 		call __mulsi3
+ 435 00aa 6256      		subi r22,lo8(-(18616990))
+ 436 00ac 7D4E      		sbci r23,hi8(-(18616990))
+ 437 00ae 834E      		sbci r24,hlo8(-(18616990))
+ 438 00b0 9E4F      		sbci r25,hhi8(-(18616990))
+ 439 00b2 D801      		movw r26,r16
+ 440 00b4 1296      		adiw r26,2
+ 441 00b6 6D93      		st X+,r22
+ 442 00b8 7D93      		st X+,r23
+ 443 00ba 8D93      		st X+,r24
+ 444 00bc 9C93      		st X,r25
+ 445 00be 1597      		sbiw r26,2+3
+ 446               	.LSM54:
+ 447 00c0 F801      		movw r30,r16
+ 448 00c2 1682      		std Z+6,__zero_reg__
+ 449 00c4 1782      		std Z+7,__zero_reg__
+ 450 00c6 1086      		std Z+8,__zero_reg__
+ 451 00c8 1186      		std Z+9,__zero_reg__
+ 452               	.LSM55:
+ 453 00ca 1082      		st Z,__zero_reg__
+ 454               	.LBB45:
+ 455               	.LBB46:
+ 456               	.LSM56:
+ 457 00cc 8BB1      		in r24,43-32
+ 458 00ce 8F70      		andi r24,lo8(15)
+ 459 00d0 8061      		ori r24,lo8(16)
+ 460 00d2 00C0      		rjmp .L33
+ 461               	.L21:
+ 462               	.LBE46:
+ 463               	.LBE45:
+ 464               	.LBE47:
+ 465               	.LSM57:
+ 466 00d4 8830      		cpi r24,lo8(8)
+ 467 00d6 01F4      		brne .L20
+ 468 00d8 8A81      		ldd r24,Y+2
+ 469 00da 90E0      		ldi r25,lo8(0)
+ 470 00dc 8F70      		andi r24,lo8(15)
+ 471 00de 9070      		andi r25,hi8(15)
+ 472 00e0 892B      		or r24,r25
+ 473 00e2 01F4      		brne .L20
+ 474               	.LBB48:
+ 475               	.LBB49:
+ 476               	.LSM58:
+ 477 00e4 2B81      		ldd r18,Y+3
+ 478 00e6 E0E0      		ldi r30,lo8(NoteData+1)
+ 479 00e8 F0E0      		ldi r31,hi8(NoteData+1)
+ 480 00ea 90E0      		ldi r25,lo8(0)
+ 481               	.LVL5:
+ 482               	.L28:
+ 483 00ec 8081      		ld r24,Z
+ 484 00ee 8217      		cp r24,r18
+ 485 00f0 01F4      		brne .L26
+ 486               	.LSM59:
+ 487 00f2 1082      		st Z,__zero_reg__
+ 488 00f4 00C0      		rjmp .L27
+ 489               	.L26:
+ 490               	.LSM60:
+ 491 00f6 8111      		cpse r24,__zero_reg__
+ 492 00f8 91E0      		ldi r25,lo8(1)
+ 493               	.L27:
+ 494 00fa 3A96      		adiw r30,10
+ 495               	.LSM61:
+ 496 00fc 80E0      		ldi r24,hi8(NoteData+31)
+ 497 00fe E030      		cpi r30,lo8(NoteData+31)
+ 498 0100 F807      		cpc r31,r24
+ 499 0102 01F4      		brne .L28
+ 500               	.LBE49:
+ 501               	.LSM62:
+ 502 0104 9923      		tst r25
+ 503 0106 01F4      		brne .L20
+ 504               	.LBB50:
+ 505               	.LBB51:
+ 506               	.LSM63:
+ 507 0108 8BB1      		in r24,43-32
+ 508 010a 8F70      		andi r24,lo8(15)
+ 509               	.L33:
+ 510 010c 8BB9      		out 43-32,r24
+ 511               	.L20:
+ 512               	.LBE51:
+ 513               	.LBE50:
+ 514               	.LBE48:
+ 515               	.LSM64:
+ 516 010e 80E0      		ldi r24,lo8(Keyboard_MIDI_Interface)
+ 517 0110 90E0      		ldi r25,hi8(Keyboard_MIDI_Interface)
+ 518 0112 0E94 0000 		call MIDI_Device_USBTask
+ 519               	.LVL6:
+ 520               	.LSM65:
+ 521 0116 0E94 0000 		call USB_USBTask
+ 522 011a 00C0      		rjmp .L29
+ 523               	.LBE41:
+ 524               	.LFE113:
+ 526               	.global	Keyboard_MIDI_Interface
+ 527               		.data
+ 530               	Keyboard_MIDI_Interface:
+ 531 0000 01        		.byte	1
+ 532 0001 02        		.byte	2
+ 533 0002 4000      		.word	64
+ 534 0004 00        		.byte	0
+ 535 0005 01        		.byte	1
+ 536 0006 4000      		.word	64
+ 537 0008 00        		.byte	0
+ 540               	SineTable:
+ 541 0009 80        		.byte	-128
+ 542 000a 83        		.byte	-125
+ 543 000b 86        		.byte	-122
+ 544 000c 89        		.byte	-119
+ 545 000d 8C        		.byte	-116
+ 546 000e 8F        		.byte	-113
+ 547 000f 92        		.byte	-110
+ 548 0010 95        		.byte	-107
+ 549 0011 98        		.byte	-104
+ 550 0012 9C        		.byte	-100
+ 551 0013 9F        		.byte	-97
+ 552 0014 A2        		.byte	-94
+ 553 0015 A5        		.byte	-91
+ 554 0016 A8        		.byte	-88
+ 555 0017 AB        		.byte	-85
+ 556 0018 AE        		.byte	-82
+ 557 0019 B0        		.byte	-80
+ 558 001a B3        		.byte	-77
+ 559 001b B6        		.byte	-74
+ 560 001c B9        		.byte	-71
+ 561 001d BC        		.byte	-68
+ 562 001e BF        		.byte	-65
+ 563 001f C1        		.byte	-63
+ 564 0020 C4        		.byte	-60
+ 565 0021 C7        		.byte	-57
+ 566 0022 C9        		.byte	-55
+ 567 0023 CC        		.byte	-52
+ 568 0024 CE        		.byte	-50
+ 569 0025 D1        		.byte	-47
+ 570 0026 D3        		.byte	-45
+ 571 0027 D5        		.byte	-43
+ 572 0028 D8        		.byte	-40
+ 573 0029 DA        		.byte	-38
+ 574 002a DC        		.byte	-36
+ 575 002b DE        		.byte	-34
+ 576 002c E0        		.byte	-32
+ 577 002d E2        		.byte	-30
+ 578 002e E4        		.byte	-28
+ 579 002f E6        		.byte	-26
+ 580 0030 E8        		.byte	-24
+ 581 0031 EA        		.byte	-22
+ 582 0032 EC        		.byte	-20
+ 583 0033 ED        		.byte	-19
+ 584 0034 EF        		.byte	-17
+ 585 0035 F0        		.byte	-16
+ 586 0036 F2        		.byte	-14
+ 587 0037 F3        		.byte	-13
+ 588 0038 F5        		.byte	-11
+ 589 0039 F6        		.byte	-10
+ 590 003a F7        		.byte	-9
+ 591 003b F8        		.byte	-8
+ 592 003c F9        		.byte	-7
+ 593 003d FA        		.byte	-6
+ 594 003e FB        		.byte	-5
+ 595 003f FC        		.byte	-4
+ 596 0040 FC        		.byte	-4
+ 597 0041 FD        		.byte	-3
+ 598 0042 FE        		.byte	-2
+ 599 0043 FE        		.byte	-2
+ 600 0044 FF        		.byte	-1
+ 601 0045 FF        		.byte	-1
+ 602 0046 FF        		.byte	-1
+ 603 0047 FF        		.byte	-1
+ 604 0048 FF        		.byte	-1
+ 605 0049 FF        		.byte	-1
+ 606 004a FF        		.byte	-1
+ 607 004b FF        		.byte	-1
+ 608 004c FF        		.byte	-1
+ 609 004d FF        		.byte	-1
+ 610 004e FF        		.byte	-1
+ 611 004f FE        		.byte	-2
+ 612 0050 FE        		.byte	-2
+ 613 0051 FD        		.byte	-3
+ 614 0052 FC        		.byte	-4
+ 615 0053 FC        		.byte	-4
+ 616 0054 FB        		.byte	-5
+ 617 0055 FA        		.byte	-6
+ 618 0056 F9        		.byte	-7
+ 619 0057 F8        		.byte	-8
+ 620 0058 F7        		.byte	-9
+ 621 0059 F6        		.byte	-10
+ 622 005a F5        		.byte	-11
+ 623 005b F3        		.byte	-13
+ 624 005c F2        		.byte	-14
+ 625 005d F0        		.byte	-16
+ 626 005e EF        		.byte	-17
+ 627 005f ED        		.byte	-19
+ 628 0060 EC        		.byte	-20
+ 629 0061 EA        		.byte	-22
+ 630 0062 E8        		.byte	-24
+ 631 0063 E6        		.byte	-26
+ 632 0064 E4        		.byte	-28
+ 633 0065 E2        		.byte	-30
+ 634 0066 E0        		.byte	-32
+ 635 0067 DE        		.byte	-34
+ 636 0068 DC        		.byte	-36
+ 637 0069 DA        		.byte	-38
+ 638 006a D8        		.byte	-40
+ 639 006b D5        		.byte	-43
+ 640 006c D3        		.byte	-45
+ 641 006d D1        		.byte	-47
+ 642 006e CE        		.byte	-50
+ 643 006f CC        		.byte	-52
+ 644 0070 C9        		.byte	-55
+ 645 0071 C7        		.byte	-57
+ 646 0072 C4        		.byte	-60
+ 647 0073 C1        		.byte	-63
+ 648 0074 BF        		.byte	-65
+ 649 0075 BC        		.byte	-68
+ 650 0076 B9        		.byte	-71
+ 651 0077 B6        		.byte	-74
+ 652 0078 B3        		.byte	-77
+ 653 0079 B0        		.byte	-80
+ 654 007a AE        		.byte	-82
+ 655 007b AB        		.byte	-85
+ 656 007c A8        		.byte	-88
+ 657 007d A5        		.byte	-91
+ 658 007e A2        		.byte	-94
+ 659 007f 9F        		.byte	-97
+ 660 0080 9C        		.byte	-100
+ 661 0081 98        		.byte	-104
+ 662 0082 95        		.byte	-107
+ 663 0083 92        		.byte	-110
+ 664 0084 8F        		.byte	-113
+ 665 0085 8C        		.byte	-116
+ 666 0086 89        		.byte	-119
+ 667 0087 86        		.byte	-122
+ 668 0088 83        		.byte	-125
+ 669 0089 80        		.byte	-128
+ 670 008a 7C        		.byte	124
+ 671 008b 79        		.byte	121
+ 672 008c 76        		.byte	118
+ 673 008d 73        		.byte	115
+ 674 008e 70        		.byte	112
+ 675 008f 6D        		.byte	109
+ 676 0090 6A        		.byte	106
+ 677 0091 67        		.byte	103
+ 678 0092 63        		.byte	99
+ 679 0093 60        		.byte	96
+ 680 0094 5D        		.byte	93
+ 681 0095 5A        		.byte	90
+ 682 0096 57        		.byte	87
+ 683 0097 54        		.byte	84
+ 684 0098 51        		.byte	81
+ 685 0099 4F        		.byte	79
+ 686 009a 4C        		.byte	76
+ 687 009b 49        		.byte	73
+ 688 009c 46        		.byte	70
+ 689 009d 43        		.byte	67
+ 690 009e 40        		.byte	64
+ 691 009f 3E        		.byte	62
+ 692 00a0 3B        		.byte	59
+ 693 00a1 38        		.byte	56
+ 694 00a2 36        		.byte	54
+ 695 00a3 33        		.byte	51
+ 696 00a4 31        		.byte	49
+ 697 00a5 2E        		.byte	46
+ 698 00a6 2C        		.byte	44
+ 699 00a7 2A        		.byte	42
+ 700 00a8 27        		.byte	39
+ 701 00a9 25        		.byte	37
+ 702 00aa 23        		.byte	35
+ 703 00ab 21        		.byte	33
+ 704 00ac 1F        		.byte	31
+ 705 00ad 1D        		.byte	29
+ 706 00ae 1B        		.byte	27
+ 707 00af 19        		.byte	25
+ 708 00b0 17        		.byte	23
+ 709 00b1 15        		.byte	21
+ 710 00b2 13        		.byte	19
+ 711 00b3 12        		.byte	18
+ 712 00b4 10        		.byte	16
+ 713 00b5 0F        		.byte	15
+ 714 00b6 0D        		.byte	13
+ 715 00b7 0C        		.byte	12
+ 716 00b8 0A        		.byte	10
+ 717 00b9 09        		.byte	9
+ 718 00ba 08        		.byte	8
+ 719 00bb 07        		.byte	7
+ 720 00bc 06        		.byte	6
+ 721 00bd 05        		.byte	5
+ 722 00be 04        		.byte	4
+ 723 00bf 03        		.byte	3
+ 724 00c0 03        		.byte	3
+ 725 00c1 02        		.byte	2
+ 726 00c2 01        		.byte	1
+ 727 00c3 01        		.byte	1
+ 728 00c4 00        		.byte	0
+ 729 00c5 00        		.byte	0
+ 730 00c6 00        		.byte	0
+ 731 00c7 00        		.byte	0
+ 732 00c8 00        		.byte	0
+ 733 00c9 00        		.byte	0
+ 734 00ca 00        		.byte	0
+ 735 00cb 00        		.byte	0
+ 736 00cc 00        		.byte	0
+ 737 00cd 00        		.byte	0
+ 738 00ce 00        		.byte	0
+ 739 00cf 01        		.byte	1
+ 740 00d0 01        		.byte	1
+ 741 00d1 02        		.byte	2
+ 742 00d2 03        		.byte	3
+ 743 00d3 03        		.byte	3
+ 744 00d4 04        		.byte	4
+ 745 00d5 05        		.byte	5
+ 746 00d6 06        		.byte	6
+ 747 00d7 07        		.byte	7
+ 748 00d8 08        		.byte	8
+ 749 00d9 09        		.byte	9
+ 750 00da 0A        		.byte	10
+ 751 00db 0C        		.byte	12
+ 752 00dc 0D        		.byte	13
+ 753 00dd 0F        		.byte	15
+ 754 00de 10        		.byte	16
+ 755 00df 12        		.byte	18
+ 756 00e0 13        		.byte	19
+ 757 00e1 15        		.byte	21
+ 758 00e2 17        		.byte	23
+ 759 00e3 19        		.byte	25
+ 760 00e4 1B        		.byte	27
+ 761 00e5 1D        		.byte	29
+ 762 00e6 1F        		.byte	31
+ 763 00e7 21        		.byte	33
+ 764 00e8 23        		.byte	35
+ 765 00e9 25        		.byte	37
+ 766 00ea 27        		.byte	39
+ 767 00eb 2A        		.byte	42
+ 768 00ec 2C        		.byte	44
+ 769 00ed 2E        		.byte	46
+ 770 00ee 31        		.byte	49
+ 771 00ef 33        		.byte	51
+ 772 00f0 36        		.byte	54
+ 773 00f1 38        		.byte	56
+ 774 00f2 3B        		.byte	59
+ 775 00f3 3E        		.byte	62
+ 776 00f4 40        		.byte	64
+ 777 00f5 43        		.byte	67
+ 778 00f6 46        		.byte	70
+ 779 00f7 49        		.byte	73
+ 780 00f8 4C        		.byte	76
+ 781 00f9 4F        		.byte	79
+ 782 00fa 51        		.byte	81
+ 783 00fb 54        		.byte	84
+ 784 00fc 57        		.byte	87
+ 785 00fd 5A        		.byte	90
+ 786 00fe 5D        		.byte	93
+ 787 00ff 60        		.byte	96
+ 788 0100 63        		.byte	99
+ 789 0101 67        		.byte	103
+ 790 0102 6A        		.byte	106
+ 791 0103 6D        		.byte	109
+ 792 0104 70        		.byte	112
+ 793 0105 73        		.byte	115
+ 794 0106 76        		.byte	118
+ 795 0107 79        		.byte	121
+ 796 0108 7C        		.byte	124
+ 797               		.lcomm NoteData,30
+ 870               	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 MIDIToneGenerator.c
+     /tmp/cc7M0io1.s:2      *ABS*:0000003f __SREG__
+     /tmp/cc7M0io1.s:3      *ABS*:0000003e __SP_H__
+     /tmp/cc7M0io1.s:4      *ABS*:0000003d __SP_L__
+     /tmp/cc7M0io1.s:5      *ABS*:00000034 __CCP__
+     /tmp/cc7M0io1.s:6      *ABS*:00000000 __tmp_reg__
+     /tmp/cc7M0io1.s:7      *ABS*:00000001 __zero_reg__
+     /tmp/cc7M0io1.s:19     .text.__vector_21:00000000 __vector_21
+                             .bss:00000000 NoteData
+     /tmp/cc7M0io1.s:540    .data:00000009 SineTable
+     /tmp/cc7M0io1.s:132    .text.EVENT_USB_Device_Connect:00000000 EVENT_USB_Device_Connect
+     /tmp/cc7M0io1.s:156    .text.EVENT_USB_Device_Disconnect:00000000 EVENT_USB_Device_Disconnect
+     /tmp/cc7M0io1.s:186    .text.EVENT_USB_Device_ControlRequest:00000000 EVENT_USB_Device_ControlRequest
+     /tmp/cc7M0io1.s:199    .text.EVENT_USB_Device_ConfigurationChanged:00000000 EVENT_USB_Device_ConfigurationChanged
+     /tmp/cc7M0io1.s:530    .data:00000000 Keyboard_MIDI_Interface
+     /tmp/cc7M0io1.s:233    .text.SetupHardware:00000000 SetupHardware
+     /tmp/cc7M0io1.s:310    .text.main:00000000 main
+
+UNDEFINED SYMBOLS
+MIDI_Device_ConfigureEndpoints
+USB_Init
+MIDI_Device_ReceiveEventPacket
+__mulsi3
+MIDI_Device_USBTask
+USB_USBTask
+__do_copy_data
+__do_clear_bss

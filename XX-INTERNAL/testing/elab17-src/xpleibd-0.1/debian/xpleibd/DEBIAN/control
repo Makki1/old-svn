@@ -1,0 +1,11 @@
+Package: xpleibd
+Version: 0.1
+Architecture: i386
+Maintainer: Michael Markstaller / Elaborated Networks GmbH for WireGate <devel@wiregate.de>
+Installed-Size: 124
+Depends: libc6 (>= 2.3), xpllib, xplhub
+Section: unknown
+Priority: extra
+Homepage: <insert the upstream URL, if relevant>
+Description: Gateway to send telegrams between xPL and eibd
+ pre-Alpha!

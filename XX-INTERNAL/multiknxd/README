@@ -1,0 +1,76 @@
+/* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+
+Notes on MODBUS:
+!!!INTERNAL!!! see http://www.intesis.com/pdf/IntesisBox_KNX_Modbus_RTU_master_datasheet_eng.pdf
+
+1) MODBUS CLIENT
+a) Unit 0 (handler: modbusknxraw?)
+- needs no config (but can have)
+- used to access EIB/KNX groupaddresses (RAW VALUES) directly witout any datapoint-type conversion.
+- can only get ONE KNX groupaddress per request! 
+- the server must know the length of the data! (1bit to 2 byte=1 16bit register, 4-14 bytes = 2+N registers)
+- eibd cache is used. Notes on this: 
+    Behavior: 
+    - if a value is in cache and not older than 3600secs (configurable globally) it is taken from there.
+    - if the value is not in cache or older than 3600secs (configurable globally) a read-request is sent onto KNX
+    - if the read-request fails it does NOT get repeated (until eibd restart). This is to prevent high load on KNX for unavailable data.
+    - it is HIGHLY recommended to have values from KNX devices getting sent cyclic or on events to fill the eibd-cache, so that never (or only once after a restart) is needed.
+- communication error signal (to eibd) on register 65535?
+- Configurable individually per point. Enable/Disable. Name/Description.
+
+Function
+b) Unit 1 (maybe) (handler: modbusknx?)
+- needs config
+- access KNX values locally converted by DPT according to config
+
+c) Unit 10-247 (maybe) (handler: modbusrtu?)
+- MODBUS TCP->RTU (serial) GATEWAY
+- communication error signal on KNX?
+
+2) MODBUS SERVER (handler: modbusserver?)
+- needs config
+- used to access other modbus CLIENTS (devices like chillers,venting,..) and transfer registers from/to KNX groupaddresses
+- communication error signal on KNX?
+- The points can be read from KNX. Configurable individually per point.
+- The points can be written from KNX. Configurable individually per point.
+- A write request can be sent to KNX following a change in the point’s value.
+- Configurable individually per point. Enable/Disable. Name/Description.
+- cycle/polling-interval/SBC
+- handling of bit-values??
+- Monitoring/Test-Tool/Debug-Port (like qHSMon?)?
+- config-Tool XLS?
+
+
+############################
+Notes on configuration-file:
+############################
+- converted at daemon-startup from old config?
+- modules.conf is in JSON-format using a simple, flexible syntax:
+{ "global": {
+"somesetting" : "somevalue",
+"someothersetting" : "someothervalue",
+},
+{ "modules" : [
+{ 
+"name" : "ow1",
+"handler" : "owhandler", 
+"familys" : [
+{ 
+"type": "DS1820",
+"sensors": {
+"id" : "28.DA63EC010000",
+"ga": "1/2/3",
+...
+}, /* modules-array */
+{ 
+"name" : "modbusX",
+"handler" : "modbusX", 
+"registers" : [
+{ ga,
+dpt / register-type 8/16/32/float
+readonly/writeonly/rw
+name/description
+pollinginterval / groupcachetimeout
+...
+
+

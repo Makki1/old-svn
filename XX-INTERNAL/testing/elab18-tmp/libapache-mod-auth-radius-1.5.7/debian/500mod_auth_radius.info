@@ -1,0 +1,2 @@
+LoadModule: radius_auth_module /usr/lib/apache/1.3/mod_auth_radius.so
+Description: This modules provide radius authentication for apache

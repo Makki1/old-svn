@@ -1,0 +1,113 @@
+   1               		.file	"diskio.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__CCP__  = 0x34
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+  15               	.Ltext0:
+  16               		.section	.text.disk_initialize,"ax",@progbits
+  17               	.global	disk_initialize
+  19               	disk_initialize:
+  20               	.LFB204:
+  21               	.LSM0:
+  22               	.LVL0:
+  23               	/* prologue: function */
+  24               	/* frame size = 0 */
+  25               	.LSM1:
+  26 0000 80E0      		ldi r24,lo8(0)
+  27               	.LVL1:
+  28               	/* epilogue start */
+  29 0002 0895      		ret
+  30               	.LFE204:
+  32               		.section	.text.disk_status,"ax",@progbits
+  33               	.global	disk_status
+  35               	disk_status:
+  36               	.LFB205:
+  37               	.LSM2:
+  38               	.LVL2:
+  39               	/* prologue: function */
+  40               	/* frame size = 0 */
+  41               	.LSM3:
+  42 0000 80E0      		ldi r24,lo8(0)
+  43               	.LVL3:
+  44               	/* epilogue start */
+  45 0002 0895      		ret
+  46               	.LFE205:
+  48               		.section	.text.disk_write,"ax",@progbits
+  49               	.global	disk_write
+  51               	disk_write:
+  52               	.LFB207:
+  53               	.LSM4:
+  54               	.LVL4:
+  55 0000 0F93      		push r16
+  56               	.LVL5:
+  57               	/* prologue: function */
+  58               	/* frame size = 0 */
+  59 0002 FB01      		movw r30,r22
+  60 0004 CA01      		movw r24,r20
+  61 0006 B901      		movw r22,r18
+  62               	.LVL6:
+  63               	.LSM5:
+  64 0008 402F      		mov r20,r16
+  65               	.LVL7:
+  66 000a 50E0      		ldi r21,lo8(0)
+  67               	.LVL8:
+  68 000c 9F01      		movw r18,r30
+  69               	.LVL9:
+  70 000e 0E94 0000 		call DataflashManager_WriteBlocks_RAM
+  71               	.LVL10:
+  72               	.LSM6:
+  73 0012 80E0      		ldi r24,lo8(0)
+  74               	/* epilogue start */
+  75 0014 0F91      		pop r16
+  76               	.LVL11:
+  77 0016 0895      		ret
+  78               	.LFE207:
+  80               		.section	.text.disk_read,"ax",@progbits
+  81               	.global	disk_read
+  83               	disk_read:
+  84               	.LFB206:
+  85               	.LSM7:
+  86               	.LVL12:
+  87 0000 0F93      		push r16
+  88               	.LVL13:
+  89               	/* prologue: function */
+  90               	/* frame size = 0 */
+  91 0002 FB01      		movw r30,r22
+  92 0004 CA01      		movw r24,r20
+  93 0006 B901      		movw r22,r18
+  94               	.LVL14:
+  95               	.LSM8:
+  96 0008 402F      		mov r20,r16
+  97               	.LVL15:
+  98 000a 50E0      		ldi r21,lo8(0)
+  99               	.LVL16:
+ 100 000c 9F01      		movw r18,r30
+ 101               	.LVL17:
+ 102 000e 0E94 0000 		call DataflashManager_ReadBlocks_RAM
+ 103               	.LVL18:
+ 104               	.LSM9:
+ 105 0012 80E0      		ldi r24,lo8(0)
+ 106               	/* epilogue start */
+ 107 0014 0F91      		pop r16
+ 108               	.LVL19:
+ 109 0016 0895      		ret
+ 110               	.LFE206:
+ 160               	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 diskio.c
+     /tmp/cc5pk3WV.s:2      *ABS*:0000003f __SREG__
+     /tmp/cc5pk3WV.s:3      *ABS*:0000003e __SP_H__
+     /tmp/cc5pk3WV.s:4      *ABS*:0000003d __SP_L__
+     /tmp/cc5pk3WV.s:5      *ABS*:00000034 __CCP__
+     /tmp/cc5pk3WV.s:6      *ABS*:00000000 __tmp_reg__
+     /tmp/cc5pk3WV.s:7      *ABS*:00000001 __zero_reg__
+     /tmp/cc5pk3WV.s:19     .text.disk_initialize:00000000 disk_initialize
+     /tmp/cc5pk3WV.s:35     .text.disk_status:00000000 disk_status
+     /tmp/cc5pk3WV.s:51     .text.disk_write:00000000 disk_write
+     /tmp/cc5pk3WV.s:83     .text.disk_read:00000000 disk_read
+
+UNDEFINED SYMBOLS
+DataflashManager_WriteBlocks_RAM
+DataflashManager_ReadBlocks_RAM

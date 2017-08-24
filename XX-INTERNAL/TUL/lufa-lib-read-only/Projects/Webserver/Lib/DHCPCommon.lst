@@ -1,0 +1,132 @@
+   1               		.file	"DHCPCommon.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__CCP__  = 0x34
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+  15               	.Ltext0:
+  16               		.section	.text.DHCPCommon_GetOption,"ax",@progbits
+  17               	.global	DHCPCommon_GetOption
+  19               	DHCPCommon_GetOption:
+  20               	.LFB8:
+  21               	.LSM0:
+  22               	.LVL0:
+  23               	/* prologue: function */
+  24               	/* frame size = 0 */
+  25 0000 FC01      		movw r30,r24
+  26 0002 DA01      		movw r26,r20
+  27 0004 00C0      		rjmp .L2
+  28               	.LVL1:
+  29               	.L6:
+  30 0006 4181      		ldd r20,Z+1
+  31               	.LSM1:
+  32 0008 2617      		cp r18,r22
+  33 000a 01F4      		brne .L3
+  34               	.LSM2:
+  35 000c 50E0      		ldi r21,lo8(0)
+  36 000e 3296      		adiw r30,2
+  37 0010 CD01      		movw r24,r26
+  38 0012 BF01      		movw r22,r30
+  39               	.LVL2:
+  40 0014 0E94 0000 		call memcpy
+  41               	.LVL3:
+  42 0018 81E0      		ldi r24,lo8(1)
+  43 001a 0895      		ret
+  44               	.LVL4:
+  45               	.L3:
+  46               	.LSM3:
+  47 001c 842F      		mov r24,r20
+  48 001e 90E0      		ldi r25,lo8(0)
+  49 0020 0296      		adiw r24,2
+  50 0022 E80F      		add r30,r24
+  51 0024 F91F      		adc r31,r25
+  52               	.LVL5:
+  53               	.L2:
+  54               	.LSM4:
+  55 0026 2081      		ld r18,Z
+  56 0028 2F3F      		cpi r18,lo8(-1)
+  57 002a 01F4      		brne .L6
+  58 002c 80E0      		ldi r24,lo8(0)
+  59               	.LSM5:
+  60 002e 0895      		ret
+  61               	.LFE8:
+  63               		.section	.text.DHCPCommon_SetOption,"ax",@progbits
+  64               	.global	DHCPCommon_SetOption
+  66               	DHCPCommon_SetOption:
+  67               	.LFB7:
+  68               	.LSM6:
+  69               	.LVL6:
+  70 0000 EF92      		push r14
+  71 0002 FF92      		push r15
+  72 0004 0F93      		push r16
+  73 0006 1F93      		push r17
+  74 0008 CF93      		push r28
+  75 000a DF93      		push r29
+  76               	/* prologue: function */
+  77               	/* frame size = 0 */
+  78 000c EC01      		movw r28,r24
+  79 000e F42E      		mov r15,r20
+  80 0010 00C0      		rjmp .L9
+  81               	.LVL7:
+  82               	.L10:
+  83               	.LSM7:
+  84 0012 8981      		ldd r24,Y+1
+  85 0014 90E0      		ldi r25,lo8(0)
+  86 0016 0296      		adiw r24,2
+  87 0018 C80F      		add r28,r24
+  88 001a D91F      		adc r29,r25
+  89               	.LVL8:
+  90               	.L9:
+  91               	.LSM8:
+  92 001c E880      		ld r14,Y
+  93 001e 8FEF      		ldi r24,lo8(-1)
+  94 0020 E816      		cp r14,r24
+  95 0022 01F4      		brne .L10
+  96               	.LSM9:
+  97 0024 6883      		st Y,r22
+  98               	.LSM10:
+  99 0026 F982      		std Y+1,r15
+ 100               	.LSM11:
+ 101 0028 0F2D      		mov r16,r15
+ 102 002a 10E0      		ldi r17,lo8(0)
+ 103 002c CE01      		movw r24,r28
+ 104 002e 0296      		adiw r24,2
+ 105 0030 B901      		movw r22,r18
+ 106               	.LVL9:
+ 107 0032 A801      		movw r20,r16
+ 108 0034 0E94 0000 		call memcpy
+ 109               	.LVL10:
+ 110               	.LSM12:
+ 111 0038 0C0F      		add r16,r28
+ 112 003a 1D1F      		adc r17,r29
+ 113 003c F801      		movw r30,r16
+ 114 003e E282      		std Z+2,r14
+ 115               	.LSM13:
+ 116 0040 8F2D      		mov r24,r15
+ 117 0042 8E5F      		subi r24,lo8(-(2))
+ 118               	/* epilogue start */
+ 119 0044 DF91      		pop r29
+ 120 0046 CF91      		pop r28
+ 121               	.LVL11:
+ 122 0048 1F91      		pop r17
+ 123 004a 0F91      		pop r16
+ 124 004c FF90      		pop r15
+ 125               	.LVL12:
+ 126 004e EF90      		pop r14
+ 127 0050 0895      		ret
+ 128               	.LFE7:
+ 162               	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 DHCPCommon.c
+     /tmp/ccal1zFK.s:2      *ABS*:0000003f __SREG__
+     /tmp/ccal1zFK.s:3      *ABS*:0000003e __SP_H__
+     /tmp/ccal1zFK.s:4      *ABS*:0000003d __SP_L__
+     /tmp/ccal1zFK.s:5      *ABS*:00000034 __CCP__
+     /tmp/ccal1zFK.s:6      *ABS*:00000000 __tmp_reg__
+     /tmp/ccal1zFK.s:7      *ABS*:00000001 __zero_reg__
+     /tmp/ccal1zFK.s:19     .text.DHCPCommon_GetOption:00000000 DHCPCommon_GetOption
+     /tmp/ccal1zFK.s:66     .text.DHCPCommon_SetOption:00000000 DHCPCommon_SetOption
+
+UNDEFINED SYMBOLS
+memcpy

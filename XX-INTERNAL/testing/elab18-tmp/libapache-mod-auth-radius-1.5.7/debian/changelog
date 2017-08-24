@@ -1,0 +1,65 @@
+libapache-mod-auth-radius (1.5.7-8) unstable; urgency=high
+
+  * Implemented the authn_provider/ap_register_provider stuff required
+    for the module to work under Apache 2.1 and higher, inspired by
+    the implementation in mod_auth_xradius and mod_authnz_ldap.
+    Now one can set 'AuthBasicProvider radius' and AAA should work,
+    finally closes: #439527.
+  * Improved the handling of the problem where one declares AuthRadiusActive,
+    but is missing the server IP - usually the result of doing
+    AddRadiusAuth in the general server config, but nothing in the
+    virtual host config. Now the module logs a warning message for that.
+
+ -- Josip Rodin <joy-packages@debian.org>  Wed,  5 Mar 2008 23:46:28 +0100
+
+libapache-mod-auth-radius (1.5.7-7) unstable; urgency=high
+
+  * New maintainer.
+  * Applied patch 002.CAN2005-0108.diff against the Apache 2.0 source file.
+  * Replaced the building of the libapache-mod-auth-radius binary package
+    with the building of the libapache2-mod-auth-radius binary package,
+    because Apache 1.x has been removed.
+  * Stole the a2* postinst/prerm snippets from libapache2-mod-php5 :)
+  * Some tidyups in the packaging.
+
+ -- Josip Rodin <joy-packages@debian.org>  Tue, 24 Jul 2007 11:53:32 +0200
+
+libapache-mod-auth-radius (1.5.7-6) unstable; urgency=high
+
+  * [SECURITY] Fix Denial of service:
+    - Add patch 002.CAN2005-0108.diff. (CAN2005-0108)
+    (Closes: #289976)
+
+ -- Fabio M. Di Nitto <fabbione@fabbione.net>  Wed, 19 Jan 2005 11:07:11 +0100
+
+libapache-mod-auth-radius (1.5.7-5) unstable; urgency=low
+
+  * Typo fix in postinst/prerm
+
+ -- Fabio M. Di Nitto <fabbione@fabbione.net>  Sat, 08 Nov 2003 18:08:56 +0100
+
+libapache-mod-auth-radius (1.5.7-4) unstable; urgency=low
+
+  * Updated postinst and postrm to be more gently with users
+
+ -- Fabio M. Di Nitto <fabbione@fabbione.net>  Wed, 29 Oct 2003 06:20:24 +0100
+
+libapache-mod-auth-radius (1.5.7-3) unstable; urgency=low
+
+  * Package cleanup and updated to use modules-config
+  * Standard-Version: 3.6.1
+
+ -- Fabio M. Di Nitto <fabbione@fabbione.net>  Mon, 06 Oct 2003 18:05:17 +0200
+
+libapache-mod-auth-radius (1.5.7-2) unstable; urgency=low
+
+  * Build-deps are now Policy compliant (Closes: #201462)
+  * Standard-Version: 3.6.0
+
+ -- Fabio M. Di Nitto <fabbione@fabbione.net>  Wed, 16 Jul 2003 12:18:24 +0200
+
+libapache-mod-auth-radius (1.5.7-1) unstable; urgency=low
+
+  * First debian package (Closes: #189689)
+
+ -- Fabio M. Di Nitto <fabbione@fabbione.net>  Sat, 19 Apr 2003 20:08:57 +0200

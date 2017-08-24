@@ -1,0 +1,195 @@
+   1               		.file	"uip-split.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__CCP__  = 0x34
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+  15               	.Ltext0:
+  16               		.section	.text.uip_split_output,"ax",@progbits
+  17               	.global	uip_split_output
+  19               	uip_split_output:
+  20               	.LFB217:
+  21               	.LSM0:
+  22 0000 CF93      		push r28
+  23 0002 DF93      		push r29
+  24               	/* prologue: function */
+  25               	/* frame size = 0 */
+  26               	.LSM1:
+  27 0004 C0E0      		ldi r28,lo8(uip_buf+14)
+  28 0006 D0E0      		ldi r29,hi8(uip_buf+14)
+  29 0008 8091 0000 		lds r24,uip_buf+23
+  30 000c 8630      		cpi r24,lo8(6)
+  31 000e 01F0      		breq .+2
+  32 0010 00C0      		rjmp .L2
+  33 0012 8091 0000 		lds r24,uip_len
+  34 0016 9091 0000 		lds r25,(uip_len)+1
+  35 001a 8A5E      		subi r24,lo8(1514)
+  36 001c 9540      		sbci r25,hi8(1514)
+  37 001e 01F0      		breq .+2
+  38 0020 00C0      		rjmp .L2
+  39               	.LSM2:
+  40 0022 80E1      		ldi r24,lo8(784)
+  41 0024 93E0      		ldi r25,hi8(784)
+  42 0026 9093 0000 		sts (uip_len)+1,r25
+  43 002a 8093 0000 		sts uip_len,r24
+  44               	.LSM3:
+  45 002e 83E0      		ldi r24,lo8(3)
+  46 0030 8093 0000 		sts uip_buf+16,r24
+  47               	.LSM4:
+  48 0034 82E0      		ldi r24,lo8(2)
+  49 0036 8093 0000 		sts uip_buf+17,r24
+  50               	.LSM5:
+  51 003a 1092 0000 		sts (uip_buf+50)+1,__zero_reg__
+  52 003e 1092 0000 		sts uip_buf+50,__zero_reg__
+  53               	.LSM6:
+  54 0042 0E94 0000 		call uip_tcpchksum
+  55 0046 8095      		com r24
+  56 0048 9095      		com r25
+  57 004a 9093 0000 		sts (uip_buf+50)+1,r25
+  58 004e 8093 0000 		sts uip_buf+50,r24
+  59               	.LSM7:
+  60 0052 1092 0000 		sts (uip_buf+24)+1,__zero_reg__
+  61 0056 1092 0000 		sts uip_buf+24,__zero_reg__
+  62               	.LSM8:
+  63 005a 0E94 0000 		call uip_ipchksum
+  64 005e 8095      		com r24
+  65 0060 9095      		com r25
+  66 0062 9093 0000 		sts (uip_buf+24)+1,r25
+  67 0066 8093 0000 		sts uip_buf+24,r24
+  68               	.LSM9:
+  69 006a 8091 0000 		lds r24,USB_CurrentMode
+  70 006e 4091 0000 		lds r20,uip_len
+  71 0072 5091 0000 		lds r21,(uip_len)+1
+  72 0076 8130      		cpi r24,lo8(1)
+  73 0078 01F4      		brne .L3
+  74               	.LSM10:
+  75 007a 80E0      		ldi r24,lo8(Ethernet_RNDIS_Interface_Device)
+  76 007c 90E0      		ldi r25,hi8(Ethernet_RNDIS_Interface_Device)
+  77 007e BE01      		movw r22,r28
+  78 0080 6E50      		subi r22,lo8(-(-14))
+  79 0082 7040      		sbci r23,hi8(-(-14))
+  80 0084 0E94 0000 		call RNDIS_Device_SendPacket
+  81 0088 00C0      		rjmp .L4
+  82               	.L3:
+  83               	.LSM11:
+  84 008a 80E0      		ldi r24,lo8(Ethernet_RNDIS_Interface_Host)
+  85 008c 90E0      		ldi r25,hi8(Ethernet_RNDIS_Interface_Host)
+  86 008e BE01      		movw r22,r28
+  87 0090 6E50      		subi r22,lo8(-(-14))
+  88 0092 7040      		sbci r23,hi8(-(-14))
+  89 0094 0E94 0000 		call RNDIS_Host_SendPacket
+  90               	.L4:
+  91               	.LSM12:
+  92 0098 80E1      		ldi r24,lo8(784)
+  93 009a 93E0      		ldi r25,hi8(784)
+  94 009c 9093 0000 		sts (uip_len)+1,r25
+  95 00a0 8093 0000 		sts uip_len,r24
+  96               	.LSM13:
+  97 00a4 83E0      		ldi r24,lo8(3)
+  98 00a6 8093 0000 		sts uip_buf+16,r24
+  99               	.LSM14:
+ 100 00aa 82E0      		ldi r24,lo8(2)
+ 101 00ac 8093 0000 		sts uip_buf+17,r24
+ 102               	.LSM15:
+ 103 00b0 8091 0000 		lds r24,uip_appdata
+ 104 00b4 9091 0000 		lds r25,(uip_appdata)+1
+ 105 00b8 FC01      		movw r30,r24
+ 106 00ba DC01      		movw r26,r24
+ 107 00bc A652      		subi r26,lo8(-(730))
+ 108 00be BD4F      		sbci r27,hi8(-(730))
+ 109 00c0 8AED      		ldi r24,lo8(730)
+ 110 00c2 92E0      		ldi r25,hi8(730)
+ 111               	.L5:
+ 112 00c4 0D90      		ld r0,X+
+ 113 00c6 0192      		st Z+,r0
+ 114 00c8 0197      		sbiw r24,1
+ 115 00ca 01F4      		brne .L5
+ 116               	.LSM16:
+ 117 00cc 80E0      		ldi r24,lo8(uip_buf+38)
+ 118 00ce 90E0      		ldi r25,hi8(uip_buf+38)
+ 119 00d0 6AED      		ldi r22,lo8(730)
+ 120 00d2 72E0      		ldi r23,hi8(730)
+ 121 00d4 0E94 0000 		call uip_add32
+ 122               	.LSM17:
+ 123 00d8 8091 0000 		lds r24,uip_acc32
+ 124 00dc 8093 0000 		sts uip_buf+38,r24
+ 125               	.LSM18:
+ 126 00e0 8091 0000 		lds r24,uip_acc32+1
+ 127 00e4 8093 0000 		sts uip_buf+39,r24
+ 128               	.LSM19:
+ 129 00e8 8091 0000 		lds r24,uip_acc32+2
+ 130 00ec 8093 0000 		sts uip_buf+40,r24
+ 131               	.LSM20:
+ 132 00f0 8091 0000 		lds r24,uip_acc32+3
+ 133 00f4 8093 0000 		sts uip_buf+41,r24
+ 134               	.LSM21:
+ 135 00f8 1092 0000 		sts (uip_buf+50)+1,__zero_reg__
+ 136 00fc 1092 0000 		sts uip_buf+50,__zero_reg__
+ 137               	.LSM22:
+ 138 0100 0E94 0000 		call uip_tcpchksum
+ 139 0104 8095      		com r24
+ 140 0106 9095      		com r25
+ 141 0108 9093 0000 		sts (uip_buf+50)+1,r25
+ 142 010c 8093 0000 		sts uip_buf+50,r24
+ 143               	.LSM23:
+ 144 0110 1092 0000 		sts (uip_buf+24)+1,__zero_reg__
+ 145 0114 1092 0000 		sts uip_buf+24,__zero_reg__
+ 146               	.LSM24:
+ 147 0118 0E94 0000 		call uip_ipchksum
+ 148 011c 8095      		com r24
+ 149 011e 9095      		com r25
+ 150 0120 9093 0000 		sts (uip_buf+24)+1,r25
+ 151 0124 8093 0000 		sts uip_buf+24,r24
+ 152               	.L2:
+ 153               	.LSM25:
+ 154 0128 8091 0000 		lds r24,USB_CurrentMode
+ 155 012c 4091 0000 		lds r20,uip_len
+ 156 0130 5091 0000 		lds r21,(uip_len)+1
+ 157 0134 8130      		cpi r24,lo8(1)
+ 158 0136 01F4      		brne .L8
+ 159               	.LSM26:
+ 160 0138 80E0      		ldi r24,lo8(Ethernet_RNDIS_Interface_Device)
+ 161 013a 90E0      		ldi r25,hi8(Ethernet_RNDIS_Interface_Device)
+ 162 013c 60E0      		ldi r22,lo8(uip_buf)
+ 163 013e 70E0      		ldi r23,hi8(uip_buf)
+ 164 0140 0E94 0000 		call RNDIS_Device_SendPacket
+ 165 0144 00C0      		rjmp .L9
+ 166               	.L8:
+ 167               	.LSM27:
+ 168 0146 80E0      		ldi r24,lo8(Ethernet_RNDIS_Interface_Host)
+ 169 0148 90E0      		ldi r25,hi8(Ethernet_RNDIS_Interface_Host)
+ 170 014a 60E0      		ldi r22,lo8(uip_buf)
+ 171 014c 70E0      		ldi r23,hi8(uip_buf)
+ 172 014e 0E94 0000 		call RNDIS_Host_SendPacket
+ 173               	.L9:
+ 174               	/* epilogue start */
+ 175               	.LSM28:
+ 176 0152 DF91      		pop r29
+ 177 0154 CF91      		pop r28
+ 178 0156 0895      		ret
+ 179               	.LFE217:
+ 205               	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 uip-split.c
+     /tmp/ccPS1jsO.s:2      *ABS*:0000003f __SREG__
+     /tmp/ccPS1jsO.s:3      *ABS*:0000003e __SP_H__
+     /tmp/ccPS1jsO.s:4      *ABS*:0000003d __SP_L__
+     /tmp/ccPS1jsO.s:5      *ABS*:00000034 __CCP__
+     /tmp/ccPS1jsO.s:6      *ABS*:00000000 __tmp_reg__
+     /tmp/ccPS1jsO.s:7      *ABS*:00000001 __zero_reg__
+     /tmp/ccPS1jsO.s:19     .text.uip_split_output:00000000 uip_split_output
+
+UNDEFINED SYMBOLS
+uip_buf
+uip_len
+uip_tcpchksum
+uip_ipchksum
+USB_CurrentMode
+Ethernet_RNDIS_Interface_Device
+RNDIS_Device_SendPacket
+Ethernet_RNDIS_Interface_Host
+RNDIS_Host_SendPacket
+uip_appdata
+uip_add32
+uip_acc32

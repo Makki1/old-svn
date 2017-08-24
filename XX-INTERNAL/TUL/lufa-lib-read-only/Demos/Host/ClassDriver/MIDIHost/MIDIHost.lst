@@ -1,0 +1,883 @@
+   1               		.file	"MIDIHost.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__CCP__  = 0x34
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+  15               	.Ltext0:
+  16               		.section	.text.EVENT_USB_Host_DeviceEnumerationFailed,"ax",@progbits
+  17               	.global	EVENT_USB_Host_DeviceEnumerationFailed
+  19               	EVENT_USB_Host_DeviceEnumerationFailed:
+  20               	.LFB154:
+  21               	.LSM0:
+  22               	.LVL0:
+  23               	/* prologue: function */
+  24               	/* frame size = 0 */
+  25               	.LSM1:
+  26 0000 9091 0000 		lds r25,USB_HostState
+  27 0004 2DB7      		in r18,__SP_L__
+  28 0006 3EB7      		in r19,__SP_H__
+  29 0008 2850      		subi r18,lo8(-(-8))
+  30 000a 3040      		sbci r19,hi8(-(-8))
+  31 000c 0FB6      		in __tmp_reg__,__SREG__
+  32 000e F894      		cli
+  33 0010 3EBF      		out __SP_H__,r19
+  34 0012 0FBE      		out __SREG__,__tmp_reg__
+  35 0014 2DBF      		out __SP_L__,r18
+  36 0016 EDB7      		in r30,__SP_L__
+  37 0018 FEB7      		in r31,__SP_H__
+  38 001a 3196      		adiw r30,1
+  39 001c 20E0      		ldi r18,lo8(__c.4676)
+  40 001e 30E0      		ldi r19,hi8(__c.4676)
+  41 0020 ADB7      		in r26,__SP_L__
+  42 0022 BEB7      		in r27,__SP_H__
+  43 0024 1296      		adiw r26,1+1
+  44 0026 3C93      		st X,r19
+  45 0028 2E93      		st -X,r18
+  46 002a 1197      		sbiw r26,1
+  47 002c 8283      		std Z+2,r24
+  48 002e 1382      		std Z+3,__zero_reg__
+  49 0030 6483      		std Z+4,r22
+  50 0032 1582      		std Z+5,__zero_reg__
+  51 0034 9683      		std Z+6,r25
+  52 0036 1782      		std Z+7,__zero_reg__
+  53 0038 0E94 0000 		call printf_P
+  54               	.LVL1:
+  55               	.LBB48:
+  56               	.LBB49:
+  57               	.LSM2:
+  58 003c 8BB1      		in r24,43-32
+  59 003e 8F70      		andi r24,lo8(15)
+  60 0040 8069      		ori r24,lo8(-112)
+  61 0042 8BB9      		out 43-32,r24
+  62 0044 2DB7      		in r18,__SP_L__
+  63 0046 3EB7      		in r19,__SP_H__
+  64 0048 285F      		subi r18,lo8(-(8))
+  65 004a 3F4F      		sbci r19,hi8(-(8))
+  66 004c 0FB6      		in __tmp_reg__,__SREG__
+  67 004e F894      		cli
+  68 0050 3EBF      		out __SP_H__,r19
+  69 0052 0FBE      		out __SREG__,__tmp_reg__
+  70 0054 2DBF      		out __SP_L__,r18
+  71               	/* epilogue start */
+  72               	.LBE49:
+  73               	.LBE48:
+  74               	.LSM3:
+  75 0056 0895      		ret
+  76               	.LFE154:
+  78               		.section	.text.EVENT_USB_Host_HostError,"ax",@progbits
+  79               	.global	EVENT_USB_Host_HostError
+  81               	EVENT_USB_Host_HostError:
+  82               	.LFB153:
+  83               	.LSM4:
+  84               	.LVL2:
+  85 0000 1F93      		push r17
+  86               	/* prologue: function */
+  87               	/* frame size = 0 */
+  88 0002 182F      		mov r17,r24
+  89               	.LSM5:
+  90 0004 0E94 0000 		call USB_Disable
+  91               	.LVL3:
+  92               	.LSM6:
+  93 0008 00D0      		rcall .
+  94 000a 00D0      		rcall .
+  95 000c EDB7      		in r30,__SP_L__
+  96 000e FEB7      		in r31,__SP_H__
+  97 0010 3196      		adiw r30,1
+  98 0012 80E0      		ldi r24,lo8(__c.4668)
+  99 0014 90E0      		ldi r25,hi8(__c.4668)
+ 100 0016 ADB7      		in r26,__SP_L__
+ 101 0018 BEB7      		in r27,__SP_H__
+ 102 001a 1296      		adiw r26,1+1
+ 103 001c 9C93      		st X,r25
+ 104 001e 8E93      		st -X,r24
+ 105 0020 1197      		sbiw r26,1
+ 106 0022 1283      		std Z+2,r17
+ 107 0024 1382      		std Z+3,__zero_reg__
+ 108 0026 0E94 0000 		call printf_P
+ 109               	.LBB50:
+ 110               	.LBB51:
+ 111               	.LSM7:
+ 112 002a 8BB1      		in r24,43-32
+ 113 002c 8F70      		andi r24,lo8(15)
+ 114 002e 8069      		ori r24,lo8(-112)
+ 115 0030 8BB9      		out 43-32,r24
+ 116 0032 0F90      		pop __tmp_reg__
+ 117 0034 0F90      		pop __tmp_reg__
+ 118 0036 0F90      		pop __tmp_reg__
+ 119 0038 0F90      		pop __tmp_reg__
+ 120               	.L4:
+ 121 003a 00C0      		rjmp .L4
+ 122               	.LBE51:
+ 123               	.LBE50:
+ 124               	.LFE153:
+ 126               		.section	.text.EVENT_USB_Host_DeviceUnattached,"ax",@progbits
+ 127               	.global	EVENT_USB_Host_DeviceUnattached
+ 129               	EVENT_USB_Host_DeviceUnattached:
+ 130               	.LFB151:
+ 131               	.LSM8:
+ 132               	/* prologue: function */
+ 133               	/* frame size = 0 */
+ 134               	.LSM9:
+ 135 0000 80E0      		ldi r24,lo8(__c.4646)
+ 136 0002 90E0      		ldi r25,hi8(__c.4646)
+ 137 0004 0E94 0000 		call puts_P
+ 138               	.LBB52:
+ 139               	.LBB53:
+ 140               	.LSM10:
+ 141 0008 8BB1      		in r24,43-32
+ 142 000a 8F70      		andi r24,lo8(15)
+ 143 000c 8061      		ori r24,lo8(16)
+ 144 000e 8BB9      		out 43-32,r24
+ 145               	/* epilogue start */
+ 146               	.LBE53:
+ 147               	.LBE52:
+ 148               	.LSM11:
+ 149 0010 0895      		ret
+ 150               	.LFE151:
+ 152               		.section	.text.EVENT_USB_Host_DeviceAttached,"ax",@progbits
+ 153               	.global	EVENT_USB_Host_DeviceAttached
+ 155               	EVENT_USB_Host_DeviceAttached:
+ 156               	.LFB150:
+ 157               	.LSM12:
+ 158               	/* prologue: function */
+ 159               	/* frame size = 0 */
+ 160               	.LSM13:
+ 161 0000 80E0      		ldi r24,lo8(__c.4641)
+ 162 0002 90E0      		ldi r25,hi8(__c.4641)
+ 163 0004 0E94 0000 		call puts_P
+ 164               	.LBB54:
+ 165               	.LBB55:
+ 166               	.LSM14:
+ 167 0008 8BB1      		in r24,43-32
+ 168 000a 8F70      		andi r24,lo8(15)
+ 169 000c 806A      		ori r24,lo8(-96)
+ 170 000e 8BB9      		out 43-32,r24
+ 171               	/* epilogue start */
+ 172               	.LBE55:
+ 173               	.LBE54:
+ 174               	.LSM15:
+ 175 0010 0895      		ret
+ 176               	.LFE150:
+ 178               		.section	.text.EVENT_USB_Host_DeviceEnumerationComplete,"ax",@progbits
+ 179               	.global	EVENT_USB_Host_DeviceEnumerationComplete
+ 181               	EVENT_USB_Host_DeviceEnumerationComplete:
+ 182               	.LFB152:
+ 183               	.LSM16:
+ 184 0000 0F93      		push r16
+ 185 0002 1F93      		push r17
+ 186 0004 DF93      		push r29
+ 187 0006 CF93      		push r28
+ 188 0008 CDB7      		in r28,__SP_L__
+ 189 000a DEB7      		in r29,__SP_H__
+ 190 000c C250      		subi r28,lo8(-(-514))
+ 191 000e D240      		sbci r29,hi8(-(-514))
+ 192 0010 0FB6      		in __tmp_reg__,__SREG__
+ 193 0012 F894      		cli
+ 194 0014 DEBF      		out __SP_H__,r29
+ 195 0016 0FBE      		out __SREG__,__tmp_reg__
+ 196 0018 CDBF      		out __SP_L__,r28
+ 197               	/* prologue: function */
+ 198               	/* frame size = 514 */
+ 199               	.LBB56:
+ 200               	.LBB57:
+ 201               	.LSM17:
+ 202 001a 8BB1      		in r24,43-32
+ 203 001c 8F70      		andi r24,lo8(15)
+ 204 001e 806A      		ori r24,lo8(-96)
+ 205 0020 8BB9      		out 43-32,r24
+ 206               	.LBE57:
+ 207               	.LBE56:
+ 208               	.LSM18:
+ 209 0022 8E01      		movw r16,r28
+ 210 0024 0D5F      		subi r16,lo8(-(3))
+ 211 0026 1F4F      		sbci r17,hi8(-(3))
+ 212 0028 81E0      		ldi r24,lo8(1)
+ 213 002a BE01      		movw r22,r28
+ 214 002c 6F5F      		subi r22,lo8(-(1))
+ 215 002e 7F4F      		sbci r23,hi8(-(1))
+ 216 0030 A801      		movw r20,r16
+ 217 0032 20E0      		ldi r18,lo8(512)
+ 218 0034 32E0      		ldi r19,hi8(512)
+ 219 0036 0E94 0000 		call USB_Host_GetDeviceConfigDescriptor
+ 220 003a 8823      		tst r24
+ 221 003c 01F0      		breq .L11
+ 222               	.LSM19:
+ 223 003e 80E0      		ldi r24,lo8(__c.4653)
+ 224 0040 90E0      		ldi r25,hi8(__c.4653)
+ 225 0042 00C0      		rjmp .L17
+ 226               	.L11:
+ 227               	.LSM20:
+ 228 0044 6981      		ldd r22,Y+1
+ 229 0046 7A81      		ldd r23,Y+2
+ 230               	.LVL4:
+ 231 0048 80E0      		ldi r24,lo8(Keyboard_MIDI_Interface)
+ 232 004a 90E0      		ldi r25,hi8(Keyboard_MIDI_Interface)
+ 233 004c A801      		movw r20,r16
+ 234 004e 0E94 0000 		call MIDI_Host_ConfigurePipes
+ 235 0052 8823      		tst r24
+ 236 0054 01F0      		breq .L13
+ 237               	.LSM21:
+ 238 0056 80E0      		ldi r24,lo8(__c.4655)
+ 239 0058 90E0      		ldi r25,hi8(__c.4655)
+ 240 005a 00C0      		rjmp .L17
+ 241               	.L13:
+ 242               	.LSM22:
+ 243 005c 81E0      		ldi r24,lo8(1)
+ 244 005e 0E94 0000 		call USB_Host_SetDeviceConfiguration
+ 245 0062 8823      		tst r24
+ 246 0064 01F0      		breq .L14
+ 247               	.LSM23:
+ 248 0066 80E0      		ldi r24,lo8(__c.4657)
+ 249 0068 90E0      		ldi r25,hi8(__c.4657)
+ 250               	.L17:
+ 251 006a 0E94 0000 		call puts_P
+ 252               	.LBB58:
+ 253               	.LBB59:
+ 254               	.LSM24:
+ 255 006e 8BB1      		in r24,43-32
+ 256 0070 8F70      		andi r24,lo8(15)
+ 257 0072 8069      		ori r24,lo8(-112)
+ 258 0074 00C0      		rjmp .L16
+ 259               	.L14:
+ 260               	.LBE59:
+ 261               	.LBE58:
+ 262               	.LSM25:
+ 263 0076 80E0      		ldi r24,lo8(__c.4659)
+ 264 0078 90E0      		ldi r25,hi8(__c.4659)
+ 265 007a 0E94 0000 		call puts_P
+ 266               	.LBB60:
+ 267               	.LBB61:
+ 268               	.LSM26:
+ 269 007e 8BB1      		in r24,43-32
+ 270 0080 8F70      		andi r24,lo8(15)
+ 271 0082 8066      		ori r24,lo8(96)
+ 272               	.L16:
+ 273 0084 8BB9      		out 43-32,r24
+ 274               	/* epilogue start */
+ 275               	.LBE61:
+ 276               	.LBE60:
+ 277               	.LSM27:
+ 278 0086 CE5F      		subi r28,lo8(-(514))
+ 279 0088 DD4F      		sbci r29,hi8(-(514))
+ 280 008a 0FB6      		in __tmp_reg__,__SREG__
+ 281 008c F894      		cli
+ 282 008e DEBF      		out __SP_H__,r29
+ 283 0090 0FBE      		out __SREG__,__tmp_reg__
+ 284 0092 CDBF      		out __SP_L__,r28
+ 285 0094 CF91      		pop r28
+ 286 0096 DF91      		pop r29
+ 287 0098 1F91      		pop r17
+ 288 009a 0F91      		pop r16
+ 289 009c 0895      		ret
+ 290               	.LFE152:
+ 292               		.section	.text.CheckJoystickMovement,"ax",@progbits
+ 293               	.global	CheckJoystickMovement
+ 295               	CheckJoystickMovement:
+ 296               	.LFB149:
+ 297               	.LSM28:
+ 298 0000 1F93      		push r17
+ 299 0002 DF93      		push r29
+ 300 0004 CF93      		push r28
+ 301 0006 00D0      		rcall .
+ 302 0008 00D0      		rcall .
+ 303 000a CDB7      		in r28,__SP_L__
+ 304 000c DEB7      		in r29,__SP_H__
+ 305               	/* prologue: function */
+ 306               	/* frame size = 4 */
+ 307               	.LBB62:
+ 308               	.LBB63:
+ 309               	.LSM29:
+ 310 000e 13B1      		in r17,35-32
+ 311 0010 8CB1      		in r24,44-32
+ 312 0012 8095      		com r24
+ 313 0014 90E0      		ldi r25,lo8(0)
+ 314 0016 8073      		andi r24,lo8(48)
+ 315 0018 9070      		andi r25,hi8(48)
+ 316 001a 9595      		asr r25
+ 317 001c 8795      		ror r24
+ 318 001e 1095      		com r17
+ 319 0020 107E      		andi r17,lo8(-32)
+ 320 0022 182B      		or r17,r24
+ 321               	.LBE63:
+ 322               	.LBE62:
+ 323               	.LSM30:
+ 324 0024 9091 0000 		lds r25,PrevJoystickStatus.4604
+ 325               	.LVL5:
+ 326 0028 9127      		eor r25,r17
+ 327               	.LSM31:
+ 328 002a 629B      		sbis 44-32,2
+ 329 002c 00C0      		rjmp .L19
+ 330 002e 30E0      		ldi r19,lo8(0)
+ 331               	.LVL6:
+ 332 0030 00C0      		rjmp .L20
+ 333               	.LVL7:
+ 334               	.L19:
+ 335 0032 39E0      		ldi r19,lo8(9)
+ 336               	.LVL8:
+ 337               	.L20:
+ 338               	.LSM32:
+ 339 0034 96FF      		sbrs r25,6
+ 340 0036 00C0      		rjmp .L21
+ 341               	.LVL9:
+ 342               	.LSM33:
+ 343 0038 16FD      		sbrc r17,6
+ 344 003a 00C0      		rjmp .L22
+ 345 003c 20E8      		ldi r18,lo8(-128)
+ 346               	.LVL10:
+ 347 003e 00C0      		rjmp .L37
+ 348               	.LVL11:
+ 349               	.L22:
+ 350 0040 20E9      		ldi r18,lo8(-112)
+ 351               	.LVL12:
+ 352               	.L37:
+ 353 0042 9CE3      		ldi r25,lo8(60)
+ 354               	.LVL13:
+ 355 0044 00C0      		rjmp .L23
+ 356               	.LVL14:
+ 357               	.L21:
+ 358               	.LSM34:
+ 359 0046 97FF      		sbrs r25,7
+ 360 0048 00C0      		rjmp .L24
+ 361               	.LVL15:
+ 362               	.LSM35:
+ 363 004a 17FD      		sbrc r17,7
+ 364 004c 00C0      		rjmp .L25
+ 365 004e 20E8      		ldi r18,lo8(-128)
+ 366               	.LVL16:
+ 367 0050 00C0      		rjmp .L33
+ 368               	.LVL17:
+ 369               	.L25:
+ 370 0052 20E9      		ldi r18,lo8(-112)
+ 371               	.LVL18:
+ 372               	.L33:
+ 373 0054 9DE3      		ldi r25,lo8(61)
+ 374               	.LVL19:
+ 375 0056 00C0      		rjmp .L23
+ 376               	.LVL20:
+ 377               	.L24:
+ 378               	.LSM36:
+ 379 0058 93FF      		sbrs r25,3
+ 380 005a 00C0      		rjmp .L26
+ 381               	.LVL21:
+ 382               	.LSM37:
+ 383 005c 13FD      		sbrc r17,3
+ 384 005e 00C0      		rjmp .L27
+ 385 0060 20E8      		ldi r18,lo8(-128)
+ 386               	.LVL22:
+ 387 0062 00C0      		rjmp .L35
+ 388               	.LVL23:
+ 389               	.L27:
+ 390 0064 20E9      		ldi r18,lo8(-112)
+ 391               	.LVL24:
+ 392               	.L35:
+ 393 0066 9EE3      		ldi r25,lo8(62)
+ 394               	.LVL25:
+ 395 0068 00C0      		rjmp .L23
+ 396               	.LVL26:
+ 397               	.L26:
+ 398               	.LSM38:
+ 399 006a 94FF      		sbrs r25,4
+ 400 006c 00C0      		rjmp .L28
+ 401               	.LSM39:
+ 402 006e 14FD      		sbrc r17,4
+ 403 0070 00C0      		rjmp .L29
+ 404 0072 20E8      		ldi r18,lo8(-128)
+ 405               	.LVL27:
+ 406 0074 00C0      		rjmp .L36
+ 407               	.LVL28:
+ 408               	.L29:
+ 409 0076 20E9      		ldi r18,lo8(-112)
+ 410               	.LVL29:
+ 411               	.L36:
+ 412 0078 9FE3      		ldi r25,lo8(63)
+ 413               	.LVL30:
+ 414 007a 00C0      		rjmp .L23
+ 415               	.LVL31:
+ 416               	.L28:
+ 417               	.LSM40:
+ 418 007c 95FF      		sbrs r25,5
+ 419 007e 00C0      		rjmp .L30
+ 420               	.LSM41:
+ 421 0080 15FD      		sbrc r17,5
+ 422 0082 00C0      		rjmp .L31
+ 423 0084 20E8      		ldi r18,lo8(-128)
+ 424               	.LVL32:
+ 425 0086 00C0      		rjmp .L34
+ 426               	.LVL33:
+ 427               	.L31:
+ 428 0088 20E9      		ldi r18,lo8(-112)
+ 429               	.LVL34:
+ 430               	.L34:
+ 431 008a 9BE3      		ldi r25,lo8(59)
+ 432               	.LVL35:
+ 433               	.L23:
+ 434               	.LBB64:
+ 435               	.LSM42:
+ 436 008c 822F      		mov r24,r18
+ 437 008e 8295      		swap r24
+ 438 0090 8F70      		andi r24,lo8(15)
+ 439 0092 8983      		std Y+1,r24
+ 440 0094 232B      		or r18,r19
+ 441 0096 2A83      		std Y+2,r18
+ 442 0098 9B83      		std Y+3,r25
+ 443 009a 80E4      		ldi r24,lo8(64)
+ 444 009c 8C83      		std Y+4,r24
+ 445               	.LSM43:
+ 446 009e 80E0      		ldi r24,lo8(Keyboard_MIDI_Interface)
+ 447 00a0 90E0      		ldi r25,hi8(Keyboard_MIDI_Interface)
+ 448 00a2 BE01      		movw r22,r28
+ 449 00a4 6F5F      		subi r22,lo8(-(1))
+ 450 00a6 7F4F      		sbci r23,hi8(-(1))
+ 451 00a8 0E94 0000 		call MIDI_Host_SendEventPacket
+ 452               	.LVL36:
+ 453               	.LSM44:
+ 454 00ac 80E0      		ldi r24,lo8(Keyboard_MIDI_Interface)
+ 455 00ae 90E0      		ldi r25,hi8(Keyboard_MIDI_Interface)
+ 456 00b0 0E94 0000 		call MIDI_Host_Flush
+ 457               	.LVL37:
+ 458               	.L30:
+ 459               	.LBE64:
+ 460               	.LSM45:
+ 461 00b4 1093 0000 		sts PrevJoystickStatus.4604,r17
+ 462               	/* epilogue start */
+ 463               	.LSM46:
+ 464 00b8 0F90      		pop __tmp_reg__
+ 465 00ba 0F90      		pop __tmp_reg__
+ 466 00bc 0F90      		pop __tmp_reg__
+ 467 00be 0F90      		pop __tmp_reg__
+ 468 00c0 CF91      		pop r28
+ 469 00c2 DF91      		pop r29
+ 470 00c4 1F91      		pop r17
+ 471 00c6 0895      		ret
+ 472               	.LFE149:
+ 474               		.data
+ 475               	.LC0:
+ 476 0000 4F6E 00   		.string	"On"
+ 477               	.LC1:
+ 478 0003 4F66 6600 		.string	"Off"
+ 479               		.section	.text.JoystickHost_Task,"ax",@progbits
+ 480               	.global	JoystickHost_Task
+ 482               	JoystickHost_Task:
+ 483               	.LFB148:
+ 484               	.LSM47:
+ 485 0000 EF92      		push r14
+ 486 0002 FF92      		push r15
+ 487 0004 0F93      		push r16
+ 488 0006 1F93      		push r17
+ 489 0008 DF93      		push r29
+ 490 000a CF93      		push r28
+ 491 000c 00D0      		rcall .
+ 492 000e 00D0      		rcall .
+ 493 0010 CDB7      		in r28,__SP_L__
+ 494 0012 DEB7      		in r29,__SP_H__
+ 495               	/* prologue: function */
+ 496               	/* frame size = 4 */
+ 497               	.LSM48:
+ 498 0014 8091 0000 		lds r24,USB_HostState
+ 499 0018 8B30      		cpi r24,lo8(11)
+ 500 001a 01F0      		breq .+2
+ 501 001c 00C0      		rjmp .L44
+ 502 001e 00C0      		rjmp .L49
+ 503               	.L43:
+ 504               	.LBB65:
+ 505               	.LSM49:
+ 506 0020 8981      		ldd r24,Y+1
+ 507 0022 8F70      		andi r24,lo8(15)
+ 508 0024 90E0      		ldi r25,lo8(0)
+ 509               	.LSM50:
+ 510 0026 8930      		cpi r24,9
+ 511 0028 9105      		cpc r25,__zero_reg__
+ 512 002a 01F4      		brne .L41
+ 513 002c 80E0      		ldi r24,lo8(.LC0)
+ 514 002e 90E0      		ldi r25,hi8(.LC0)
+ 515 0030 00C0      		rjmp .L42
+ 516               	.L41:
+ 517 0032 0897      		sbiw r24,8
+ 518 0034 01F4      		brne .L47
+ 519 0036 80E0      		ldi r24,lo8(.LC1)
+ 520 0038 90E0      		ldi r25,hi8(.LC1)
+ 521               	.L42:
+ 522               	.LSM51:
+ 523 003a 2DB7      		in r18,__SP_L__
+ 524 003c 3EB7      		in r19,__SP_H__
+ 525 003e 2A50      		subi r18,lo8(-(-10))
+ 526 0040 3040      		sbci r19,hi8(-(-10))
+ 527 0042 0FB6      		in __tmp_reg__,__SREG__
+ 528 0044 F894      		cli
+ 529 0046 3EBF      		out __SP_H__,r19
+ 530 0048 0FBE      		out __SREG__,__tmp_reg__
+ 531 004a 2DBF      		out __SP_L__,r18
+ 532 004c EDB7      		in r30,__SP_L__
+ 533 004e FEB7      		in r31,__SP_H__
+ 534 0050 3196      		adiw r30,1
+ 535 0052 ADB7      		in r26,__SP_L__
+ 536 0054 BEB7      		in r27,__SP_H__
+ 537 0056 1296      		adiw r26,1+1
+ 538 0058 1C93      		st X,r17
+ 539 005a 0E93      		st -X,r16
+ 540 005c 1197      		sbiw r26,1
+ 541 005e 9383      		std Z+3,r25
+ 542 0060 8283      		std Z+2,r24
+ 543 0062 8A81      		ldd r24,Y+2
+ 544 0064 90E0      		ldi r25,lo8(0)
+ 545 0066 8F70      		andi r24,lo8(15)
+ 546 0068 9070      		andi r25,hi8(15)
+ 547 006a 0196      		adiw r24,1
+ 548 006c 9583      		std Z+5,r25
+ 549 006e 8483      		std Z+4,r24
+ 550 0070 8B81      		ldd r24,Y+3
+ 551 0072 8683      		std Z+6,r24
+ 552 0074 1782      		std Z+7,__zero_reg__
+ 553 0076 8C81      		ldd r24,Y+4
+ 554 0078 8087      		std Z+8,r24
+ 555 007a 1186      		std Z+9,__zero_reg__
+ 556 007c 0E94 0000 		call printf_P
+ 557 0080 2DB7      		in r18,__SP_L__
+ 558 0082 3EB7      		in r19,__SP_H__
+ 559 0084 265F      		subi r18,lo8(-(10))
+ 560 0086 3F4F      		sbci r19,hi8(-(10))
+ 561 0088 0FB6      		in __tmp_reg__,__SREG__
+ 562 008a F894      		cli
+ 563 008c 3EBF      		out __SP_H__,r19
+ 564 008e 0FBE      		out __SREG__,__tmp_reg__
+ 565 0090 2DBF      		out __SP_L__,r18
+ 566 0092 00C0      		rjmp .L47
+ 567               	.L49:
+ 568               	.LBE65:
+ 569               	.LSM52:
+ 570 0094 7E01      		movw r14,r28
+ 571 0096 0894      		sec
+ 572 0098 E11C      		adc r14,__zero_reg__
+ 573 009a F11C      		adc r15,__zero_reg__
+ 574               	.LBB66:
+ 575               	.LSM53:
+ 576 009c 00E0      		ldi r16,lo8(__c.4580)
+ 577 009e 10E0      		ldi r17,hi8(__c.4580)
+ 578               	.L47:
+ 579               	.LBE66:
+ 580               	.LSM54:
+ 581 00a0 80E0      		ldi r24,lo8(Keyboard_MIDI_Interface)
+ 582 00a2 90E0      		ldi r25,hi8(Keyboard_MIDI_Interface)
+ 583 00a4 B701      		movw r22,r14
+ 584 00a6 0E94 0000 		call MIDI_Host_ReceiveEventPacket
+ 585 00aa 8823      		tst r24
+ 586 00ac 01F0      		breq .+2
+ 587 00ae 00C0      		rjmp .L43
+ 588               	.LSM55:
+ 589 00b0 0E94 0000 		call CheckJoystickMovement
+ 590               	.L44:
+ 591               	/* epilogue start */
+ 592               	.LSM56:
+ 593 00b4 0F90      		pop __tmp_reg__
+ 594 00b6 0F90      		pop __tmp_reg__
+ 595 00b8 0F90      		pop __tmp_reg__
+ 596 00ba 0F90      		pop __tmp_reg__
+ 597 00bc CF91      		pop r28
+ 598 00be DF91      		pop r29
+ 599 00c0 1F91      		pop r17
+ 600 00c2 0F91      		pop r16
+ 601 00c4 FF90      		pop r15
+ 602 00c6 EF90      		pop r14
+ 603 00c8 0895      		ret
+ 604               	.LFE148:
+ 606               		.section	.text.SetupHardware,"ax",@progbits
+ 607               	.global	SetupHardware
+ 609               	SetupHardware:
+ 610               	.LFB147:
+ 611               	.LSM57:
+ 612               	/* prologue: function */
+ 613               	/* frame size = 0 */
+ 614               	.LSM58:
+ 615 0000 84B7      		in r24,84-32
+ 616 0002 877F      		andi r24,lo8(-9)
+ 617 0004 84BF      		out 84-32,r24
+ 618               	.LSM59:
+ 619 0006 28E1      		ldi r18,lo8(24)
+ 620               	/* #APP */
+ 621               	 ;  82 "MIDIHost.c" 1
+ 622 0008 0FB6      		in __tmp_reg__, __SREG__
+ 623 000a F894      		cli
+ 624 000c 2093 6000 		sts 96, r18
+ 625 0010 1092 6000 		sts 96, __zero_reg__
+ 626 0014 0FBE      		out __SREG__,__tmp_reg__
+ 627               		
+ 628               	 ;  0 "" 2
+ 629               	/* #NOAPP */
+ 630               	.LBB67:
+ 631               	.LBB68:
+ 632               	.LSM60:
+ 633 0016 90E0      		ldi r25,lo8(0)
+ 634 0018 80E8      		ldi r24,lo8(-128)
+ 635               	/* #APP */
+ 636               	 ;  1394 "/usr/lib/gcc/avr/4.3.5/../../../avr/include/avr/power.h" 1
+ 637 001a 0FB6      		in __tmp_reg__,__SREG__
+ 638 001c F894      		cli
+ 639 001e 8093 6100 		sts 97, r24
+ 640 0022 9093 6100 		sts 97, r25
+ 641 0026 0FBE      		out __SREG__, __tmp_reg__
+ 642               	 ;  0 "" 2
+ 643               	/* #NOAPP */
+ 644               	.LBE68:
+ 645               	.LBE67:
+ 646               	.LBB69:
+ 647               	.LBB70:
+ 648               	.LSM61:
+ 649 0028 83E3      		ldi r24,lo8(51)
+ 650 002a 90E0      		ldi r25,hi8(51)
+ 651 002c 9093 CD00 		sts (204)+1,r25
+ 652 0030 8093 CC00 		sts 204,r24
+ 653               	.LSM62:
+ 654 0034 86E0      		ldi r24,lo8(6)
+ 655 0036 8093 CA00 		sts 202,r24
+ 656               	.LSM63:
+ 657 003a 1092 C800 		sts 200,__zero_reg__
+ 658               	.LSM64:
+ 659 003e 2093 C900 		sts 201,r18
+ 660               	.LSM65:
+ 661 0042 539A      		sbi 42-32,3
+ 662               	.LSM66:
+ 663 0044 5A9A      		sbi 43-32,2
+ 664               	.LBE70:
+ 665               	.LBE69:
+ 666               	.LBB71:
+ 667               	.LBB72:
+ 668               	.LSM67:
+ 669 0046 8AB1      		in r24,42-32
+ 670 0048 806F      		ori r24,lo8(-16)
+ 671 004a 8AB9      		out 42-32,r24
+ 672               	.LSM68:
+ 673 004c 8BB1      		in r24,43-32
+ 674 004e 8F70      		andi r24,lo8(15)
+ 675 0050 8BB9      		out 43-32,r24
+ 676               	.LBE72:
+ 677               	.LBE71:
+ 678               	.LBB73:
+ 679               	.LBB74:
+ 680               	.LSM69:
+ 681 0052 6A98      		cbi 45-32,2
+ 682               	.LSM70:
+ 683 0054 729A      		sbi 46-32,2
+ 684               	.LBE74:
+ 685               	.LBE73:
+ 686               	.LBB75:
+ 687               	.LBB76:
+ 688               	.LSM71:
+ 689 0056 84B1      		in r24,36-32
+ 690 0058 8F71      		andi r24,lo8(31)
+ 691 005a 84B9      		out 36-32,r24
+ 692               	.LSM72:
+ 693 005c 8DB1      		in r24,45-32
+ 694 005e 8F7C      		andi r24,lo8(-49)
+ 695 0060 8DB9      		out 45-32,r24
+ 696               	.LSM73:
+ 697 0062 85B1      		in r24,37-32
+ 698 0064 806E      		ori r24,lo8(-32)
+ 699 0066 85B9      		out 37-32,r24
+ 700               	.LSM74:
+ 701 0068 8EB1      		in r24,46-32
+ 702 006a 8063      		ori r24,lo8(48)
+ 703 006c 8EB9      		out 46-32,r24
+ 704               	.LBE76:
+ 705               	.LBE75:
+ 706               	.LSM75:
+ 707 006e 0E94 0000 		call USB_Init
+ 708               	.LBB77:
+ 709               	.LBB78:
+ 710               	.LSM76:
+ 711 0072 E0E0      		ldi r30,lo8(USARTSerialStream)
+ 712 0074 F0E0      		ldi r31,hi8(USARTSerialStream)
+ 713 0076 F093 0000 		sts (__iob)+1,r31
+ 714 007a E093 0000 		sts __iob,r30
+ 715               	.LSM77:
+ 716 007e F093 0000 		sts (__iob+2)+1,r31
+ 717 0082 E093 0000 		sts __iob+2,r30
+ 718               	.LSM78:
+ 719 0086 8EE0      		ldi r24,lo8(14)
+ 720 0088 DF01      		movw r26,r30
+ 721 008a 1D92      		st X+,__zero_reg__
+ 722 008c 8A95      	        dec r24
+ 723 008e 01F4      		brne .-6
+ 724 0090 83E0      		ldi r24,lo8(3)
+ 725 0092 8093 0000 		sts USARTSerialStream+3,r24
+ 726 0096 80E0      		ldi r24,lo8(gs(Serial_putchar))
+ 727 0098 90E0      		ldi r25,hi8(gs(Serial_putchar))
+ 728 009a 9093 0000 		sts (USARTSerialStream+8)+1,r25
+ 729 009e 8093 0000 		sts USARTSerialStream+8,r24
+ 730 00a2 80E0      		ldi r24,lo8(gs(Serial_getchar))
+ 731 00a4 90E0      		ldi r25,hi8(gs(Serial_getchar))
+ 732 00a6 9093 0000 		sts (USARTSerialStream+10)+1,r25
+ 733 00aa 8093 0000 		sts USARTSerialStream+10,r24
+ 734               	/* epilogue start */
+ 735               	.LBE78:
+ 736               	.LBE77:
+ 737               	.LSM79:
+ 738 00ae 0895      		ret
+ 739               	.LFE147:
+ 741               		.section	.text.main,"ax",@progbits
+ 742               	.global	main
+ 744               	main:
+ 745               	.LFB146:
+ 746               	.LSM80:
+ 747               	/* prologue: function */
+ 748               	/* frame size = 0 */
+ 749               	.LSM81:
+ 750 0000 0E94 0000 		call SetupHardware
+ 751               	.LSM82:
+ 752 0004 80E0      		ldi r24,lo8(__c.4564)
+ 753 0006 90E0      		ldi r25,hi8(__c.4564)
+ 754 0008 0E94 0000 		call puts_P
+ 755               	.LBB79:
+ 756               	.LBB80:
+ 757               	.LSM83:
+ 758 000c 8BB1      		in r24,43-32
+ 759 000e 8F70      		andi r24,lo8(15)
+ 760 0010 8061      		ori r24,lo8(16)
+ 761 0012 8BB9      		out 43-32,r24
+ 762               	.LBE80:
+ 763               	.LBE79:
+ 764               	.LSM84:
+ 765               	/* #APP */
+ 766               	 ;  66 "MIDIHost.c" 1
+ 767 0014 7894      		sei
+ 768               	 ;  0 "" 2
+ 769               	/* #NOAPP */
+ 770               	.L53:
+ 771               	.LSM85:
+ 772 0016 0E94 0000 		call JoystickHost_Task
+ 773               	.LSM86:
+ 774 001a 80E0      		ldi r24,lo8(Keyboard_MIDI_Interface)
+ 775 001c 90E0      		ldi r25,hi8(Keyboard_MIDI_Interface)
+ 776 001e 0E94 0000 		call MIDI_Host_USBTask
+ 777               	.LSM87:
+ 778 0022 0E94 0000 		call USB_USBTask
+ 779 0026 00C0      		rjmp .L53
+ 780               	.LFE146:
+ 782               	.global	Keyboard_MIDI_Interface
+ 783               		.data
+ 786               	Keyboard_MIDI_Interface:
+ 787 0007 01        		.byte	1
+ 788 0008 00        		.byte	0
+ 789 0009 02        		.byte	2
+ 790 000a 00        		.byte	0
+ 791 000b 0000 0000 		.skip 6,0
+ 791      0000 
+ 792               		.section	.progmem.data,"a",@progbits
+ 795               	__c.4676:
+ 796 0000 1B5B 3331 		.ascii	"\033[31mDev Enum Error\r\n"
+ 796      6D44 6576 
+ 796      2045 6E75 
+ 796      6D20 4572 
+ 796      726F 720D 
+ 797 0015 202D 2D20 		.string	" -- Error Code %d\r\n -- Sub Error Code %d\r\n -- In State %d\r\n\033[37m"
+ 797      4572 726F 
+ 797      7220 436F 
+ 797      6465 2025 
+ 797      640D 0A20 
+ 800               	__c.4668:
+ 801 0056 1B5B 3331 		.string	"\033[31mHost Mode Error\r\n -- Error Code %d\r\n\033[37m"
+ 801      6D48 6F73 
+ 801      7420 4D6F 
+ 801      6465 2045 
+ 801      7272 6F72 
+ 804               	__c.4659:
+ 805 0085 4D49 4449 		.string	"MIDI Device Enumerated.\r\n"
+ 805      2044 6576 
+ 805      6963 6520 
+ 805      456E 756D 
+ 805      6572 6174 
+ 808               	__c.4657:
+ 809 009f 4572 726F 		.string	"Error Setting Device Configuration.\r\n"
+ 809      7220 5365 
+ 809      7474 696E 
+ 809      6720 4465 
+ 809      7669 6365 
+ 812               	__c.4655:
+ 813 00c5 4174 7461 		.string	"Attached Device Not a Valid MIDI Class Device.\r\n"
+ 813      6368 6564 
+ 813      2044 6576 
+ 813      6963 6520 
+ 813      4E6F 7420 
+ 816               	__c.4653:
+ 817 00f6 4572 726F 		.string	"Error Retrieving Configuration Descriptor.\r\n"
+ 817      7220 5265 
+ 817      7472 6965 
+ 817      7669 6E67 
+ 817      2043 6F6E 
+ 820               	__c.4646:
+ 821 0123 0D0A 4465 		.string	"\r\nDevice Unattached.\r\n"
+ 821      7669 6365 
+ 821      2055 6E61 
+ 821      7474 6163 
+ 821      6865 642E 
+ 824               	__c.4641:
+ 825 013a 4465 7669 		.string	"Device Attached.\r\n"
+ 825      6365 2041 
+ 825      7474 6163 
+ 825      6865 642E 
+ 825      0D0A 00
+ 826               		.lcomm PrevJoystickStatus.4604,1
+ 829               	__c.4580:
+ 830 014d 4D49 4449 		.string	"MIDI Note %s - Channel %d, Pitch %d, Velocity %d\r\n"
+ 830      204E 6F74 
+ 830      6520 2573 
+ 830      202D 2043 
+ 830      6861 6E6E 
+ 833               	__c.4564:
+ 834 0180 1B5B 3336 		.string	"\033[36mMIDI Host Demo running.\r\n\033[37m"
+ 834      6D4D 4944 
+ 834      4920 486F 
+ 834      7374 2044 
+ 834      656D 6F20 
+ 923               	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 MIDIHost.c
+     /tmp/cc2guR4s.s:2      *ABS*:0000003f __SREG__
+     /tmp/cc2guR4s.s:3      *ABS*:0000003e __SP_H__
+     /tmp/cc2guR4s.s:4      *ABS*:0000003d __SP_L__
+     /tmp/cc2guR4s.s:5      *ABS*:00000034 __CCP__
+     /tmp/cc2guR4s.s:6      *ABS*:00000000 __tmp_reg__
+     /tmp/cc2guR4s.s:7      *ABS*:00000001 __zero_reg__
+     /tmp/cc2guR4s.s:19     .text.EVENT_USB_Host_DeviceEnumerationFailed:00000000 EVENT_USB_Host_DeviceEnumerationFailed
+     /tmp/cc2guR4s.s:795    .progmem.data:00000000 __c.4676
+     /tmp/cc2guR4s.s:81     .text.EVENT_USB_Host_HostError:00000000 EVENT_USB_Host_HostError
+     /tmp/cc2guR4s.s:800    .progmem.data:00000056 __c.4668
+     /tmp/cc2guR4s.s:129    .text.EVENT_USB_Host_DeviceUnattached:00000000 EVENT_USB_Host_DeviceUnattached
+     /tmp/cc2guR4s.s:820    .progmem.data:00000123 __c.4646
+     /tmp/cc2guR4s.s:155    .text.EVENT_USB_Host_DeviceAttached:00000000 EVENT_USB_Host_DeviceAttached
+     /tmp/cc2guR4s.s:824    .progmem.data:0000013a __c.4641
+     /tmp/cc2guR4s.s:181    .text.EVENT_USB_Host_DeviceEnumerationComplete:00000000 EVENT_USB_Host_DeviceEnumerationComplete
+     /tmp/cc2guR4s.s:816    .progmem.data:000000f6 __c.4653
+     /tmp/cc2guR4s.s:786    .data:00000007 Keyboard_MIDI_Interface
+     /tmp/cc2guR4s.s:812    .progmem.data:000000c5 __c.4655
+     /tmp/cc2guR4s.s:808    .progmem.data:0000009f __c.4657
+     /tmp/cc2guR4s.s:804    .progmem.data:00000085 __c.4659
+     /tmp/cc2guR4s.s:295    .text.CheckJoystickMovement:00000000 CheckJoystickMovement
+                             .bss:00000000 PrevJoystickStatus.4604
+     /tmp/cc2guR4s.s:482    .text.JoystickHost_Task:00000000 JoystickHost_Task
+     /tmp/cc2guR4s.s:829    .progmem.data:0000014d __c.4580
+     /tmp/cc2guR4s.s:609    .text.SetupHardware:00000000 SetupHardware
+     /tmp/cc2guR4s.s:744    .text.main:00000000 main
+     /tmp/cc2guR4s.s:833    .progmem.data:00000180 __c.4564
+
+UNDEFINED SYMBOLS
+USB_HostState
+printf_P
+USB_Disable
+puts_P
+USB_Host_GetDeviceConfigDescriptor
+MIDI_Host_ConfigurePipes
+USB_Host_SetDeviceConfiguration
+MIDI_Host_SendEventPacket
+MIDI_Host_Flush
+MIDI_Host_ReceiveEventPacket
+USB_Init
+USARTSerialStream
+__iob
+Serial_putchar
+Serial_getchar
+MIDI_Host_USBTask
+USB_USBTask
+__do_copy_data
+__do_clear_bss

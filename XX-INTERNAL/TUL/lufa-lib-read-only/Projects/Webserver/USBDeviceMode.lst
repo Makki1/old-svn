@@ -1,0 +1,247 @@
+   1               		.file	"USBDeviceMode.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__CCP__  = 0x34
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+  15               	.Ltext0:
+  16               		.section	.text.EVENT_USB_Device_Disconnect,"ax",@progbits
+  17               	.global	EVENT_USB_Device_Disconnect
+  19               	EVENT_USB_Device_Disconnect:
+  20               	.LFB219:
+  21               	.LSM0:
+  22               	/* prologue: function */
+  23               	/* frame size = 0 */
+  24               	.LBB12:
+  25               	.LBB13:
+  26               	.LSM1:
+  27 0000 8BB1      		in r24,43-32
+  28 0002 8F70      		andi r24,lo8(15)
+  29 0004 8061      		ori r24,lo8(16)
+  30 0006 8BB9      		out 43-32,r24
+  31               	/* epilogue start */
+  32               	.LBE13:
+  33               	.LBE12:
+  34               	.LSM2:
+  35 0008 0895      		ret
+  36               	.LFE219:
+  38               		.section	.text.CALLBACK_MS_Device_SCSICommandReceived,"ax",@progbits
+  39               	.global	CALLBACK_MS_Device_SCSICommandReceived
+  41               	CALLBACK_MS_Device_SCSICommandReceived:
+  42               	.LFB222:
+  43               	.LSM3:
+  44               	.LVL0:
+  45               	/* prologue: function */
+  46               	/* frame size = 0 */
+  47               	.LBB14:
+  48               	.LBB15:
+  49               	.LSM4:
+  50 0000 2BB1      		in r18,43-32
+  51 0002 2F70      		andi r18,lo8(15)
+  52 0004 206D      		ori r18,lo8(-48)
+  53 0006 2BB9      		out 43-32,r18
+  54               	.LBE15:
+  55               	.LBE14:
+  56               	.LSM5:
+  57 0008 0E94 0000 		call SCSI_DecodeSCSICommand
+  58               	.LVL1:
+  59               	.LBB16:
+  60               	.LBB17:
+  61               	.LSM6:
+  62 000c 9BB1      		in r25,43-32
+  63 000e 9F70      		andi r25,lo8(15)
+  64 0010 9062      		ori r25,lo8(32)
+  65 0012 9BB9      		out 43-32,r25
+  66               	/* epilogue start */
+  67               	.LBE17:
+  68               	.LBE16:
+  69               	.LSM7:
+  70 0014 0895      		ret
+  71               	.LFE222:
+  73               		.section	.text.EVENT_USB_Device_ControlRequest,"ax",@progbits
+  74               	.global	EVENT_USB_Device_ControlRequest
+  76               	EVENT_USB_Device_ControlRequest:
+  77               	.LFB221:
+  78               	.LSM8:
+  79               	/* prologue: function */
+  80               	/* frame size = 0 */
+  81               	.LSM9:
+  82 0000 80E0      		ldi r24,lo8(Ethernet_RNDIS_Interface_Device)
+  83 0002 90E0      		ldi r25,hi8(Ethernet_RNDIS_Interface_Device)
+  84 0004 0E94 0000 		call RNDIS_Device_ProcessControlRequest
+  85               	.LSM10:
+  86 0008 80E0      		ldi r24,lo8(Disk_MS_Interface)
+  87 000a 90E0      		ldi r25,hi8(Disk_MS_Interface)
+  88 000c 0E94 0000 		call MS_Device_ProcessControlRequest
+  89               	/* epilogue start */
+  90               	.LSM11:
+  91 0010 0895      		ret
+  92               	.LFE221:
+  94               		.section	.text.EVENT_USB_Device_ConfigurationChanged,"ax",@progbits
+  95               	.global	EVENT_USB_Device_ConfigurationChanged
+  97               	EVENT_USB_Device_ConfigurationChanged:
+  98               	.LFB220:
+  99               	.LSM12:
+ 100 0000 0F93      		push r16
+ 101 0002 1F93      		push r17
+ 102               	/* prologue: function */
+ 103               	/* frame size = 0 */
+ 104               	.LSM13:
+ 105 0004 80E0      		ldi r24,lo8(Ethernet_RNDIS_Interface_Device)
+ 106 0006 90E0      		ldi r25,hi8(Ethernet_RNDIS_Interface_Device)
+ 107 0008 0E94 0000 		call RNDIS_Device_ConfigureEndpoints
+ 108 000c 082F      		mov r16,r24
+ 109               	.LSM14:
+ 110 000e 80E0      		ldi r24,lo8(Disk_MS_Interface)
+ 111 0010 90E0      		ldi r25,hi8(Disk_MS_Interface)
+ 112 0012 0E94 0000 		call MS_Device_ConfigureEndpoints
+ 113               	.LSM15:
+ 114 0016 10E0      		ldi r17,lo8(0)
+ 115 0018 90E0      		ldi r25,lo8(0)
+ 116 001a 0823      		and r16,r24
+ 117 001c 1923      		and r17,r25
+ 118 001e 00FF      		sbrs r16,0
+ 119 0020 00C0      		rjmp .L8
+ 120 0022 90E2      		ldi r25,lo8(32)
+ 121 0024 00C0      		rjmp .L9
+ 122               	.L8:
+ 123 0026 90E9      		ldi r25,lo8(-112)
+ 124               	.L9:
+ 125               	.LBB18:
+ 126               	.LBB19:
+ 127               	.LSM16:
+ 128 0028 8BB1      		in r24,43-32
+ 129 002a 8F70      		andi r24,lo8(15)
+ 130 002c 982B      		or r25,r24
+ 131 002e 9BB9      		out 43-32,r25
+ 132               	/* epilogue start */
+ 133               	.LBE19:
+ 134               	.LBE18:
+ 135               	.LSM17:
+ 136 0030 1F91      		pop r17
+ 137 0032 0F91      		pop r16
+ 138 0034 0895      		ret
+ 139               	.LFE220:
+ 141               		.section	.text.EVENT_USB_Device_Connect,"ax",@progbits
+ 142               	.global	EVENT_USB_Device_Connect
+ 144               	EVENT_USB_Device_Connect:
+ 145               	.LFB218:
+ 146               	.LSM18:
+ 147               	/* prologue: function */
+ 148               	/* frame size = 0 */
+ 149               	.LBB20:
+ 150               	.LBB21:
+ 151               	.LSM19:
+ 152 0000 8BB1      		in r24,43-32
+ 153 0002 8F70      		andi r24,lo8(15)
+ 154 0004 8063      		ori r24,lo8(48)
+ 155 0006 8BB9      		out 43-32,r24
+ 156               	.LBE21:
+ 157               	.LBE20:
+ 158               	.LSM20:
+ 159 0008 0E94 0000 		call uIPManagement_Init
+ 160               	/* epilogue start */
+ 161               	.LSM21:
+ 162 000c 0895      		ret
+ 163               	.LFE218:
+ 165               		.section	.text.USBDeviceMode_USBTask,"ax",@progbits
+ 166               	.global	USBDeviceMode_USBTask
+ 168               	USBDeviceMode_USBTask:
+ 169               	.LFB217:
+ 170               	.LSM22:
+ 171               	/* prologue: function */
+ 172               	/* frame size = 0 */
+ 173               	.LSM23:
+ 174 0000 8091 0000 		lds r24,USB_CurrentMode
+ 175 0004 8130      		cpi r24,lo8(1)
+ 176 0006 01F4      		brne .L15
+ 177               	.LSM24:
+ 178 0008 0E94 0000 		call uIPManagement_ManageNetwork
+ 179               	.LSM25:
+ 180 000c 80E0      		ldi r24,lo8(Ethernet_RNDIS_Interface_Device)
+ 181 000e 90E0      		ldi r25,hi8(Ethernet_RNDIS_Interface_Device)
+ 182 0010 0E94 0000 		call RNDIS_Device_USBTask
+ 183               	.LSM26:
+ 184 0014 80E0      		ldi r24,lo8(Disk_MS_Interface)
+ 185 0016 90E0      		ldi r25,hi8(Disk_MS_Interface)
+ 186 0018 0E94 0000 		call MS_Device_USBTask
+ 187               	.L15:
+ 188 001c 0895      		ret
+ 189               	.LFE217:
+ 191               	.global	Ethernet_RNDIS_Interface_Device
+ 192               		.data
+ 193               	.LC0:
+ 194 0000 4C55 4641 		.string	"LUFA RNDIS Adapter"
+ 194      2052 4E44 
+ 194      4953 2041 
+ 194      6461 7074 
+ 194      6572 00
+ 197               	Ethernet_RNDIS_Interface_Device:
+ 198 0013 00        		.byte	0
+ 199 0014 01        		.byte	1
+ 200 0015 4000      		.word	64
+ 201 0017 01        		.byte	1
+ 202 0018 02        		.byte	2
+ 203 0019 4000      		.word	64
+ 204 001b 01        		.byte	1
+ 205 001c 05        		.byte	5
+ 206 001d 0800      		.word	8
+ 207 001f 01        		.byte	1
+ 208 0020 0000      		.word	.LC0
+ 209 0022 02        		.byte	2
+ 210 0023 00        		.byte	0
+ 211 0024 02        		.byte	2
+ 212 0025 00        		.byte	0
+ 213 0026 02        		.byte	2
+ 214 0027 00        		.byte	0
+ 215 0028 0000 0000 		.skip 134,0
+ 215      0000 0000 
+ 215      0000 0000 
+ 215      0000 0000 
+ 215      0000 0000 
+ 216               	.global	Disk_MS_Interface
+ 219               	Disk_MS_Interface:
+ 220 00ae 02        		.byte	2
+ 221 00af 03        		.byte	3
+ 222 00b0 4000      		.word	64
+ 223 00b2 00        		.byte	0
+ 224 00b3 04        		.byte	4
+ 225 00b4 4000      		.word	64
+ 226 00b6 00        		.byte	0
+ 227 00b7 01        		.byte	1
+ 228 00b8 0000 0000 		.skip 45,0
+ 228      0000 0000 
+ 228      0000 0000 
+ 228      0000 0000 
+ 228      0000 0000 
+ 293               	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 USBDeviceMode.c
+     /tmp/ccakfdDV.s:2      *ABS*:0000003f __SREG__
+     /tmp/ccakfdDV.s:3      *ABS*:0000003e __SP_H__
+     /tmp/ccakfdDV.s:4      *ABS*:0000003d __SP_L__
+     /tmp/ccakfdDV.s:5      *ABS*:00000034 __CCP__
+     /tmp/ccakfdDV.s:6      *ABS*:00000000 __tmp_reg__
+     /tmp/ccakfdDV.s:7      *ABS*:00000001 __zero_reg__
+     /tmp/ccakfdDV.s:19     .text.EVENT_USB_Device_Disconnect:00000000 EVENT_USB_Device_Disconnect
+     /tmp/ccakfdDV.s:41     .text.CALLBACK_MS_Device_SCSICommandReceived:00000000 CALLBACK_MS_Device_SCSICommandReceived
+     /tmp/ccakfdDV.s:76     .text.EVENT_USB_Device_ControlRequest:00000000 EVENT_USB_Device_ControlRequest
+     /tmp/ccakfdDV.s:197    .data:00000013 Ethernet_RNDIS_Interface_Device
+     /tmp/ccakfdDV.s:219    .data:000000ae Disk_MS_Interface
+     /tmp/ccakfdDV.s:97     .text.EVENT_USB_Device_ConfigurationChanged:00000000 EVENT_USB_Device_ConfigurationChanged
+     /tmp/ccakfdDV.s:144    .text.EVENT_USB_Device_Connect:00000000 EVENT_USB_Device_Connect
+     /tmp/ccakfdDV.s:168    .text.USBDeviceMode_USBTask:00000000 USBDeviceMode_USBTask
+
+UNDEFINED SYMBOLS
+SCSI_DecodeSCSICommand
+RNDIS_Device_ProcessControlRequest
+MS_Device_ProcessControlRequest
+RNDIS_Device_ConfigureEndpoints
+MS_Device_ConfigureEndpoints
+uIPManagement_Init
+USB_CurrentMode
+uIPManagement_ManageNetwork
+RNDIS_Device_USBTask
+MS_Device_USBTask
+__do_copy_data

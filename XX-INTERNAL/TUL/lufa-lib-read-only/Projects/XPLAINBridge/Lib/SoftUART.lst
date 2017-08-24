@@ -1,0 +1,456 @@
+   1               		.file	"SoftUART.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__CCP__  = 0x34
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+  15               	.Ltext0:
+  16               		.section	.text.SoftUART_Init,"ax",@progbits
+  17               	.global	SoftUART_Init
+  19               	SoftUART_Init:
+  20               	.LFB131:
+  21               	.LSM0:
+  22               	/* prologue: function */
+  23               	/* frame size = 0 */
+  24               	.LSM1:
+  25 0000 599A      		sbi 43-32,1
+  26               	.LSM2:
+  27 0002 519A      		sbi 42-32,1
+  28               	.LSM3:
+  29 0004 589A      		sbi 43-32,0
+  30               	.LSM4:
+  31 0006 22E0      		ldi r18,lo8(2)
+  32 0008 2093 6900 		sts 105,r18
+  33               	.LSM5:
+  34 000c 81E0      		ldi r24,lo8(1)
+  35 000e 8DBB      		out 61-32,r24
+  36               	.LBB56:
+  37               	.LBB57:
+  38               	.LSM6:
+  39 0010 80E4      		ldi r24,lo8(832)
+  40 0012 93E0      		ldi r25,hi8(832)
+  41 0014 9093 8900 		sts (136)+1,r25
+  42 0018 8093 8800 		sts 136,r24
+  43               	.LSM7:
+  44 001c 9093 9900 		sts (152)+1,r25
+  45 0020 8093 9800 		sts 152,r24
+  46               	.LBE57:
+  47               	.LBE56:
+  48               	.LSM8:
+  49 0024 2093 6F00 		sts 111,r18
+  50               	.LSM9:
+  51 0028 2093 7100 		sts 113,r18
+  52               	.LSM10:
+  53 002c 89E0      		ldi r24,lo8(9)
+  54 002e 8093 9100 		sts 145,r24
+  55               	/* epilogue start */
+  56               	.LSM11:
+  57 0032 0895      		ret
+  58               	.LFE131:
+  60               		.section	.text.__vector_1,"ax",@progbits
+  61               	.global	__vector_1
+  63               	__vector_1:
+  64               	.LFB132:
+  65               	.LSM12:
+  66 0000 1F92      		push __zero_reg__
+  67 0002 0F92      		push r0
+  68 0004 0FB6      		in r0,__SREG__
+  69 0006 0F92      		push r0
+  70 0008 1124      		clr __zero_reg__
+  71 000a 8F93      		push r24
+  72 000c 9F93      		push r25
+  73               	/* prologue: Signal */
+  74               	/* frame size = 0 */
+  75               	.LSM13:
+  76 000e 88E0      		ldi r24,lo8(8)
+  77 0010 8093 0000 		sts RX_BitsRemaining,r24
+  78               	.LSM14:
+  79 0014 8091 8800 		lds r24,136
+  80 0018 9091 8900 		lds r25,(136)+1
+  81 001c 9695      		lsr r25
+  82 001e 8795      		ror r24
+  83 0020 9095      		com r25
+  84 0022 8195      		neg r24
+  85 0024 9F4F      		sbci r25,lo8(-1)
+  86 0026 9093 8500 		sts (132)+1,r25
+  87 002a 8093 8400 		sts 132,r24
+  88               	.LSM15:
+  89 002e 4899      		sbic 41-32,0
+  90 0030 00C0      		rjmp .L5
+  91               	.LSM16:
+  92 0032 1DBA      		out 61-32,__zero_reg__
+  93               	.LSM17:
+  94 0034 89E0      		ldi r24,lo8(9)
+  95 0036 8093 8100 		sts 129,r24
+  96               	.L5:
+  97               	/* epilogue start */
+  98               	.LSM18:
+  99 003a 9F91      		pop r25
+ 100 003c 8F91      		pop r24
+ 101 003e 0F90      		pop r0
+ 102 0040 0FBE      		out __SREG__,r0
+ 103 0042 0F90      		pop r0
+ 104 0044 1F90      		pop __zero_reg__
+ 105 0046 1895      		reti
+ 106               	.LFE132:
+ 108               		.section	.text.__vector_17,"ax",@progbits
+ 109               	.global	__vector_17
+ 111               	__vector_17:
+ 112               	.LFB133:
+ 113               	.LSM19:
+ 114 0000 1F92      		push __zero_reg__
+ 115 0002 0F92      		push r0
+ 116 0004 0FB6      		in r0,__SREG__
+ 117 0006 0F92      		push r0
+ 118 0008 0BB6      		in r0,91-32
+ 119 000a 0F92      		push r0
+ 120 000c 1124      		clr __zero_reg__
+ 121 000e 2F93      		push r18
+ 122 0010 3F93      		push r19
+ 123 0012 8F93      		push r24
+ 124 0014 9F93      		push r25
+ 125 0016 CF93      		push r28
+ 126 0018 DF93      		push r29
+ 127 001a EF93      		push r30
+ 128 001c FF93      		push r31
+ 129               	/* prologue: Signal */
+ 130               	/* frame size = 0 */
+ 131               	.LSM20:
+ 132 001e 29B1      		in r18,41-32
+ 133               	.LVL0:
+ 134 0020 2170      		andi r18,lo8(1)
+ 135               	.LSM21:
+ 136 0022 9091 0000 		lds r25,RX_BitsRemaining
+ 137 0026 9923      		tst r25
+ 138 0028 01F0      		breq .L7
+ 139               	.LSM22:
+ 140 002a 8091 0000 		lds r24,RX_Data
+ 141 002e 8695      		lsr r24
+ 142 0030 8093 0000 		sts RX_Data,r24
+ 143               	.LSM23:
+ 144 0034 9150      		subi r25,lo8(-(-1))
+ 145 0036 9093 0000 		sts RX_BitsRemaining,r25
+ 146               	.LSM24:
+ 147 003a 2223      		tst r18
+ 148 003c 01F0      		breq .L10
+ 149               	.LSM25:
+ 150 003e 8068      		ori r24,lo8(-128)
+ 151 0040 8093 0000 		sts RX_Data,r24
+ 152 0044 00C0      		rjmp .L10
+ 153               	.L7:
+ 154               	.LSM26:
+ 155 0046 1092 8100 		sts 129,__zero_reg__
+ 156               	.LSM27:
+ 157 004a 81E0      		ldi r24,lo8(1)
+ 158 004c 8CBB      		out 60-32,r24
+ 159               	.LSM28:
+ 160 004e 8DBB      		out 61-32,r24
+ 161               	.LSM29:
+ 162 0050 2223      		tst r18
+ 163 0052 01F0      		breq .L10
+ 164               	.LBB58:
+ 165               	.LBB59:
+ 166               	.LSM30:
+ 167 0054 C0E0      		ldi r28,lo8(UARTtoUSB_Buffer)
+ 168 0056 D0E0      		ldi r29,hi8(UARTtoUSB_Buffer)
+ 169               	.LVL1:
+ 170               	.LSM31:
+ 171 0058 E881      		ld r30,Y
+ 172 005a F981      		ldd r31,Y+1
+ 173 005c 8091 0000 		lds r24,RX_Data
+ 174 0060 8083      		st Z,r24
+ 175               	.LSM32:
+ 176 0062 8881      		ld r24,Y
+ 177 0064 9981      		ldd r25,Y+1
+ 178 0066 0196      		adiw r24,1
+ 179 0068 9983      		std Y+1,r25
+ 180 006a 8883      		st Y,r24
+ 181 006c 2E81      		ldd r18,Y+6
+ 182 006e 3F81      		ldd r19,Y+7
+ 183               	.LVL2:
+ 184 0070 8217      		cp r24,r18
+ 185 0072 9307      		cpc r25,r19
+ 186 0074 01F4      		brne .L9
+ 187               	.LSM33:
+ 188 0076 8C81      		ldd r24,Y+4
+ 189 0078 9D81      		ldd r25,Y+5
+ 190 007a 9983      		std Y+1,r25
+ 191 007c 8883      		st Y,r24
+ 192               	.L9:
+ 193               	.LBB60:
+ 194               	.LBB61:
+ 195               	.LSM34:
+ 196               	.LSM35:
+ 197 007e 2FB7      		in r18,__SREG__
+ 198               	.LVL3:
+ 199               	.LBE61:
+ 200               	.LBE60:
+ 201               	.LBB62:
+ 202               	.LBB63:
+ 203               	.LSM36:
+ 204               	.LSM37:
+ 205               	/* #APP */
+ 206               	 ;  421 "../../LUFA/Drivers/USB/../../Common/Common.h" 1
+ 207 0080 F894      		cli
+ 208               	 ;  0 "" 2
+ 209               	.LSM38:
+ 210               	/* #NOAPP */
+ 211               	.LBE63:
+ 212               	.LBE62:
+ 213               	.LSM39:
+ 214 0082 8985      		ldd r24,Y+9
+ 215 0084 9A85      		ldd r25,Y+10
+ 216 0086 0196      		adiw r24,1
+ 217 0088 9A87      		std Y+10,r25
+ 218 008a 8987      		std Y+9,r24
+ 219               	.LBB64:
+ 220               	.LBB65:
+ 221               	.LSM40:
+ 222               	.LSM41:
+ 223 008c 2FBF      		out __SREG__,r18
+ 224               	.LSM42:
+ 225               	.LVL4:
+ 226               	.L10:
+ 227               	/* epilogue start */
+ 228               	.LBE65:
+ 229               	.LBE64:
+ 230               	.LBE59:
+ 231               	.LBE58:
+ 232               	.LSM43:
+ 233 008e FF91      		pop r31
+ 234 0090 EF91      		pop r30
+ 235 0092 DF91      		pop r29
+ 236 0094 CF91      		pop r28
+ 237               	.LVL5:
+ 238 0096 9F91      		pop r25
+ 239 0098 8F91      		pop r24
+ 240 009a 3F91      		pop r19
+ 241 009c 2F91      		pop r18
+ 242               	.LVL6:
+ 243 009e 0F90      		pop r0
+ 244 00a0 0BBE      		out 91-32,r0
+ 245 00a2 0F90      		pop r0
+ 246 00a4 0FBE      		out __SREG__,r0
+ 247 00a6 0F90      		pop r0
+ 248 00a8 1F90      		pop __zero_reg__
+ 249 00aa 1895      		reti
+ 250               	.LFE133:
+ 252               		.section	.text.__vector_32,"ax",@progbits
+ 253               	.global	__vector_32
+ 255               	__vector_32:
+ 256               	.LFB134:
+ 257               	.LSM44:
+ 258 0000 1F92      		push __zero_reg__
+ 259 0002 0F92      		push r0
+ 260 0004 0FB6      		in r0,__SREG__
+ 261 0006 0F92      		push r0
+ 262 0008 0BB6      		in r0,91-32
+ 263 000a 0F92      		push r0
+ 264 000c 1124      		clr __zero_reg__
+ 265 000e 2F93      		push r18
+ 266 0010 3F93      		push r19
+ 267 0012 4F93      		push r20
+ 268 0014 8F93      		push r24
+ 269 0016 9F93      		push r25
+ 270 0018 CF93      		push r28
+ 271 001a DF93      		push r29
+ 272 001c EF93      		push r30
+ 273 001e FF93      		push r31
+ 274               	/* prologue: Signal */
+ 275               	/* frame size = 0 */
+ 276               	.LSM45:
+ 277 0020 9091 0000 		lds r25,TX_BitsRemaining
+ 278 0024 9923      		tst r25
+ 279 0026 01F0      		breq .L12
+ 280               	.LSM46:
+ 281 0028 8091 0000 		lds r24,TX_Data
+ 282 002c 80FF      		sbrs r24,0
+ 283 002e 00C0      		rjmp .L13
+ 284               	.LSM47:
+ 285 0030 5998      		cbi 43-32,1
+ 286 0032 00C0      		rjmp .L14
+ 287               	.L13:
+ 288               	.LSM48:
+ 289 0034 599A      		sbi 43-32,1
+ 290               	.L14:
+ 291               	.LSM49:
+ 292 0036 8695      		lsr r24
+ 293 0038 8093 0000 		sts TX_Data,r24
+ 294               	.LSM50:
+ 295 003c 9150      		subi r25,lo8(-(-1))
+ 296 003e 9093 0000 		sts TX_BitsRemaining,r25
+ 297 0042 00C0      		rjmp .L17
+ 298               	.L12:
+ 299               	.LSM51:
+ 300 0044 8091 0000 		lds r24,RX_BitsRemaining
+ 301 0048 8823      		tst r24
+ 302 004a 01F0      		breq .+2
+ 303 004c 00C0      		rjmp .L17
+ 304               	.LBB66:
+ 305               	.LBB67:
+ 306               	.LBB68:
+ 307               	.LBB69:
+ 308               	.LBB70:
+ 309               	.LBB71:
+ 310               	.LSM52:
+ 311               	.LSM53:
+ 312 004e 2FB7      		in r18,__SREG__
+ 313               	.LVL7:
+ 314               	.LBE71:
+ 315               	.LBE70:
+ 316               	.LBB72:
+ 317               	.LBB73:
+ 318               	.LSM54:
+ 319               	.LSM55:
+ 320               	/* #APP */
+ 321               	 ;  421 "../../LUFA/Drivers/USB/../../Common/Common.h" 1
+ 322 0050 F894      		cli
+ 323               	 ;  0 "" 2
+ 324               	.LSM56:
+ 325               	/* #NOAPP */
+ 326               	.LBE73:
+ 327               	.LBE72:
+ 328               	.LSM57:
+ 329 0052 8091 0000 		lds r24,USBtoUART_Buffer+9
+ 330 0056 9091 0000 		lds r25,(USBtoUART_Buffer+9)+1
+ 331               	.LVL8:
+ 332               	.LBB74:
+ 333               	.LBB75:
+ 334               	.LSM58:
+ 335               	.LSM59:
+ 336 005a 2FBF      		out __SREG__,r18
+ 337               	.LSM60:
+ 338               	.LBE75:
+ 339               	.LBE74:
+ 340               	.LBE69:
+ 341               	.LBE68:
+ 342               	.LBE67:
+ 343               	.LBE66:
+ 344               	.LSM61:
+ 345 005c 892B      		or r24,r25
+ 346 005e 01F0      		breq .L17
+ 347               	.LSM62:
+ 348 0060 5998      		cbi 43-32,1
+ 349               	.LBB76:
+ 350               	.LBB77:
+ 351               	.LSM63:
+ 352 0062 C0E0      		ldi r28,lo8(USBtoUART_Buffer)
+ 353 0064 D0E0      		ldi r29,hi8(USBtoUART_Buffer)
+ 354               	.LVL9:
+ 355               	.LSM64:
+ 356 0066 EA81      		ldd r30,Y+2
+ 357 0068 FB81      		ldd r31,Y+3
+ 358 006a 4191      		ld r20,Z+
+ 359               	.LVL10:
+ 360               	.LSM65:
+ 361 006c FB83      		std Y+3,r31
+ 362 006e EA83      		std Y+2,r30
+ 363 0070 8E81      		ldd r24,Y+6
+ 364 0072 9F81      		ldd r25,Y+7
+ 365               	.LVL11:
+ 366 0074 E817      		cp r30,r24
+ 367 0076 F907      		cpc r31,r25
+ 368 0078 01F4      		brne .L16
+ 369               	.LSM66:
+ 370 007a 8C81      		ldd r24,Y+4
+ 371 007c 9D81      		ldd r25,Y+5
+ 372 007e 9B83      		std Y+3,r25
+ 373 0080 8A83      		std Y+2,r24
+ 374               	.L16:
+ 375               	.LBB78:
+ 376               	.LBB79:
+ 377               	.LSM67:
+ 378               	.LSM68:
+ 379 0082 8FB7      		in r24,__SREG__
+ 380               	.LVL12:
+ 381               	.LBE79:
+ 382               	.LBE78:
+ 383               	.LBB80:
+ 384               	.LBB81:
+ 385               	.LSM69:
+ 386               	.LSM70:
+ 387               	/* #APP */
+ 388               	 ;  421 "../../LUFA/Drivers/USB/../../Common/Common.h" 1
+ 389 0084 F894      		cli
+ 390               	 ;  0 "" 2
+ 391               	.LSM71:
+ 392               	/* #NOAPP */
+ 393               	.LBE81:
+ 394               	.LBE80:
+ 395               	.LSM72:
+ 396 0086 2985      		ldd r18,Y+9
+ 397 0088 3A85      		ldd r19,Y+10
+ 398               	.LVL13:
+ 399 008a 2150      		subi r18,lo8(-(-1))
+ 400 008c 3040      		sbci r19,hi8(-(-1))
+ 401 008e 3A87      		std Y+10,r19
+ 402 0090 2987      		std Y+9,r18
+ 403               	.LBB82:
+ 404               	.LBB83:
+ 405               	.LSM73:
+ 406               	.LSM74:
+ 407 0092 8FBF      		out __SREG__,r24
+ 408               	.LSM75:
+ 409               	.LBE83:
+ 410               	.LBE82:
+ 411               	.LBE77:
+ 412               	.LBE76:
+ 413               	.LSM76:
+ 414 0094 4095      		com r20
+ 415 0096 4093 0000 		sts TX_Data,r20
+ 416               	.LSM77:
+ 417 009a 89E0      		ldi r24,lo8(9)
+ 418               	.LVL14:
+ 419 009c 8093 0000 		sts TX_BitsRemaining,r24
+ 420               	.LVL15:
+ 421               	.L17:
+ 422               	/* epilogue start */
+ 423               	.LSM78:
+ 424 00a0 FF91      		pop r31
+ 425 00a2 EF91      		pop r30
+ 426 00a4 DF91      		pop r29
+ 427 00a6 CF91      		pop r28
+ 428               	.LVL16:
+ 429 00a8 9F91      		pop r25
+ 430 00aa 8F91      		pop r24
+ 431               	.LVL17:
+ 432 00ac 4F91      		pop r20
+ 433               	.LVL18:
+ 434 00ae 3F91      		pop r19
+ 435 00b0 2F91      		pop r18
+ 436               	.LVL19:
+ 437 00b2 0F90      		pop r0
+ 438 00b4 0BBE      		out 91-32,r0
+ 439 00b6 0F90      		pop r0
+ 440 00b8 0FBE      		out __SREG__,r0
+ 441 00ba 0F90      		pop r0
+ 442 00bc 1F90      		pop __zero_reg__
+ 443 00be 1895      		reti
+ 444               	.LFE134:
+ 446               		.lcomm TX_BitsRemaining,1
+ 447               		.lcomm TX_Data,1
+ 448               		.lcomm RX_BitsRemaining,1
+ 449               		.lcomm RX_Data,1
+ 498               	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 SoftUART.c
+     /tmp/cc4UeK5J.s:2      *ABS*:0000003f __SREG__
+     /tmp/cc4UeK5J.s:3      *ABS*:0000003e __SP_H__
+     /tmp/cc4UeK5J.s:4      *ABS*:0000003d __SP_L__
+     /tmp/cc4UeK5J.s:5      *ABS*:00000034 __CCP__
+     /tmp/cc4UeK5J.s:6      *ABS*:00000000 __tmp_reg__
+     /tmp/cc4UeK5J.s:7      *ABS*:00000001 __zero_reg__
+     /tmp/cc4UeK5J.s:19     .text.SoftUART_Init:00000000 SoftUART_Init
+     /tmp/cc4UeK5J.s:63     .text.__vector_1:00000000 __vector_1
+     /tmp/cc4UeK5J.s:447    .bss:00000002 RX_BitsRemaining
+     /tmp/cc4UeK5J.s:111    .text.__vector_17:00000000 __vector_17
+     /tmp/cc4UeK5J.s:448    .bss:00000003 RX_Data
+     /tmp/cc4UeK5J.s:255    .text.__vector_32:00000000 __vector_32
+                             .bss:00000000 TX_BitsRemaining
+     /tmp/cc4UeK5J.s:446    .bss:00000001 TX_Data
+
+UNDEFINED SYMBOLS
+UARTtoUSB_Buffer
+USBtoUART_Buffer
+__do_clear_bss

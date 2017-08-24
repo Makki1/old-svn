@@ -1,0 +1,12 @@
+diff -Naurd libapache-mod-auth-radius-1.5.7.ORIG/mod_auth_radius.c libapache-mod-auth-radius-1.5.7/mod_auth_radius.c
+--- libapache-mod-auth-radius-1.5.7.ORIG/mod_auth_radius.c	2003-03-24 20:16:15.000000000 +0100
++++ libapache-mod-auth-radius-1.5.7/mod_auth_radius.c	2003-04-19 17:20:54.000000000 +0200
+@@ -302,7 +302,7 @@
+ #define DPRINTF printf
+ #else
+ #define DPRINTF
+-#endif DEBUG_RADIUS
++#endif /* DEBUG_RADIUS */
+ 
+ /*
+   RFC 2138 says that this port number is wrong, but everyone's using it.

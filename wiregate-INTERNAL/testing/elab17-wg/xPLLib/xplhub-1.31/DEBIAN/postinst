@@ -1,8 +1,0 @@
-#! /bin/sh -e
-
-update-rc.d xplhub defaults
-/etc/init.d/xplhub restart
-if [ -e /etc/init.d/monit ]
-then
-	/etc/init.d/monit restart
-fi
